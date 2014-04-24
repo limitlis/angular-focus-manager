@@ -14,10 +14,6 @@ angular.module('fm').service('focusQuery', function () {
     var focusLoop = 'focus-loop';
 //    var selectable = 'A,SELECT,BUTTON,INPUT,TEXTAREA,*[tabindex]';
 
-    function isRoot(el) {
-        return !this.parentId(groupId);
-    }
-
     function getFirstGroupId() {
         var q = '[{focusGroup}]:not([{focusContainerId}])'.supplant({
             focusGroup: focusGroup,
@@ -34,15 +30,6 @@ angular.module('fm').service('focusQuery', function () {
         });
         var groupEls = document.querySelectorAll(q);
         return getGroupId(groupEls[groupEls.length - 1]);
-    }
-
-    function getGroupContainer(group) {
-        var containerId = group.getAttribute('focus-container-id');
-        var q = '[{focusGroupId}="{containerId}"]'.supplant({
-            focusGroupId: focusGroupId,
-            containerId: containerId
-        });
-        return document.querySelector(q);
     }
 
     function getChildGroups(groupId) {
@@ -85,16 +72,6 @@ angular.module('fm').service('focusQuery', function () {
         var i = 0, len = els.length, $el;
         while (i < len) {
             $el = query(els[i]);
-
-//                if ($el.hasClass('disabled')) {
-//                    i += 1;
-//                    continue;
-//                }
-
-//                if ($el.attr('disabled')) {
-//                    i += 1;
-//                    continue;
-//                }
 
             if (!$el.isVisible(true)) {
                 i += 1;
@@ -165,6 +142,11 @@ angular.module('fm').service('focusQuery', function () {
         el.setAttribute(focusContainerId, id);
     }
 
+    function getContainerIdByGroupId(groupId) {
+        var group = getGroup(groupId);
+        return getContainerId(group);
+    }
+
     function group(elementOrGroupId) {
         if (isNaN(elementOrGroupId)) {
             elementOrGroupId = this.parentId(elementOrGroupId);
@@ -192,11 +174,11 @@ angular.module('fm').service('focusQuery', function () {
     this.setParentId = setParentId;
     this.getContainerId = getContainerId;
     this.setContainerId = setContainerId;
+    this.getContainerIdByGroupId = getContainerIdByGroupId;
     this.getGroup = getGroup;
     this.getFirstGroupId = getFirstGroupId;
     this.getLastGroupId = getLastGroupId;
 
-    this.isRoot = isRoot;
     this.getElementsWithoutParents = getElementsWithoutParents;
     this.getGroupsWithoutContainers = getGroupsWithoutContainers;
     this.isAutofocus = isAutofocus;
@@ -204,7 +186,6 @@ angular.module('fm').service('focusQuery', function () {
     this.isEnabled = isEnabled;
     this.group = group;
     this.getGroupElements = getGroupElements;
-    this.getGroupContainer = getGroupContainer;
     this.getChildGroups = getChildGroups;
     this.contains = contains;
 
