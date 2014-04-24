@@ -1,4 +1,23 @@
-### Focus Manager Development Stages
+## Focus Manager Development
+
+The goal is to create a focus manager that:
+
+* Can navigate through elements in a controlled manner.
+* ARIA compatible
+* Easy to use but able to handle complex environments with popups, dialogs, multiple sections, etc.
+* No jQuery dependencies
+
+The Focus Manager is dependent on AngularJS in a limited capacity and it may be possible to break it out for other frameworks though that is not one of the primary goals at this time.
+
+The devlopement will be broken into phases and stages to document the development cycle, thoughts, challenges and workflow.
+
+
+###Phase 1: Element Traversal
+---
+The goal with this phase is to be able to traverse through the focus elements using the TAB and SHIFT+TAB. There should be groups to help organize the order in which things are traversed. In the end, it won't look to much different from what you would see if we didn't have the Focus Manager, which means it is working, with the following exceptions. The FM will have:
+
+* **Isolated groups**: certain groups will receive focus unless an element inside of it has focus
+* **Loops**: Once the last element has been reached, the next request will loop back to the start.
 
 #####Stage 1: Next Element Traversal
 ---
@@ -90,3 +109,11 @@ The following represents the flow:
 	findPrevElement("group-1", "el-1") -> NULL
 
 	CHECK FOR LOOP
+	
+	
+#####Stage 3: Loops
+---
+
+As part of the cleanup I added a new property to allow looping. I had it listed as "CHECK FOR LOOP". This will complete The first phase of development.
+
+	focus-loop="true"

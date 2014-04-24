@@ -11,6 +11,7 @@ angular.module('fm').service('focusQuery', function () {
     var focusGroup = 'focus-group';
     var focusElement = 'focus-element';
     var focusEnabled = 'focus-enabled';
+    var focusLoop = 'focus-loop';
 //    var selectable = 'A,SELECT,BUTTON,INPUT,TEXTAREA,*[tabindex]';
 
     function isRoot(el) {
@@ -116,6 +117,10 @@ angular.module('fm').service('focusQuery', function () {
         return el.getAttribute(focusEnabled) !== 'false';
     }
 
+    function isLoop(el) {
+        return el.getAttribute(focusLoop) === 'true';
+    }
+
     function getElement(elementId) {
         var q = '[{focusElementId}="{elementId}"]'.supplant({
             focusElementId: focusElementId,
@@ -195,6 +200,7 @@ angular.module('fm').service('focusQuery', function () {
     this.getElementsWithoutParents = getElementsWithoutParents;
     this.getGroupsWithoutContainers = getGroupsWithoutContainers;
     this.isAutofocus = isAutofocus;
+    this.isLoop = isLoop;
     this.isEnabled = isEnabled;
     this.group = group;
     this.getGroupElements = getGroupElements;

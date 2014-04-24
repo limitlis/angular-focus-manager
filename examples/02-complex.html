@@ -6,14 +6,14 @@
 </head>
 <body>
 Isolated Group 1
-<div focus-group="auto">
+<div focus-group="auto" focus-loop="true">
     <a href="">My Only link</a>
 
     <div focus-group="auto">
         <div focus-group="auto">
             <a href="" tabindex="1">Link</a>
             <a href="" tabindex="2">Link</a>
-            <!--<a href="" tabindex="3" disabled="disabled">Link (Disabled)</a>-->
+            <a href="" tabindex="3" disabled="disabled">Link (Disabled)</a>
             <a href="" tabindex="3">Link</a>
 
             <div style="display: none">
@@ -30,7 +30,7 @@ Isolated Group 1
             <div focus-group="auto">
                 <a href="" tabindex="1">Link</a>
                 <a href="" tabindex="2">Link</a>
-                <!--<a href="" tabindex="3" disabled="disabled">Link (Disabled)</a>-->
+                <a href="" tabindex="3" disabled="disabled">Link (Disabled)</a>
                 <a href="" tabindex="3">Link</a>
 
                 <div style="display: none">
@@ -47,9 +47,9 @@ Isolated Group 1
 
     <div focus-group="auto">
         <div focus-group="auto">
-            <a href="" tabindex="1">Link1</a>
+            <a href="" tabindex="1" focus-element="autofocus">Link1</a>
             <a href="" tabindex="2">Link</a>
-            <!--<a href="" tabindex="3" disabled="disabled">Link (Disabled)</a>-->
+            <a href="" tabindex="3" disabled="disabled">Link (Disabled)</a>
             <a href="" tabindex="3">Link</a>
 
             <div style="display: none">
@@ -70,7 +70,7 @@ Isolated Group 1
 </div>
 
 
-<div focus-group="auto">
+<div focus-group="auto" focus-loop="true">
 Isolated group 2
     <div focus-group="auto">
         <div focus-group="auto">
@@ -80,7 +80,7 @@ Isolated group 2
     </div>
 
     <div focus-group="auto">
-        <a href="" tabindex="3" focus-element="autofocus">Link</a>
+        <a href="" tabindex="3">Link</a>
     </div>
 
 </div>
