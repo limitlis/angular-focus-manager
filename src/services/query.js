@@ -8,12 +8,31 @@ angular.module('fm').service('focusQuery', function () {
     var focusParentId = 'focus-parent-id';
     var focusContainerId = 'focus-container-id';
 
+    var focusGroup = 'focus-group';
     var focusElement = 'focus-element';
     var focusEnabled = 'focus-enabled';
 //    var selectable = 'A,SELECT,BUTTON,INPUT,TEXTAREA,*[tabindex]';
 
     function isRoot(el) {
         return !this.parentId(groupId);
+    }
+
+    function getFirstGroupId() {
+        var q = '[{focusGroup}]:not([{focusContainerId}])'.supplant({
+            focusGroup: focusGroup,
+            focusContainerId: focusContainerId
+        });
+        var groupEl = document.querySelector(q);
+        return getGroupId(groupEl);
+    }
+
+    function getLastGroupId() {
+        var q = '[{focusGroup}]:not([{focusContainerId}])'.supplant({
+            focusGroup: focusGroup,
+            focusContainerId: focusContainerId
+        });
+        var groupEls = document.querySelectorAll(q);
+        return getGroupId(groupEls[groupEls.length - 1]);
     }
 
     function getGroupContainer(group) {
@@ -169,6 +188,8 @@ angular.module('fm').service('focusQuery', function () {
     this.getContainerId = getContainerId;
     this.setContainerId = setContainerId;
     this.getGroup = getGroup;
+    this.getFirstGroupId = getFirstGroupId;
+    this.getLastGroupId = getLastGroupId;
 
     this.isRoot = isRoot;
     this.getElementsWithoutParents = getElementsWithoutParents;

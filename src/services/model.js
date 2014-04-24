@@ -2,10 +2,10 @@ angular.module('fm').service('focusModel', function (focusQuery) {
 
     var scope = this;
 
-    var console = {
-        log: function () {
-        }
-    };
+//    var console = {
+//        log: function () {
+//        }
+//    };
 
     /**
      * Set the focus to a particular element
@@ -37,7 +37,14 @@ angular.module('fm').service('focusModel', function (focusQuery) {
     }
 
     function prev() {
-
+        if (scope.focusElement) {
+            var groupId = focusQuery.getParentId(scope.focusElement);
+            var elementId = focusQuery.getElementId(scope.focusElement);
+            console.log('next', groupId, elementId);
+            findPrevElement(groupId, elementId);
+        } else {
+            findPrevElement();
+        }
     }
 
     function getElementIndex(list, item) {
@@ -49,6 +56,25 @@ angular.module('fm').service('focusModel', function (focusQuery) {
             i += 1;
         }
         return -1;
+    }
+
+    function getPrevElement(elements, elementId) {
+        var element = focusQuery.getElement(elementId);
+        var index = getElementIndex(elements, element);
+        console.log('index is', index);
+        if (index > 0) {
+            return elements[index - 1];
+        }
+    }
+
+    function getPrevGroup(groups, groupId) {
+        if (groups) {
+            var group = focusQuery.getGroup(groupId);
+            var index = getElementIndex(groups, group);
+            if (index > 0) {
+                return groups[index - 1];
+            }
+        }
     }
 
     function getNextElement(elements, elementId) {
@@ -98,8 +124,7 @@ angular.module('fm').service('focusModel', function (focusQuery) {
                 }
             }
         } else {
-            var groupEl = document.querySelector('[focus-group]');
-            var groupId = focusQuery.getGroupId(groupEl);
+            groupId = focusQuery.getFirstGroupId();
             findNextElement(groupId);
         }
     }
@@ -160,13 +185,100 @@ angular.module('fm').service('focusModel', function (focusQuery) {
         }
     }
 
-    function findPrevGroup() {
+    function findPrevGroup(containerId, groupId) {
+        console.log('findPrevGroup("{containerId}", "{groupId}")'.supplant({
+            containerId: containerId || '',
+            groupId: groupId || ''
+        }));
+
+        if (containerId) {
+            if(groupId) {
+                var groups = focusQuery.getChildGroups(containerId);
+                var prevGroup = getPrevGroup(groups, groupId);
+                console.log('WHAT IS THE PREV GROUP', prevGroup);
+                if(prevGroup) {
+                    var prevGroupId = focusQuery.getGroupId(prevGroup);
+                    findPrevChildGroup(prevGroupId);
+                } else {
+                    var parentContainer = focusQuery.getGroup(containerId);
+                    var parentContainerId = focusQuery.getContainerId(parentContainer);
+                    console.log('PARENT CONTAINER ID', parentContainerId, containerId);
+                    if (parentContainerId) {
+                        findPrevGroup(parentContainerId, containerId);
+                    } else {
+                        findPrevElement(containerId);
+                    }
+                }
+            } else {
+                // TODO: Make this optional
+                throw new Error('groupId required');
+            }
+        } else {
+            groupId = focusQuery.getLastGroupId();
+            findPrevChildGroup(groupId);
+        }
     }
 
-    function findPrevChildGroup() {
+    function findPrevChildGroup(groupId) {
+        console.log('findPrevChildGroup("{groupId}")'.supplant({
+            groupId: groupId || ''
+        }));
+
+        if (groupId) {
+            var groups = focusQuery.getChildGroups(groupId);
+            if (groups.length) {
+                var childGroupId = focusQuery.getGroupId(groups[groups.length - 1]);
+                console.log('we got a child group', childGroupId);
+                findPrevChildGroup(childGroupId);
+//            findNextElement(nextGroupId);
+            } else {
+                console.log('there are no groups');
+                findPrevElement(groupId);
+            }
+        } else {
+            findPrevGroup();
+        }
     }
 
-    function findPrevElement() {
+    function findPrevElement(groupId, elementId) {
+        console.log('findNextElement("{groupId}", "{elementId}")'.supplant({
+            groupId: groupId || '',
+            elementId: elementId || ''
+        }));
+
+        if (groupId) {
+            if (elementId) {
+                var els = focusQuery.getGroupElements(groupId);
+                console.log('FIND NEXT SIBLING ELMENT');
+                var prevEl = getPrevElement(els, elementId);
+                console.log('whois', prevEl);
+                if(prevEl) {
+                    focus(prevEl);
+                } else {
+                    console.log('NO PREV ELS');
+                    var group = focusQuery.getGroup(groupId);
+                    var containerId = focusQuery.getContainerId(group);
+                    if(containerId) {
+                        findPrevGroup(containerId, groupId);
+                    } else {
+                        console.log('#### SHOULD WE LOOP');
+                        findPrevChildGroup(groupId);
+                    }
+                }
+            } else {
+                console.log('FIND LAST ELEMENT');
+                var els = focusQuery.getGroupElements(groupId);
+                if (els.length) {
+                    console.log('FOUND ELEMENTS');
+                    focus(els[els.length - 1]);
+                } else {
+                    console.log('NO ELEMENTS FOUND');
+                    findPrevChildGroup(groupId);
+                }
+            }
+        } else {
+            findPrevChildGroup();
+        }
     }
 
     this.focusElement = null;

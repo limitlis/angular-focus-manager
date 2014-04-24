@@ -5,14 +5,15 @@
     <title></title>
 </head>
 <body>
-<div id="manager1" focus-group="auto">
+Isolated Group 1
+<div focus-group="auto">
     <a href="">My Only link</a>
 
     <div focus-group="auto">
         <div focus-group="auto">
-            <a href="" tabindex="1" focus-element="autofocus">Link</a>
+            <a href="" tabindex="1">Link</a>
             <a href="" tabindex="2">Link</a>
-            <a href="" tabindex="3" disabled="disabled">Link (Disabled)</a>
+            <!--<a href="" tabindex="3" disabled="disabled">Link (Disabled)</a>-->
             <a href="" tabindex="3">Link</a>
 
             <div style="display: none">
@@ -29,7 +30,7 @@
             <div focus-group="auto">
                 <a href="" tabindex="1">Link</a>
                 <a href="" tabindex="2">Link</a>
-                <a href="" tabindex="3" disabled="disabled">Link (Disabled)</a>
+                <!--<a href="" tabindex="3" disabled="disabled">Link (Disabled)</a>-->
                 <a href="" tabindex="3">Link</a>
 
                 <div style="display: none">
@@ -48,7 +49,7 @@
         <div focus-group="auto">
             <a href="" tabindex="1">Link1</a>
             <a href="" tabindex="2">Link</a>
-            <a href="" tabindex="3" disabled="disabled">Link (Disabled)</a>
+            <!--<a href="" tabindex="3" disabled="disabled">Link (Disabled)</a>-->
             <a href="" tabindex="3">Link</a>
 
             <div style="display: none">
@@ -69,8 +70,8 @@
 </div>
 
 
-<div id="manager2" focus-group="auto">
-Another manager
+<div focus-group="auto">
+Isolated group 2
     <div focus-group="auto">
         <div focus-group="auto">
             <a href="" tabindex="2">Link</a>
@@ -79,7 +80,7 @@ Another manager
     </div>
 
     <div focus-group="auto">
-        <a href="" tabindex="3">Link</a>
+        <a href="" tabindex="3" focus-element="autofocus">Link</a>
     </div>
 
 </div>
