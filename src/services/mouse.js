@@ -1,26 +1,35 @@
-angular.module('fm')
-    .service('focusMouse', function (focusModel) {
+ux.service('focusMouse', function (focusModel) {
 
-        var scope = this;
+    var scope = this;
 
-        function mute() {
-            scope.muted = false;
+    function mute() {
+        scope.muted = false;
+        document.removeEventListener('mousedown', onMouseDown);
+//        document.removeEventListener('mouseup', onMouseUp);
+    }
+
+    function unmute() {
+        scope.muted = true;
+        document.addEventListener('mousedown', onMouseDown);
+//        document.addEventListener('mouseup', onMouseUp);
+    }
+
+    function onMouseDown(evt) {
+        if (focusModel.canReceiveFocus(evt.target)) {
+            console.log('change focus');
+            focusModel.focus(evt.target);
         }
+    }
 
-        function unmute() {
-            scope.muted = true;
+    function onMouseUp(evt) {
+        focusModel.focus(focusModel.focus());
+    }
 
-            document.addEventListener('mouseup', function () {
-                // if element is not a focus element, return focus
-                focusModel.focus(focusModel.focus());
-            });
-        }
+    this.mute = mute;
+    this.unmute = unmute;
 
-        this.mute = mute;
-        this.unmute = unmute;
-
-    })
+})
     .run(function (focusMouse, focusModel) {
-//        focusMouse.unmute();
+        focusMouse.unmute();
     });
 

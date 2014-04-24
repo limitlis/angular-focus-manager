@@ -1,4 +1,4 @@
-angular.module('fm').directive('focusGroup', function (focusQuery) {
+ux.directive('focusGroup', function (focusQuery) {
 
     var groupId = 1;
     var elementId = 1;

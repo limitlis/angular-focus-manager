@@ -1,5 +1,4 @@
-angular.module('fm')
-    .service('focus', function (focusModel) {
+ux.service('focus', function (focusModel) {
         document.addEventListener('focusout', function (evt) {
             evt.preventDefault();
             evt.stopImmediatePropagation();

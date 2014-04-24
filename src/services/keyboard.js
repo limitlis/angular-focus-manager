@@ -1,5 +1,4 @@
-angular.module('fm')
-    .service('focusKeyboard', function ($window) {
+ux.service('focusKeyboard', function ($window) {
 
         var registeredKeys = {};
 

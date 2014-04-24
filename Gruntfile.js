@@ -3,15 +3,16 @@ module.exports = function (grunt) {
     var tasks = [
         'jshint',
         'ngmin',
-        'uglify',
-//        'copy'
+        'uglify'
     ];
-    
+
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         banner: '/*\n' +
             '* <%= pkg.name %> v.<%= pkg.version %>\n' +
-            '* Rob Taylor. MIT ' + new Date().getFullYear() + '\n' +
+            '* (c) ' + new Date().getFullYear() + ', WebUX\n' +
+            '* https://github.com/webux/<%= pkg.filename %>\n' +
+            '* License: MIT.\n' +
             '*/\n',
         wrapStart: '(function(){\n',
         wrapEnd: '\n}());\n',
@@ -40,10 +41,11 @@ module.exports = function (grunt) {
         ngmin: {
             client: {
                 src: [
-                    'src/fm.js',
+                    'src/ux.js',
+                    'src/consts.js',
                     'src/**/*.js'
                 ],
-                dest: './build/fm.js'
+                dest: './build/<%= pkg.filename %>.js'
             }
         },
         uglify: {
@@ -58,7 +60,7 @@ module.exports = function (grunt) {
                     footer: '<%= wrapEnd %>'
                 },
                 files: {
-                    './build/fm.js': ['./build/fm.js']
+                    './build/<%= pkg.filename %>.js': ['./build/<%= pkg.filename %>.js']
                 }
             },
             build_min: {
@@ -67,18 +69,8 @@ module.exports = function (grunt) {
                     banner: '<%= banner %>'
                 },
                 files: {
-                    './build/fm.min.js': ['./build/fm.js']
+                    './build/<%= pkg.filename %>.min.js': ['./build/<%= pkg.filename %>.js']
                 }
-            }
-        },
-        copy: {
-            main: {
-                files: [
-//                    {src: ['images/**'], dest: './../public/'},
-//                    {src: ['css/**.css'], dest: './../public/'},
-//                    {src: ['vendor/**'], dest: './../public/'},
-                    {src: ['partials/**'], dest: './../../public/website/'}
-                ]
             }
         }
     });
@@ -88,10 +80,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
-//    grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-wrap');
     grunt.loadNpmTasks('grunt-ngmin');
-//    grunt.loadNpmTasks('grunt-angular-templates');
 
     grunt.registerTask('default', tasks);
 

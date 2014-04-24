@@ -117,3 +117,29 @@ The following represents the flow:
 As part of the cleanup I added a new property to allow looping. I had it listed as "CHECK FOR LOOP". This will complete The first phase of development.
 
 	focus-loop="true"
+	
+###Cleanup and Grunt Integration
+---
+Setting up Gruntfile; committing build. Cleanup.	
+	
+	
+###Phase 2: User Interaction
+---
+
+The goal is to support Key and Mouse interaction through registering hotkey and combo keys to a public interfacing API, ability to mute and unmute actions.
+
+##### Stage 3: Mouse Interaction
+---
+	focusMouse.mute()
+	focusMouse.unmute()
+	
+
+##### Stage 4: Keyboard Interaction
+---
+
+	<div focus-keyboard="SHIFT+Q"></div>
+
+	focusKeyboard.mute()
+	focusKeybaord.unmute()
+
+ 

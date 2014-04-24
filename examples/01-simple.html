@@ -8,6 +8,7 @@
 <div focus-group="auto" focus-loop="false">
     <a href="">Link 1</a>
     <a href="">Link 2</a>
+    <div tabindex="0">DIV Link</div>
     <div focus-group="auto">
         <div focus-group="auto">
             <a href="">Link 3</a>
@@ -22,10 +23,10 @@
 </div>
 
 <script src="../bower_components/angular/angular.js"></script>
-<script src="../build/fm.js"></script>
+<script src="../build/ux-angular-focusmanager.js"></script>
 <script src="vendor/ux-query.js"></script>
 <script>
-    angular.module('app', ['fm'])
+    angular.module('app', ['ux'])
 </script>
 </body>
 </html>

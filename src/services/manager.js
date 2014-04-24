@@ -1,5 +1,4 @@
-angular.module('fm')
-    .service('focusManager', function (focusModel) {
+ux.service('focusManager', function (focusModel) {
 
         document.addEventListener('focusin', function (evt) {
             focusModel.focus(evt.target);

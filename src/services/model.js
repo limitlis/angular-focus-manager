@@ -1,4 +1,4 @@
-angular.module('fm').service('focusModel', function (focusQuery) {
+ux.service('focusModel', function (focusQuery) {
 
     var scope = this;
 
@@ -15,6 +15,10 @@ angular.module('fm').service('focusModel', function (focusQuery) {
         scope.activeElement = el;
 
         el.focus();
+    }
+
+    function canReceiveFocus(el) {
+        return focusQuery.canReceiveFocus(el);
     }
 
     /**
@@ -324,5 +328,6 @@ angular.module('fm').service('focusModel', function (focusQuery) {
     this.focus = focus;
     this.prev = prev;
     this.next = next;
+    this.canReceiveFocus = canReceiveFocus;
 
 });

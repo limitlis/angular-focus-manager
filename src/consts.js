@@ -1,12 +1,9 @@
 /* global angular, fm */
 
+var exports = {};
 
-window.fm = angular.module('fm', [])
-    .value('fm.version', '0.1')
-
-fm.consts = {
+var consts = {
     TAB_INDEX: 99999,
-    PARENT_ID: 'focus-parent-id',
 
     KEY_BACKSPACE: 8,
     KEY_TAB: 9,
@@ -28,9 +25,6 @@ fm.consts = {
     GROUP_MANUAL: 'manual',
     GROUP_READER: 'reader',
     GROUP_MANAGE: 'manage',
-
-    GROUP_GROUP_ID: 'focus-group-id',
-    GROUP_PARENT_ID: 'focus-parent-id',
 
     GROUP_READ_CLASS: '.readable',
     GROUP_FOCUS_ELEMENTS: 'A,SELECT,BUTTON,INPUT,TEXTAREA,*[tabindex],.focusable'

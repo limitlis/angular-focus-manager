@@ -1,4 +1,4 @@
-angular.module('fm').directive('focusElement', function (focusModel, focusQuery) {
+ux.directive('focusElement', function (focusModel, focusQuery) {
 
     function linker(scope, element, attr) {
         var el = element[0];

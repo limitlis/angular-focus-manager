@@ -1,4 +1,4 @@
-angular.module('fm').service('focusQuery', function () {
+ux.service('focusQuery', function () {
 
     // http://quirksmode.org/dom/core/
     var query = $;
@@ -12,7 +12,20 @@ angular.module('fm').service('focusQuery', function () {
     var focusElement = 'focus-element';
     var focusEnabled = 'focus-enabled';
     var focusLoop = 'focus-loop';
-//    var selectable = 'A,SELECT,BUTTON,INPUT,TEXTAREA,*[tabindex]';
+    var selectable = 'A,SELECT,BUTTON,INPUT,TEXTAREA,*[tabindex]';
+
+    function canReceiveFocus(el) {
+        var isSelectable = new RegExp(el.nodeName.toUpperCase()).test(selectable);
+
+        if(!isSelectable) {
+            isSelectable = el.getAttribute('tabindex') !== null;
+        }
+
+        if(isSelectable) {
+             isSelectable = query(el).isVisible();
+        }
+        return isSelectable;
+    }
 
     function getFirstGroupId() {
         var q = '[{focusGroup}]:not([{focusContainerId}])'.supplant({
@@ -188,5 +201,6 @@ angular.module('fm').service('focusQuery', function () {
     this.getGroupElements = getGroupElements;
     this.getChildGroups = getChildGroups;
     this.contains = contains;
+    this.canReceiveFocus = canReceiveFocus;
 
 })
