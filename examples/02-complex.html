@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<div id="manager1" focus-group="auto">
+    <a href="">My Only link</a>
+
+    <div focus-group="auto">
+        <div focus-group="auto">
+            <a href="" tabindex="1" focus-element="autofocus">Link</a>
+            <a href="" tabindex="2">Link</a>
+            <a href="" tabindex="3" disabled="disabled">Link (Disabled)</a>
+            <a href="" tabindex="3">Link</a>
+
+            <div style="display: none">
+                <a href="" tabindex="3">Link</a>
+                <a href="" tabindex="3">Link</a>
+            </div>
+
+            <a href="" tabindex="3">Link A</a>
+            <a href="" tabindex="3">Link B</a>
+            <a href="" tabindex="4">Link C</a>
+        </div>
+
+        <div focus-group="auto">
+            <div focus-group="auto">
+                <a href="" tabindex="1">Link</a>
+                <a href="" tabindex="2">Link</a>
+                <a href="" tabindex="3" disabled="disabled">Link (Disabled)</a>
+                <a href="" tabindex="3">Link</a>
+
+                <div style="display: none">
+                    <a href="" tabindex="3">Link</a>
+                    <a href="" tabindex="3">Link</a>
+                </div>
+
+                <a href="" tabindex="3">Link A</a>
+                <a href="" tabindex="3">Link B</a>
+                <a href="" tabindex="4">Link C2</a>
+            </div>
+        </div>
+    </div>
+
+    <div focus-group="auto">
+        <div focus-group="auto">
+            <a href="" tabindex="1">Link1</a>
+            <a href="" tabindex="2">Link</a>
+            <a href="" tabindex="3" disabled="disabled">Link (Disabled)</a>
+            <a href="" tabindex="3">Link</a>
+
+            <div style="display: none">
+                <a href="" tabindex="3">Link</a>
+                <a href="" tabindex="3">Link</a>
+            </div>
+
+            <a href="" tabindex="3">Link A</a>
+            <a href="" tabindex="3">Link B</a>
+            <a href="" tabindex="4">Link C</a>
+        </div>
+    </div>
+
+    <div focus-group="auto">
+        <a href="" tabindex="3">Link</a>
+    </div>
+
+</div>
+
+
+<div id="manager2" focus-group="auto">
+Another manager
+    <div focus-group="auto">
+        <div focus-group="auto">
+            <a href="" tabindex="2">Link</a>
+            <a href="" tabindex="1">Link</a>
+        </div>
+    </div>
+
+    <div focus-group="auto">
+        <a href="" tabindex="3">Link</a>
+    </div>
+
+</div>
+
+<script src="../bower_components/angular/angular.js"></script>
+<script src="../build/fm.js"></script>
+<script src="vendor/ux-query.js"></script>
+<script>
+    angular.module('app', ['fm'])
+</script>
+</body>
+</html>
