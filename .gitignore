@@ -2,6 +2,7 @@
 .nodemonignore
 .sass-cache/
 node_modules/
+bower_components/
 test/coverage/
 .idea
 scss/

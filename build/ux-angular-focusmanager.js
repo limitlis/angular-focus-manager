@@ -375,21 +375,21 @@ ux.service("focusMouse", function(focusModel) {
         document.removeEventListener("mousedown", onMouseDown);
     }
     function unmute() {
-        scope.muted = true;
+        scope.muted = false;
         document.addEventListener("mousedown", onMouseDown);
     }
     function onMouseDown(evt) {
+        if (scope.muted) {
+            return;
+        }
         if (focusModel.canReceiveFocus(evt.target)) {
-            console.log("change focus");
             focusModel.focus(evt.target);
         }
     }
-    function onMouseUp(evt) {
-        focusModel.focus(focusModel.focus());
-    }
+    this.muted = false;
     this.mute = mute;
     this.unmute = unmute;
-}).run(function(focusMouse, focusModel) {
+}).run(function(focusMouse) {
     focusMouse.unmute();
 });
 
@@ -408,6 +408,9 @@ ux.service("focusQuery", function() {
         var isSelectable = new RegExp(el.nodeName.toUpperCase()).test(selectable);
         if (!isSelectable) {
             isSelectable = el.getAttribute("tabindex") !== null;
+        }
+        if (isSelectable) {
+            isSelectable = el.getAttribute("disabled") === null;
         }
         if (isSelectable) {
             isSelectable = query(el).isVisible();

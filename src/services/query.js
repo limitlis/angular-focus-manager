@@ -22,6 +22,10 @@ ux.service('focusQuery', function () {
         }
 
         if(isSelectable) {
+            isSelectable = el.getAttribute('disabled') === null;
+        }
+
+        if(isSelectable) {
              isSelectable = query(el).isVisible();
         }
         return isSelectable;

@@ -5,31 +5,27 @@ ux.service('focusMouse', function (focusModel) {
     function mute() {
         scope.muted = false;
         document.removeEventListener('mousedown', onMouseDown);
-//        document.removeEventListener('mouseup', onMouseUp);
     }
 
     function unmute() {
-        scope.muted = true;
+        scope.muted = false;
         document.addEventListener('mousedown', onMouseDown);
-//        document.addEventListener('mouseup', onMouseUp);
     }
 
     function onMouseDown(evt) {
+        if (scope.muted) {
+            return;
+        }
         if (focusModel.canReceiveFocus(evt.target)) {
-            console.log('change focus');
             focusModel.focus(evt.target);
         }
     }
 
-    function onMouseUp(evt) {
-        focusModel.focus(focusModel.focus());
-    }
-
+    this.muted = false;
     this.mute = mute;
     this.unmute = unmute;
 
-})
-    .run(function (focusMouse, focusModel) {
-        focusMouse.unmute();
-    });
+}).run(function (focusMouse) {
+    focusMouse.unmute();
+});
 

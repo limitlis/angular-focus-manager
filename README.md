@@ -1,4 +1,4 @@
-ux-focusmanager
+ux-angular-focusmanager
 ==============
 
-Manages the focus and accessibility in web applications.
+In progress...
