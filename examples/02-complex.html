@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <title></title>
     <style>
+        * {
+            outline: none;
+        }
+
         .focus-highlight {
             position: absolute;
             -webkit-transition: left 100ms ease-out, top 100ms ease-out, width 100ms ease-out, height 100ms ease-out;
@@ -18,8 +22,15 @@
     </style>
 </head>
 <body ng-controller="AppCtrl as app">
-Isolated Group 1
+
+<div>Isolated Group 1</div>
 <div focus-group="auto" focus-loop="true">
+    <select>
+        <option value="1">One</option>
+        <option value="2">Two</option>
+        <option value="3">Three</option>
+    </select>
+
     <a href="">My Only link</a>
 
     <div focus-group="auto">
@@ -89,7 +100,7 @@ Isolated Group 1
 
 
 <div focus-group="auto" focus-loop="false">
-    Isolated group 2
+    <div>Isolated Group 2</div>
     <div focus-group="auto">
         <div focus-group="auto">
             <a href="" tabindex="2" focus-element="autofocus">Link</a>

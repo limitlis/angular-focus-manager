@@ -81,7 +81,7 @@ ux.service('focusKeyboard', function (focusModel) {
         var doc;
         if (node.ownerDocument) {
             doc = node.ownerDocument;
-        } else if (node.nodeType == 9){
+        } else if (node.nodeType == 9) {
             // the node may be the document itself, nodeType 9 = DOCUMENT_NODE
             doc = node;
         } else {
@@ -121,7 +121,7 @@ ux.service('focusKeyboard', function (focusModel) {
             event.synthetic = true; // allow detection of synthetic events
             // The second parameter says go ahead with the default action
             node.dispatchEvent(event, true);
-        } else  if (node.fireEvent) {
+        } else if (node.fireEvent) {
             // IE-old school style
             var event = doc.createEventObject();
             event.synthetic = true; // allow detection of synthetic events

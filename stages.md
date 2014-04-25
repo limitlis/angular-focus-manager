@@ -179,3 +179,7 @@ The browser will not recognize some elements as focus elements by default. (Good
 [http://stackoverflow.com/questions/2381572/how-can-i-trigger-a-javascript-event-click](http://stackoverflow.com/questions/2381572/how-can-i-trigger-a-javascript-event-click)
 
 I want the enter key to be the thing which invokes stuff. I will need to try it out on different elements to see when it is needed and make sure I haven't broken native browser support and ARIA support.
+
+**Focus Trapping**
+
+Browsers will sometimes cause focus to go to unexpected places if at the start or end of the focus area, or if an component that has uses a popup (sucha as a select has focus.) To resolve this issue if you add an anchor tab at the beginning and end of the "body" tag, we can then monitor and trap the focus when it goes rogue. I created a service called "focusTrap" to handle this procedure.
