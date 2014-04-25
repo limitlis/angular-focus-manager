@@ -191,3 +191,9 @@ In this phase, the goal is to start controlling the behavior in which things rec
 #####Stage 5: Tab index
 
 Support tab indexing as supported by the browser with the exception that tab index will be under focus groups and not traverse the entire page but move from one group to the next. 
+
+#####Stage 6: Focus Group Index
+
+Like tab index, group index controls the order in which the groups will be traversed. Similar to tabindex, groups with an index will take priority over those that do not.
+
+	focus-group-index="1"

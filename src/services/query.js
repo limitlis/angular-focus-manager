@@ -49,10 +49,21 @@ ux.service('focusQuery', function () {
     }
 
     function getChildGroups(groupId) {
-        return document.querySelectorAll('[{focusContainerId}="{groupId}"]'.supplant({
+        var els = document.querySelectorAll('[{focusContainerId}="{groupId}"]'.supplant({
             focusContainerId: focusContainerId,
             groupId: groupId
         }));
+
+        var returnVal = [];
+        var i = 0, len = els.length;
+        while (i < len) {
+            returnVal.push(els[i]);
+            i += 1;
+        }
+
+        returnVal.sort(sortByGroupIndex);
+
+        return returnVal;
     }
 
     function getElementsWithoutParents(el) {
@@ -198,13 +209,26 @@ ux.service('focusQuery', function () {
     }
 
     function sortByTabIndex(a, b) {
-        var aTabIndex = a.getAttribute('tabindex') || 999999;
-        var bTabIndex = b.getAttribute('tabindex') || 999999;
+        var aTabIndex = a.getAttribute('tabindex') || Number.POSITIVE_INFINITY;
+        var bTabIndex = b.getAttribute('tabindex') || Number.POSITIVE_INFINITY;
 
         if (aTabIndex < bTabIndex) {
             return -1;
         }
         if (aTabIndex > bTabIndex) {
+            return 1;
+        }
+        return 0;
+    }
+
+    function sortByGroupIndex(a, b) {
+        var aGroupIndex = a.getAttribute('focus-group-index') || Number.POSITIVE_INFINITY;
+        var bGroupIndex = b.getAttribute('focus-group-index') || Number.POSITIVE_INFINITY;
+
+        if (aGroupIndex < bGroupIndex) {
+            return -1;
+        }
+        if (aGroupIndex > bGroupIndex) {
             return 1;
         }
         return 0;
