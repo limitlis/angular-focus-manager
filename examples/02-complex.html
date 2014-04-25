@@ -3,6 +3,19 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
+    <style>
+        .focus-highlight {
+            position: absolute;
+            -webkit-transition: left 100ms ease-out, top 100ms ease-out, width 100ms ease-out, height 100ms ease-out;
+            transition: left 100ms ease-out, top 100ms ease-out, width 100ms ease-out, height 100ms ease-out;
+            outline: 2px solid #FF0000;
+            border: 2px solid #fff;
+            pointer-events: none;
+            margin-left: -2px;
+            margin-top: -2px;
+            z-index: 1000;
+        }
+    </style>
 </head>
 <body>
 Isolated Group 1
@@ -12,7 +25,7 @@ Isolated Group 1
     <div focus-group="auto">
         <div focus-group="auto">
             <a href="" tabindex="1">Link</a>
-            <a href="" tabindex="2">Link</a>
+            <a href="" tabindex="2" focus-keyboard="command+k">Link</a>
             <a href="" tabindex="3" disabled="disabled">Link (Disabled)</a>
             <a href="" tabindex="3">Link</a>
 
@@ -22,7 +35,7 @@ Isolated Group 1
             </div>
 
             <a href="" tabindex="3">Link A</a>
-            <a href="" tabindex="3">Link B</a>
+            <a href="" tabindex="3" focus-keyboard="g i">Link B</a>
             <a href="" tabindex="4">Link C</a>
         </div>
 
@@ -71,10 +84,10 @@ Isolated Group 1
 
 
 <div focus-group="auto" focus-loop="false">
-Isolated group 2
+    Isolated group 2
     <div focus-group="auto">
         <div focus-group="auto">
-            <a href="" tabindex="2"  focus-element="autofocus">Link</a>
+            <a href="" tabindex="2" focus-element="autofocus">Link</a>
             <a href="" tabindex="2">Link</a>
             <a href="" tabindex="1">Link</a>
         </div>
@@ -85,7 +98,7 @@ Isolated group 2
     </div>
 
 </div>
-
+<div focus-highlight=""></div>
 <script src="../bower_components/angular/angular.js"></script>
 <script src="../build/ux-angular-focusmanager.js"></script>
 <script src="vendor/ux-query.js"></script>

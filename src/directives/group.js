@@ -2,6 +2,8 @@ ux.directive('focusGroup', function (focusQuery) {
 
     var groupId = 1;
     var elementId = 1;
+    var activeGroupName = null;
+    var prevGroupName = null;
 
     function compile(el) {
         var els, i, len, elementName;
@@ -10,13 +12,12 @@ ux.directive('focusGroup', function (focusQuery) {
 
         focusQuery.setGroupId(el, groupName);
 
-//        els = el.querySelectorAll(':not([parent-id])');
         els = focusQuery.getElementsWithoutParents(el);
         len = els.length;
 
         i = 0;
         while (i < len) {
-            elementName  = 'element-' + elementId;
+            elementName = 'element-' + elementId;
             focusQuery.setParentId(els[i], groupName);
             focusQuery.setElementId(els[i], elementName);
             elementId += 1;
@@ -33,12 +34,41 @@ ux.directive('focusGroup', function (focusQuery) {
         }
 
         groupId += 1;
+
+        return groupName;
+
     }
 
-    function linker(scope, el, attr) {
-        compile(el[0]);
+    function linker(scope, element, attr) {
+
+        var el = element[0];
+        var groupName = null;
+        var bound = false;
+
+        setTimeout(function () {
+            if (!focusQuery.getContainerId(el)) {
+
+                scope.$on('focusIn', utils.debounce(function (evt) {
+                    if (activeGroupName !== groupName) {
+                        activeGroupName = groupName;
+                        scope.$broadcast('bindKeys');
+                    }
+                }, 100));
+
+                scope.$on('focusOut', utils.debounce(function (evt) {
+                    if (activeGroupName !== groupName) {
+                        scope.$broadcast('unbindKeys');
+                    }
+                }, 200));
+            }
+        }, 10);
+
+        groupName = compile(el)
     }
 
-    return { link: linker };
+    return {
+        scope: true,
+        link: linker
+    };
 
 })

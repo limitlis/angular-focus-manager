@@ -11,10 +11,10 @@ ux.service('focusModel', function (focusQuery) {
         if (typeof el === 'undefined') {
             return scope.activeElement;
         }
-
-        scope.activeElement = el;
-
-        el.focus();
+        if(scope.activeElement !== el) {
+            scope.activeElement = el;
+            el.focus();
+        }
     }
 
     function canReceiveFocus(el) {

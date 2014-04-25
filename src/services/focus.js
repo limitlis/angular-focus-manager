@@ -1,19 +1,13 @@
 ux.service('focus', function (focusModel) {
-        document.addEventListener('focusout', function (evt) {
-            evt.preventDefault();
-            evt.stopImmediatePropagation();
 
-            focusModel.focus(focusModel.focus());
+    // TODO: DO NOT LISTEN TO THESE EVENTS, INSTEAD LISTEN TO EVENTS FROM MODEL
+    document.addEventListener('focusout', function (evt) {
+        angular.element(document).scope().$broadcast('focusOut');
+    }, false);
 
-        }, false);
-
-        document.addEventListener('focusin', function (evt) {
-            evt.preventDefault();
-            evt.stopImmediatePropagation();
-
-        }, false);
-    })
-    .run(function (focus, focusModel) {
-
-    });
+    document.addEventListener('focusin', function (evt) {
+        angular.element(evt.target).scope().$emit('focusIn');
+    }, false);
+}).run(function (focus) {
+});
 
