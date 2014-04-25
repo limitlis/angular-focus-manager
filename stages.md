@@ -206,3 +206,14 @@ We have already implemented the first type, the other type we will implement is 
 
 **focus-group="strict"** - only DOM elements with an attribute "tabindex" will be traversed
 
+######Stage 8: Stacked Groups
+---
+
+If we have modals or popups or something of the such, it is likely that we will want the focus to go to that group and basically ignore the others. Fortunatedly, we are almost there, we have the isolate groups. Now we just need to remember the stack. This will use a combination of the things we already have...
+
+* When a popup show, we need to make sure we have an element with autofocus.
+* We are going to create a new directive called "focus-stack". When set it will stack the previous focus element so when the group is destroyed, it can return the focus.
+
+	
+
+
