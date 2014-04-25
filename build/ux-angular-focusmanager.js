@@ -49,29 +49,6 @@ utils.throttle = function(func, threshhold, scope) {
     };
 };
 
-var consts = {
-    TAB_INDEX: 99999,
-    KEY_BACKSPACE: 8,
-    KEY_TAB: 9,
-    KEY_ENTER: 13,
-    KEY_LEFT_ARROW: 37,
-    KEY_UP_ARROW: 38,
-    KEY_RIGHT_ARROW: 39,
-    KEY_DOWN_ARROW: 40,
-    KEY_COMMA: 188,
-    KEY_PERIOD: 190,
-    DIRECTION_NEXT: "next",
-    DIRECTION_PREV: "prev",
-    DOM_CATCH_ALL_ID: "fm-catchall",
-    GROUP_DISABLED: "disabled",
-    GROUP_STRICT: "strict",
-    GROUP_MANUAL: "manual",
-    GROUP_READER: "reader",
-    GROUP_MANAGE: "manage",
-    GROUP_READ_CLASS: ".readable",
-    GROUP_FOCUS_ELEMENTS: "A,SELECT,BUTTON,INPUT,TEXTAREA,*[tabindex],.focusable"
-};
-
 ux.directive("focusElement", function(focusModel, focusQuery) {
     return {
         link: function(scope, element, attr) {
@@ -85,11 +62,10 @@ ux.directive("focusElement", function(focusModel, focusQuery) {
     };
 });
 
-ux.directive("focusGroup", function(focusQuery) {
+ux.directive("focusGroup", function(focusQuery, focusDispatcher) {
     var groupId = 1;
     var elementId = 1;
-    var activeGroupName = null;
-    var prevGroupName = null;
+    var dispatcher = focusDispatcher();
     function compile(el) {
         var els, i, len, elementName;
         var groupName = "group-" + groupId;
@@ -120,17 +96,19 @@ ux.directive("focusGroup", function(focusQuery) {
         var bound = false;
         setTimeout(function() {
             if (!focusQuery.getContainerId(el)) {
-                scope.$on("focusIn", utils.debounce(function(evt) {
-                    if (activeGroupName !== groupName) {
-                        activeGroupName = groupName;
-                        scope.$broadcast("bindKeys");
+                dispatcher.on("focusin", utils.debounce(function(evt) {
+                    if (focusQuery.contains(el, evt.newTarget)) {
+                        if (bound === false) {
+                            bound = true;
+                            scope.$broadcast("bindKeys", groupName);
+                        }
+                    } else {
+                        if (bound === true) {
+                            bound = false;
+                            scope.$broadcast("unbindKeys");
+                        }
                     }
                 }, 100));
-                scope.$on("focusOut", utils.debounce(function(evt) {
-                    if (activeGroupName !== groupName) {
-                        scope.$broadcast("unbindKeys");
-                    }
-                }, 200));
             }
         }, 10);
         groupName = compile(el);
@@ -141,14 +119,15 @@ ux.directive("focusGroup", function(focusQuery) {
     };
 });
 
-ux.directive("focusHighlight", function(focusModel) {
+ux.directive("focusHighlight", function(focusModel, focusDispatcher) {
+    var dispatcher = focusDispatcher();
     return {
         scope: true,
         replace: true,
         link: function(scope, element, attrs) {
             var el = element[0];
-            document.addEventListener("focusin", utils.throttle(function(evt) {
-                var rect = focusModel.activeElement.getBoundingClientRect();
+            dispatcher.on("focusin", utils.throttle(function(evt) {
+                var rect = evt.newTarget.getBoundingClientRect();
                 el.style.left = rect.left + "px";
                 el.style.top = rect.top + "px";
                 el.style.width = rect.width + "px";
@@ -194,14 +173,45 @@ String.prototype.supplant = function(o) {
     });
 };
 
-ux.service("focus", function(focusModel) {
-    document.addEventListener("focusout", function(evt) {
-        angular.element(document).scope().$broadcast("focusOut");
-    }, false);
-    document.addEventListener("focusin", function(evt) {
-        angular.element(evt.target).scope().$emit("focusIn");
-    }, false);
-}).run(function(focus) {});
+ux.factory("focusDispatcher", function() {
+    var dispatchers = {};
+    function EventDispatcher() {
+        this.events = {};
+    }
+    EventDispatcher.prototype.events = {};
+    EventDispatcher.prototype.on = function(key, func) {
+        if (!this.events.hasOwnProperty(key)) {
+            this.events[key] = [];
+        }
+        this.events[key].push(func);
+    };
+    EventDispatcher.prototype.off = function(key, func) {
+        if (this.events.hasOwnProperty(key)) {
+            for (var i in this.events[key]) {
+                if (this.events[key][i] === func) {
+                    this.events[key].splice(i, 1);
+                }
+            }
+        }
+    };
+    EventDispatcher.prototype.trigger = function(key, dataObj) {
+        if (this.events.hasOwnProperty(key)) {
+            dataObj = dataObj || {};
+            dataObj.currentTarget = this;
+            for (var i in this.events[key]) {
+                this.events[key][i](dataObj);
+            }
+        }
+    };
+    function dispatcher(name) {
+        name = name || "fm";
+        if (!dispatchers[name]) {
+            dispatchers[name] = new EventDispatcher();
+        }
+        return dispatchers[name];
+    }
+    return dispatcher;
+});
 
 ux.service("focusKeyboard", function($window) {
     var registeredKeys = {};
@@ -250,15 +260,22 @@ ux.service("focusKeyboard", function($window) {
     focusKeyboard.register("SHIFT+TAB", focusModel.prev);
 });
 
-ux.service("focusModel", function(focusQuery) {
+ux.service("focusModel", function(focusQuery, focusDispatcher) {
     var scope = this;
+    var dispatcher = focusDispatcher();
     function focus(el) {
         if (typeof el === "undefined") {
             return scope.activeElement;
         }
         if (scope.activeElement !== el) {
+            var eventObj = {
+                oldTarget: scope.activeElement,
+                newTarget: el
+            };
+            dispatcher.trigger("focusout", eventObj);
             scope.activeElement = el;
             el.focus();
+            dispatcher.trigger("focusin", eventObj);
         }
     }
     function canReceiveFocus(el) {

@@ -1,6 +1,7 @@
-ux.service('focusModel', function (focusQuery) {
+ux.service('focusModel', function (focusQuery, focusDispatcher) {
 
     var scope = this;
+    var dispatcher = focusDispatcher();
 
     /**
      * Set the focus to a particular element
@@ -11,9 +12,19 @@ ux.service('focusModel', function (focusQuery) {
         if (typeof el === 'undefined') {
             return scope.activeElement;
         }
+
         if(scope.activeElement !== el) {
+            var eventObj = {
+                'oldTarget': scope.activeElement,
+                'newTarget': el
+            };
+
+            dispatcher.trigger('focusout', eventObj);
+
             scope.activeElement = el;
             el.focus();
+
+            dispatcher.trigger('focusin', eventObj);
         }
     }
 

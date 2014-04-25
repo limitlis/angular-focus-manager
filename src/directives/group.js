@@ -1,9 +1,8 @@
-ux.directive('focusGroup', function (focusQuery) {
+ux.directive('focusGroup', function (focusQuery, focusDispatcher) {
 
     var groupId = 1;
     var elementId = 1;
-    var activeGroupName = null;
-    var prevGroupName = null;
+    var dispatcher = focusDispatcher();
 
     function compile(el) {
         var els, i, len, elementName;
@@ -45,21 +44,25 @@ ux.directive('focusGroup', function (focusQuery) {
         var groupName = null;
         var bound = false;
 
+        // using timeout to allow all groups to digest before performing container check
         setTimeout(function () {
             if (!focusQuery.getContainerId(el)) {
-
-                scope.$on('focusIn', utils.debounce(function (evt) {
-                    if (activeGroupName !== groupName) {
-                        activeGroupName = groupName;
-                        scope.$broadcast('bindKeys');
+                dispatcher.on('focusin', utils.debounce(function (evt) {
+                    // if group contains target then bind keys
+                    if (focusQuery.contains(el, evt.newTarget)) {
+                        if (bound === false) {
+                            bound = true;
+                            scope.$broadcast('bindKeys', groupName);
+//                            console.log('bind', groupName);
+                        }
+                    } else {
+                        if (bound === true) {
+                            bound = false;
+                            scope.$broadcast('unbindKeys');
+//                            console.log('unbind', groupName);
+                        }
                     }
                 }, 100));
-
-                scope.$on('focusOut', utils.debounce(function (evt) {
-                    if (activeGroupName !== groupName) {
-                        scope.$broadcast('unbindKeys');
-                    }
-                }, 200));
             }
         }, 10);
 

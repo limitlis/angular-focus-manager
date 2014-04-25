@@ -141,5 +141,22 @@ The goal is to support Key and Mouse interaction through registering hotkey and 
 
 	focusKeyboard.mute()
 	focusKeybaord.unmute()
+	
+I chose to use "Mousetrap.js". It has the capabilities I am looking for and has a small footprint. It will be compiled into Focus Manager.
 
+
+###Testing & Notes
+---
+
+** Event Dispatcher **
+
+Upon testing the current status of the application, things seem to be working well in Chrome, since that was what I was developing in but not so much in Firefox. I know that the main problem is that Firefox does not support "focusin" and "focusout" events. I also know the focus events are not what I necessarily want other components listening to inside Focus Manager since they are not reflective of what is happening internally. So I built a EventDispatcher that FM is using to send out events. This is also what would be used to listen to events externally as well. Example: FocusHighlight directive.
+
+**Scope**
+
+Another thing I had to add was a scope on focus groups. This is not an isolate scope, so it should not affect any directives or controllers contained within. This was needed to help with the dispatching of events to other directives such as the "focusKeyboard" directive to turn on and off key bindings.
+
+**Throttle & Debounce**
+
+I am a fan of these two functions from underscore and like to add them where I find they can help with performance. Highlighter throttles the events it receives to prevent from overcompensating for rapid change events. I also use it in group to handle the change in the activeElement to bind and unbind key events.
  
