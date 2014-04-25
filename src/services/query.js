@@ -208,11 +208,6 @@ ux.service('focusQuery', function () {
         el.setAttribute(focusContainerId, id);
     }
 
-    function getContainerIdByGroupId(groupId) {
-        var group = getGroup(groupId);
-        return getContainerId(group);
-    }
-
     function contains(container, el) {
         var parent = el.parentNode;
         while (parent.nodeType !== 9) {
@@ -259,7 +254,6 @@ ux.service('focusQuery', function () {
     this.setParentId = setParentId;
     this.getContainerId = getContainerId;
     this.setContainerId = setContainerId;
-    this.getContainerIdByGroupId = getContainerIdByGroupId;
     this.getGroup = getGroup;
     this.getFirstGroupId = getFirstGroupId;
     this.getLastGroupId = getLastGroupId;

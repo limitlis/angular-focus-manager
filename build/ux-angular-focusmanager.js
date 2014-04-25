@@ -747,10 +747,6 @@ ux.service("focusQuery", function() {
     function setContainerId(el, id) {
         el.setAttribute(focusContainerId, id);
     }
-    function getContainerIdByGroupId(groupId) {
-        var group = getGroup(groupId);
-        return getContainerId(group);
-    }
     function contains(container, el) {
         var parent = el.parentNode;
         while (parent.nodeType !== 9) {
@@ -792,7 +788,6 @@ ux.service("focusQuery", function() {
     this.setParentId = setParentId;
     this.getContainerId = getContainerId;
     this.setContainerId = setContainerId;
-    this.getContainerIdByGroupId = getContainerIdByGroupId;
     this.getGroup = getGroup;
     this.getFirstGroupId = getFirstGroupId;
     this.getLastGroupId = getLastGroupId;
@@ -816,6 +811,9 @@ ux.service("focusTrap", function(focusModel) {
     var endAnchorTag = document.createElement("a");
     endAnchorTag.setAttribute("href", "");
     body.appendChild(endAnchorTag);
+    var syncFocus = utils.debounce(function() {
+        focusModel.focus().focus();
+    });
     document.addEventListener("keydown", function(evt) {
         if (evt.keyCode === 9) {
             if (focusModel.activeElement === activeElement) {
@@ -824,6 +822,7 @@ ux.service("focusTrap", function(focusModel) {
                 } else {
                     focusModel.next();
                 }
+                syncFocus();
             }
         }
         activeElement = focusModel.activeElement;

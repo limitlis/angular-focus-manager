@@ -16,6 +16,11 @@ ux.service('focusTrap', function (focusModel) {
     endAnchorTag.setAttribute('href', '');
     body.appendChild(endAnchorTag);
 
+    // sometimes the browser focus gets out of sync, this fixes it in those cases
+    var syncFocus = utils.debounce(function () {
+        focusModel.focus().focus();
+    });
+
     document.addEventListener('keydown', function (evt) {
         if (evt.keyCode === 9) {
             if (focusModel.activeElement === activeElement) {
@@ -24,6 +29,8 @@ ux.service('focusTrap', function (focusModel) {
                 } else {
                     focusModel.next();
                 }
+
+                syncFocus();
             }
         }
         activeElement = focusModel.activeElement;
