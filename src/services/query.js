@@ -56,7 +56,6 @@ ux.service('focusQuery', function () {
     }
 
     function getElementsWithoutParents(el) {
-//        return el.querySelectorAll(':not([' + focusParentId + '])');
 
         var query = 'A:not({focusParentId}),' +
             'SELECT:not({focusParentId}),' +
@@ -96,6 +95,8 @@ ux.service('focusQuery', function () {
             i += 1;
         }
 
+        returnVal.sort(sortByTabIndex);
+
         return returnVal;
 
     }
@@ -109,15 +110,15 @@ ux.service('focusQuery', function () {
             return false;
         }
 
-        if(el.style.display === 'none') {
+        if (el.style.display === 'none') {
             return false;
         }
 
-        if(el.style.visibility === 'hidden') {
+        if (el.style.visibility === 'hidden') {
             return false;
         }
 
-        if(el.style.opacity === 0 || el.style.opacity === '0') {
+        if (el.style.opacity === 0 || el.style.opacity === '0') {
             return false;
         }
 
@@ -194,6 +195,19 @@ ux.service('focusQuery', function () {
             parent = parent.parentNode;
         }
         return false;
+    }
+
+    function sortByTabIndex(a, b) {
+        var aTabIndex = a.getAttribute('tabindex') || 999999;
+        var bTabIndex = b.getAttribute('tabindex') || 999999;
+
+        if (aTabIndex < bTabIndex) {
+            return -1;
+        }
+        if (aTabIndex > bTabIndex) {
+            return 1;
+        }
+        return 0;
     }
 
     this.getElement = getElement;

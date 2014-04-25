@@ -642,6 +642,7 @@ ux.service("focusQuery", function() {
             returnVal.push(els[i]);
             i += 1;
         }
+        returnVal.sort(sortByTabIndex);
         return returnVal;
     }
     function isVisible(el) {
@@ -718,6 +719,17 @@ ux.service("focusQuery", function() {
             parent = parent.parentNode;
         }
         return false;
+    }
+    function sortByTabIndex(a, b) {
+        var aTabIndex = a.getAttribute("tabindex") || 999999;
+        var bTabIndex = b.getAttribute("tabindex") || 999999;
+        if (aTabIndex < bTabIndex) {
+            return -1;
+        }
+        if (aTabIndex > bTabIndex) {
+            return 1;
+        }
+        return 0;
     }
     this.getElement = getElement;
     this.getElementId = getElementId;

@@ -183,3 +183,11 @@ I want the enter key to be the thing which invokes stuff. I will need to try it 
 **Focus Trapping**
 
 Browsers will sometimes cause focus to go to unexpected places if at the start or end of the focus area, or if an component that has uses a popup (sucha as a select has focus.) To resolve this issue if you add an anchor tab at the beginning and end of the "body" tag, we can then monitor and trap the focus when it goes rogue. I created a service called "focusTrap" to handle this procedure.
+
+###Phase 3: Focus management
+
+In this phase, the goal is to start controlling the behavior in which things receive focus using indexed elements and focus groups as well as different types of focus groups.
+
+#####Stage 5: Tab index
+
+Support tab indexing as supported by the browser with the exception that tab index will be under focus groups and not traverse the entire page but move from one group to the next. 
