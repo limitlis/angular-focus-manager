@@ -213,51 +213,118 @@ ux.factory("focusDispatcher", function() {
     return dispatcher;
 });
 
-ux.service("focusKeyboard", function($window) {
-    var registeredKeys = {};
-    document.addEventListener("keydown", function(evt) {
-        var keys = "";
-        if (evt.shiftKey) {
-            keys += "shift+";
-        }
-        if (evt.keyCode === 9) {
-            keys += "tab";
-        }
-        var opts = registeredKeys[keys];
-        if (opts && opts.callback && !opts.muted) {
-            evt.preventDefault();
-            evt.stopPropagation();
-            opts.callback();
-        }
-    });
-    function register(shortcut, callback) {
-        registeredKeys[shortcut.trim().toLowerCase()] = {
-            muted: false,
-            callback: callback
-        };
-    }
-    function unregister(shortcut) {
-        delete registeredKeys[shortcut.trim().toLowerCase()];
-    }
-    function mute(shortcut) {
-        var key = registeredKeys[shortcut.trim().toLowerCase()];
-        if (key) {
-            key.muted = true;
+ux.service("focusKeyboard", function(focusModel) {
+    var tabKeysEnabled = false;
+    var arrowKeysEnabled = false;
+    function enableTabKeys() {
+        if (!tabKeysEnabled) {
+            tabKeysEnabled = true;
+            Mousetrap.bind("tab", onFocusNext);
+            Mousetrap.bind("shift+tab", onFocusPrev);
         }
     }
-    function unmute(shortcut) {
-        var key = registeredKeys[shortcut.trim().toLowerCase()];
-        if (key) {
-            key.muted = false;
+    function disableTabKeys() {
+        if (tabKeysEnabled) {
+            tabKeysEnabled = false;
+            Mousetrap.unbind("tab", onFocusNext);
+            Mousetrap.unbind("shift+tab", onFocusPrev);
         }
     }
-    this.register = register;
-    this.unregister = unregister;
-    this.mute = mute;
-    this.unmute = unmute;
-}).run(function(focusKeyboard, focusModel) {
-    focusKeyboard.register("TAB", focusModel.next);
-    focusKeyboard.register("SHIFT+TAB", focusModel.prev);
+    function enableArrowKeys() {
+        if (!arrowKeysEnabled) {
+            arrowKeysEnabled = true;
+            Mousetrap.bind("up", onFocusPrev);
+            Mousetrap.bind("left", onFocusPrev);
+            Mousetrap.bind("down", onFocusNext);
+            Mousetrap.bind("right", onFocusNext);
+        }
+    }
+    function disableArrowKeys() {
+        if (arrowKeysEnabled) {
+            arrowKeysEnabled = false;
+            Mousetrap.unbind("up", onFocusPrev);
+            Mousetrap.unbind("left", onFocusPrev);
+            Mousetrap.unbind("down", onFocusNext);
+            Mousetrap.unbind("right", onFocusNext);
+        }
+    }
+    function toggleTabArrowKeys() {
+        if (tabKeysEnabled) {
+            disableTabKeys();
+            enableArrowKeys();
+        } else {
+            enableTabKeys();
+            disableArrowKeys();
+        }
+    }
+    function triggerClick(evt) {
+        evt.preventDefault();
+        evt.stopPropagation();
+        fireEvent(evt.target, "mousedown");
+        fireEvent(evt.target, "mouseup");
+        fireEvent(evt.target, "click");
+    }
+    function onFocusNext(evt) {
+        evt.preventDefault();
+        evt.stopPropagation();
+        focusModel.next();
+        return false;
+    }
+    function onFocusPrev(evt) {
+        evt.preventDefault();
+        evt.stopPropagation();
+        focusModel.prev();
+        return false;
+    }
+    function fireEvent(node, eventName) {
+        var doc;
+        if (node.ownerDocument) {
+            doc = node.ownerDocument;
+        } else if (node.nodeType == 9) {
+            doc = node;
+        } else {
+            throw new Error("Invalid node passed to fireEvent: " + node.id);
+        }
+        if (node.dispatchEvent) {
+            var eventClass = "";
+            switch (eventName) {
+              case "click":
+              case "mousedown":
+              case "mouseup":
+                eventClass = "MouseEvents";
+                break;
+
+              case "focus":
+              case "change":
+              case "blur":
+              case "select":
+                eventClass = "HTMLEvents";
+                break;
+
+              default:
+                throw "fireEvent: Couldn't find an event class for event '" + eventName + "'.";
+                break;
+            }
+            var event = doc.createEvent(eventClass);
+            var bubbles = eventName == "change" ? false : true;
+            event.initEvent(eventName, bubbles, true);
+            event.synthetic = true;
+            node.dispatchEvent(event, true);
+        } else if (node.fireEvent) {
+            var event = doc.createEventObject();
+            event.synthetic = true;
+            node.fireEvent("on" + eventName, event);
+        }
+    }
+    this.enableTabKeys = enableTabKeys;
+    this.disableTabKeys = disableTabKeys;
+    this.enableArrowKeys = enableArrowKeys;
+    this.disableArrowKeys = disableArrowKeys;
+    this.toggleTabArrowKeys = toggleTabArrowKeys;
+    this.triggerClick = triggerClick;
+}).run(function(focusKeyboard) {
+    focusKeyboard.enableTabKeys();
+    Mousetrap.bind("enter", focusKeyboard.triggerClick);
 });
 
 ux.service("focusModel", function(focusQuery, focusDispatcher) {

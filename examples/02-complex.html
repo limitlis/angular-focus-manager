@@ -17,7 +17,7 @@
         }
     </style>
 </head>
-<body>
+<body ng-controller="AppCtrl as app">
 Isolated Group 1
 <div focus-group="auto" focus-loop="true">
     <a href="">My Only link</a>
@@ -41,7 +41,8 @@ Isolated Group 1
 
         <div focus-group="auto">
             <div focus-group="auto">
-                <a href="" tabindex="1">Link</a>
+                <a href="" tabindex="1" ng-click="app.callAction()">Action Link</a>
+                <div tabindex="0" ng-click="app.callAction()">DIV Link</div>
                 <a href="" tabindex="2">Link</a>
                 <a href="" tabindex="3" disabled="disabled">Link (Disabled)</a>
                 <a href="" tabindex="3">Link</a>
@@ -50,7 +51,11 @@ Isolated Group 1
                     <a href="" tabindex="3">Link</a>
                     <a href="" tabindex="3">Link</a>
                 </div>
-
+                <select>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                </select>
                 <a href="" tabindex="3">Link A</a>
                 <a href="" tabindex="3">Link B</a>
                 <a href="" tabindex="4">Link C2</a>
@@ -103,6 +108,11 @@ Isolated Group 1
 <script src="../build/ux-angular-focusmanager.js"></script>
 <script>
     angular.module('app', ['ux'])
+            .controller('AppCtrl', function () {
+                this.callAction = function () {
+                    console.log('action called', Date.now());
+                }
+            })
 </script>
 </body>
 </html>

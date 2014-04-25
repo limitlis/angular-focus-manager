@@ -140,7 +140,7 @@ The goal is to support Key and Mouse interaction through registering hotkey and 
 	<div focus-keyboard="SHIFT+Q"></div>
 
 	focusKeyboard.mute()
-	focusKeybaord.unmute()
+	focusKeyboard.unmute()
 	
 I chose to use "Mousetrap.js". It has the capabilities I am looking for and has a small footprint. It will be compiled into Focus Manager.
 
@@ -148,7 +148,7 @@ I chose to use "Mousetrap.js". It has the capabilities I am looking for and has 
 ###Testing & Notes
 ---
 
-** Event Dispatcher **
+**Event Dispatcher**
 
 Upon testing the current status of the application, things seem to be working well in Chrome, since that was what I was developing in but not so much in Firefox. I know that the main problem is that Firefox does not support "focusin" and "focusout" events. I also know the focus events are not what I necessarily want other components listening to inside Focus Manager since they are not reflective of what is happening internally. So I built a EventDispatcher that FM is using to send out events. This is also what would be used to listen to events externally as well. Example: FocusHighlight directive.
 
@@ -159,4 +159,23 @@ Another thing I had to add was a scope on focus groups. This is not an isolate s
 **Throttle & Debounce**
 
 I am a fan of these two functions from underscore and like to add them where I find they can help with performance. Highlighter throttles the events it receives to prevent from overcompensating for rapid change events. I also use it in group to handle the change in the activeElement to bind and unbind key events.
- 
+
+**Mousetrap.js**
+
+I chose mousetrap.js because it is simple to use but offers a power API. I have simplified focusKeyboard by using it to register keys to the focusModel API. Other keys (such as the navigation) have been registered like this as well.
+
+The keyboard API now looks like this...
+
+	focusKeyboard.enableTabKeys()
+    focusKeyboard.disableTabKeys()
+    focusKeyboard.enableArrowKeys()
+    focusKeyboard.disableArrowKeys()
+    focusKeyboard.toggleTabArrowKeys()
+
+**Triggering Key Events***
+
+The browser will not recognize some elements as focus elements by default. (Good thing we are building a Focus Manager). In order to invoke "native" events we have to fire off the events ourselves. I found a function from this url that seems to do the job...
+
+[http://stackoverflow.com/questions/2381572/how-can-i-trigger-a-javascript-event-click](http://stackoverflow.com/questions/2381572/how-can-i-trigger-a-javascript-event-click)
+
+I want the enter key to be the thing which invokes stuff. I will need to try it out on different elements to see when it is needed and make sure I haven't broken native browser support and ARIA support.
