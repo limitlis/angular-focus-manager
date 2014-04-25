@@ -449,8 +449,8 @@ ux.service("focusModel", function(focusQuery, focusDispatcher) {
         }
     }
     function findNextGroup(containerId, groupId) {
-        var groups, nextGroup, nextGroupId, parentContainer, parentContainerId;
-        if (groupId) {
+        var group, groups, nextGroup, nextGroupId, parentContainer, parentContainerId;
+        if (containerId) {
             groups = focusQuery.getChildGroups(containerId);
             nextGroup = getNextGroup(groups, groupId);
             if (nextGroup) {
@@ -459,16 +459,17 @@ ux.service("focusModel", function(focusQuery, focusDispatcher) {
             } else {
                 parentContainer = focusQuery.getGroup(containerId);
                 parentContainerId = focusQuery.getContainerId(parentContainer);
-                if (parentContainerId) {
-                    findNextGroup(parentContainerId, containerId);
-                } else {
-                    if (focusQuery.isLoop(parentContainer)) {
-                        findNextElement(containerId);
-                    }
-                }
+                findNextGroup(parentContainerId, containerId);
             }
         } else {
-            groupId = focusQuery.getFirstGroupId();
+            if (groupId) {
+                group = focusQuery.getGroup(groupId);
+                if (!focusQuery.isLoop(group)) {
+                    return;
+                }
+            } else {
+                groupId = focusQuery.getFirstGroupId();
+            }
             findNextElement(groupId);
         }
     }

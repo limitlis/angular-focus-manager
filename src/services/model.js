@@ -13,7 +13,7 @@ ux.service('focusModel', function (focusQuery, focusDispatcher) {
             return scope.activeElement;
         }
 
-        if(scope.activeElement !== el) {
+        if (scope.activeElement !== el) {
             var eventObj = {
                 'oldTarget': scope.activeElement,
                 'newTarget': el
@@ -112,7 +112,7 @@ ux.service('focusModel', function (focusQuery, focusDispatcher) {
         var group, index;
 
         if (groups && groups.length) {
-            if(groupId) {
+            if (groupId) {
                 group = focusQuery.getGroup(groupId);
                 index = getElementIndex(groups, group);
                 if (index > 0) {
@@ -173,9 +173,9 @@ ux.service('focusModel', function (focusQuery, focusDispatcher) {
      * @param groupId
      */
     function findNextGroup(containerId, groupId) {
-        var groups, nextGroup, nextGroupId, parentContainer, parentContainerId;
+        var group, groups, nextGroup, nextGroupId, parentContainer, parentContainerId;
 
-        if (groupId) {
+        if (containerId) {
             groups = focusQuery.getChildGroups(containerId);
             nextGroup = getNextGroup(groups, groupId);
             if (nextGroup) {
@@ -185,16 +185,17 @@ ux.service('focusModel', function (focusQuery, focusDispatcher) {
                 // no next group go up, if there is not a container, we are at the top of the isolate group
                 parentContainer = focusQuery.getGroup(containerId);
                 parentContainerId = focusQuery.getContainerId(parentContainer);
-                if (parentContainerId) {
-                    findNextGroup(parentContainerId, containerId);
-                } else {
-                    if (focusQuery.isLoop(parentContainer)) {
-                        findNextElement(containerId);
-                    } // else do nothing
-                }
+                findNextGroup(parentContainerId, containerId);
             }
         } else {
-            groupId = focusQuery.getFirstGroupId();
+            if (groupId) {
+                group = focusQuery.getGroup(groupId);
+                if (!focusQuery.isLoop(group)) {
+                    return; // do nothing
+                }
+            } else {
+                groupId = focusQuery.getFirstGroupId();
+            }
             findNextElement(groupId);
         }
     }
