@@ -86,16 +86,27 @@ ux.service('focusQuery', function () {
     }
 
     function getGroupElements(groupId) {
+        var q, isStrict, els, returnVal, i, len;
 
-        var q = '[{focusParentId}="{groupId}"]:not([disabled]):not(.disabled)'.supplant({
-            focusParentId: focusParentId,
-            groupId: groupId
-        });
+        isStrict = isGroupStrict(groupId);
+        if(isStrict) {
+            q = '[{focusParentId}="{groupId}"][tabindex]:not([disabled]):not(.disabled)'.supplant({
+                focusParentId: focusParentId,
+                groupId: groupId
+            });
+        } else {
+            q = '[{focusParentId}="{groupId}"]:not([disabled]):not(.disabled)'.supplant({
+                focusParentId: focusParentId,
+                groupId: groupId
+            });
+        }
 
-        var els = document.querySelectorAll(q);
-        var returnVal = [];
 
-        var i = 0, len = els.length, $el;
+        els = document.querySelectorAll(q);
+        returnVal = [];
+
+        i = 0;
+        len = els.length;
         while (i < len) {
             if (!isVisible(els[i])) {
                 i += 1;
@@ -158,6 +169,11 @@ ux.service('focusQuery', function () {
 
     function getGroup(groupId) {
         return document.querySelector('[' + focusGroupId + '="' + groupId + '"]');
+    }
+
+    function isGroupStrict(groupId) {
+        var group = getGroup(groupId);
+        return group.getAttribute(focusGroup) === 'strict';
     }
 
     function getElementId(el) {

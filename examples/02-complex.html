@@ -39,8 +39,7 @@
 </head>
 <body ng-controller="AppCtrl as app">
 
-<div>Isolated Group 1</div>
-<div focus-group="auto" focus-loop="true">
+<div focus-group focus-loop="true">
     <select>
         <option value="1">One</option>
         <option value="2">Two</option>
@@ -49,8 +48,8 @@
 
     <a href="">My Only link</a>
 
-    <div focus-group="auto">
-        <div focus-group="auto" focus-group-index="1">
+    <div focus-group>
+        <div focus-group="strict" focus-group-index="1">
             <div class="header">Group 1</div>
             <a href="" tabindex="4">Link 4</a>
             <a href="" tabindex="3" focus-keyboard="command+k">Link 3</a>
@@ -63,20 +62,20 @@
             </div>
 
             <a href="" tabindex="6">Link A</a>
-            <a href="" tabindex="7" focus-keyboard="g i">Link B</a>
+            <a href="" focus-keyboard="g i">Link B</a>
             <a href="" tabindex="7">Link C</a>
         </div>
 
-        <div focus-group="auto" focus-group-index="3">
+        <div focus-group focus-group-index="3">
             <div class="header">Group 3</div>
             <a href="">Link</a>
             <a href="">Link</a>
             <a href="">Link</a>
         </div>
 
-        <div focus-group="auto" focus-group-index="2">
+        <div focus-group focus-group-index="2">
             <div class="header">Group 2</div>
-            <div focus-group="auto">
+            <div focus-group>
                 <a href="" tabindex="1" ng-click="app.callAction()">Action Link</a>
                 <div tabindex="0" ng-click="app.callAction()">DIV Link</div>
                 <a href="" tabindex="2">Link</a>
@@ -99,8 +98,8 @@
         </div>
     </div>
 
-    <div focus-group="auto">
-        <div focus-group="auto">
+    <div focus-group>
+        <div focus-group>
             <a href="" tabindex="1" focus-element="autofocus">Link1</a>
             <a href="" tabindex="2">Link</a>
             <a href="" tabindex="3" disabled="disabled">Link (Disabled)</a>
@@ -117,24 +116,23 @@
         </div>
     </div>
 
-    <div focus-group="auto">
+    <div focus-group>
         <a href="" tabindex="3">Link</a>
     </div>
 
 </div>
 
 
-<div focus-group="auto" focus-loop="false">
-    <div>Isolated Group 2</div>
-    <div focus-group="auto">
-        <div focus-group="auto">
+<div style="margin-top: 15px" focus-group focus-loop="false">
+    <div focus-group>
+        <div focus-group>
             <a href="" tabindex="3">Link 3</a>
             <a href="" tabindex="2">Link 2</a>
             <a href="" tabindex="1" focus-element="autofocus">Link 1</a>
         </div>
     </div>
 
-    <div focus-group="auto">
+    <div focus-group>
         <a href="" tabindex="3">Link 4</a>
     </div>
 

@@ -197,3 +197,12 @@ Support tab indexing as supported by the browser with the exception that tab ind
 Like tab index, group index controls the order in which the groups will be traversed. Similar to tabindex, groups with an index will take priority over those that do not.
 
 	focus-group-index="1"
+	
+#####Stage 7: Focus Group Types
+
+We have already implemented the first type, the other type we will implement is "strict" mode - only those elements with a tab index can receive focus.
+
+**focus-groups** - default will find all elements that can recieve focus
+
+**focus-group="strict"** - only DOM elements with an attribute "tabindex" will be traversed
+
