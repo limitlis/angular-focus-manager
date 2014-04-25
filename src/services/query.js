@@ -1,7 +1,6 @@
 ux.service('focusQuery', function () {
 
     // http://quirksmode.org/dom/core/
-    var query = $;
 
     var focusElementId = 'focus-element-id';
     var focusGroupId = 'focus-group-id';
@@ -17,16 +16,16 @@ ux.service('focusQuery', function () {
     function canReceiveFocus(el) {
         var isSelectable = new RegExp(el.nodeName.toUpperCase()).test(selectable);
 
-        if(!isSelectable) {
+        if (!isSelectable) {
             isSelectable = el.getAttribute('tabindex') !== null;
         }
 
-        if(isSelectable) {
+        if (isSelectable) {
             isSelectable = el.getAttribute('disabled') === null;
         }
 
-        if(isSelectable) {
-             isSelectable = query(el).isVisible();
+        if (isSelectable) {
+            isSelectable = isVisible(el);
         }
         return isSelectable;
     }
@@ -88,9 +87,7 @@ ux.service('focusQuery', function () {
 
         var i = 0, len = els.length, $el;
         while (i < len) {
-            $el = query(els[i]);
-
-            if (!$el.isVisible(true)) {
+            if (!isVisible(els[i])) {
                 i += 1;
                 continue;
             }
@@ -101,6 +98,30 @@ ux.service('focusQuery', function () {
 
         return returnVal;
 
+    }
+
+    function isVisible(el) {
+        if (el.parentNode.nodeType === 9) {
+            return true;
+        }
+
+        if (el.offsetWidth === 0 || el.offsetHeight === 0) {
+            return false;
+        }
+
+        if(el.style.display === 'none') {
+            return false;
+        }
+
+        if(el.style.visibility === 'hidden') {
+            return false;
+        }
+
+        if(el.style.opacity === 0 || el.style.opacity === '0') {
+            return false;
+        }
+
+        return true;
     }
 
     function isAutofocus(el) {
@@ -164,13 +185,6 @@ ux.service('focusQuery', function () {
         return getContainerId(group);
     }
 
-    function group(elementOrGroupId) {
-        if (isNaN(elementOrGroupId)) {
-            elementOrGroupId = this.parentId(elementOrGroupId);
-        }
-        return document.querySelector('[' + focusGroupId + '="' + elementOrGroupId + '"]');
-    }
-
     function contains(container, el) {
         var parent = el.parentNode;
         while (parent.nodeType !== 9) {
@@ -201,7 +215,6 @@ ux.service('focusQuery', function () {
     this.isAutofocus = isAutofocus;
     this.isLoop = isLoop;
     this.isEnabled = isEnabled;
-    this.group = group;
     this.getGroupElements = getGroupElements;
     this.getChildGroups = getChildGroups;
     this.contains = contains;

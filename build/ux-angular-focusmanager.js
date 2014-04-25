@@ -504,7 +504,6 @@ ux.service("focusMouse", function(focusModel) {
 });
 
 ux.service("focusQuery", function() {
-    var query = $;
     var focusElementId = "focus-element-id";
     var focusGroupId = "focus-group-id";
     var focusParentId = "focus-parent-id";
@@ -523,7 +522,7 @@ ux.service("focusQuery", function() {
             isSelectable = el.getAttribute("disabled") === null;
         }
         if (isSelectable) {
-            isSelectable = query(el).isVisible();
+            isSelectable = isVisible(el);
         }
         return isSelectable;
     }
@@ -569,8 +568,7 @@ ux.service("focusQuery", function() {
         var returnVal = [];
         var i = 0, len = els.length, $el;
         while (i < len) {
-            $el = query(els[i]);
-            if (!$el.isVisible(true)) {
+            if (!isVisible(els[i])) {
                 i += 1;
                 continue;
             }
@@ -578,6 +576,24 @@ ux.service("focusQuery", function() {
             i += 1;
         }
         return returnVal;
+    }
+    function isVisible(el) {
+        if (el.parentNode.nodeType === 9) {
+            return true;
+        }
+        if (el.offsetWidth === 0 || el.offsetHeight === 0) {
+            return false;
+        }
+        if (el.style.display === "none") {
+            return false;
+        }
+        if (el.style.visibility === "hidden") {
+            return false;
+        }
+        if (el.style.opacity === 0 || el.style.opacity === "0") {
+            return false;
+        }
+        return true;
     }
     function isAutofocus(el) {
         return el.getAttribute(focusElement) === "autofocus";
@@ -626,12 +642,6 @@ ux.service("focusQuery", function() {
         var group = getGroup(groupId);
         return getContainerId(group);
     }
-    function group(elementOrGroupId) {
-        if (isNaN(elementOrGroupId)) {
-            elementOrGroupId = this.parentId(elementOrGroupId);
-        }
-        return document.querySelector("[" + focusGroupId + '="' + elementOrGroupId + '"]');
-    }
     function contains(container, el) {
         var parent = el.parentNode;
         while (parent.nodeType !== 9) {
@@ -660,7 +670,6 @@ ux.service("focusQuery", function() {
     this.isAutofocus = isAutofocus;
     this.isLoop = isLoop;
     this.isEnabled = isEnabled;
-    this.group = group;
     this.getGroupElements = getGroupElements;
     this.getChildGroups = getChildGroups;
     this.contains = contains;
