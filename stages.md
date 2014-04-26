@@ -202,18 +202,19 @@ Like tab index, group index controls the order in which the groups will be trave
 
 We have already implemented the first type, the other type we will implement is "strict" mode - only those elements with a tab index can receive focus.
 
-**focus-groups** - default will find all elements that can recieve focus
+**focus-group** - default will find all elements that can recieve focus
 
 **focus-group="strict"** - only DOM elements with an attribute "tabindex" will be traversed
 
 ######Stage 8: Stacked Groups
----
 
 If we have modals or popups or something of the such, it is likely that we will want the focus to go to that group and basically ignore the others. Fortunatedly, we are almost there, we have the isolate groups. Now we just need to remember the stack. This will use a combination of the things we already have...
 
 * When a popup show, we need to make sure we have an element with autofocus.
 * We are going to create a new directive called "focus-stack". When set it will stack the previous focus element so when the group is destroyed, it can return the focus.
 
-	
+###Testing & Notes
+---
 
+Upon testing, there were a few issues that were fixed. Discovery of a new feature which is the ability to perform the trapping to correct focus issues but when at the start or end of the page, releasing the focus to the next item that would naturally take focus. This will be especially useful when embedding an application within a page that may have other controls of functionality that need to be navigated to outside of FM.
 
