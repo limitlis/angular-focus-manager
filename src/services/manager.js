@@ -1,4 +1,4 @@
-ux.service('focusModel', function (focusQuery, focusDispatcher) {
+ux.service('focusManager', function (focusQuery, focusDispatcher) {
 
     var scope = this;
     var dispatcher = focusDispatcher();
@@ -365,6 +365,7 @@ ux.service('focusModel', function (focusQuery, focusDispatcher) {
     this.prev = prev;
     this.next = next;
     this.canReceiveFocus = canReceiveFocus;
+    // used to throttle enable /disable to prevent too many calls
     this.enable = utils.debounce(enable);
     this.disable = utils.debounce(disable);
 

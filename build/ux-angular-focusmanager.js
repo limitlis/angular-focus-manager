@@ -13,20 +13,20 @@ try {
     ux = angular.module("ux", []);
 }
 
-ux.directive("focusElement", function(focusModel, focusQuery) {
+ux.directive("focusElement", function(focusManager, focusQuery) {
     return {
         link: function(scope, element, attr) {
             var el = element[0];
             if (focusQuery.isAutofocus(el)) {
                 setTimeout(function() {
-                    focusModel.focus(el);
+                    focusManager.focus(el);
                 });
             }
         }
     };
 });
 
-ux.directive("focusGroup", function(focusModel, focusQuery, focusDispatcher) {
+ux.directive("focusGroup", function(focusManager, focusQuery, focusDispatcher) {
     var groupId = 1;
     var elementId = 1;
     var dispatcher = focusDispatcher();
@@ -60,7 +60,7 @@ ux.directive("focusGroup", function(focusModel, focusQuery, focusDispatcher) {
         var groupName = null;
         var bound = false;
         el.addEventListener("focus", function() {
-            focusModel.enable();
+            focusManager.enable();
         }, true);
         setTimeout(function() {
             if (!focusQuery.getContainerId(el)) {
@@ -93,7 +93,7 @@ ux.directive("focusGroup", function(focusModel, focusQuery, focusDispatcher) {
     };
 });
 
-ux.directive("focusHighlight", function(focusModel, focusDispatcher) {
+ux.directive("focusHighlight", function(focusManager, focusDispatcher) {
     var dispatcher = focusDispatcher();
     return {
         scope: true,
@@ -101,7 +101,7 @@ ux.directive("focusHighlight", function(focusModel, focusDispatcher) {
         link: function(scope, element, attrs) {
             var el = element[0];
             document.addEventListener("focus", utils.throttle(function(evt) {
-                if (focusModel.canReceiveFocus(evt.target)) {
+                if (focusManager.canReceiveFocus(evt.target)) {
                     var rect = evt.target.getBoundingClientRect();
                     el.style.left = rect.left + "px";
                     el.style.top = rect.top + "px";
@@ -114,7 +114,7 @@ ux.directive("focusHighlight", function(focusModel, focusDispatcher) {
     };
 });
 
-ux.directive("focusKeyboard", function(focusModel) {
+ux.directive("focusKeyboard", function(focusManager) {
     return {
         link: function(scope, element, attrs) {
             var bound = false;
@@ -124,7 +124,7 @@ ux.directive("focusKeyboard", function(focusModel) {
                     Mousetrap.bind(attrs.focusKeyboard.split(","), function(evt) {
                         evt.preventDefault();
                         evt.stopPropagation();
-                        focusModel.focus(element[0]);
+                        focusManager.focus(element[0]);
                         return false;
                     });
                 }
@@ -143,17 +143,17 @@ ux.directive("focusKeyboard", function(focusModel) {
     };
 });
 
-ux.directive("focusStack", function(focusModel, focusQuery) {
+ux.directive("focusStack", function(focusManager, focusQuery) {
     var stack = [];
     return {
         link: function(scope, element, attrs) {
-            stack.push(focusQuery.getElementId(focusModel.activeElement));
+            stack.push(focusQuery.getElementId(focusManager.activeElement));
             scope.$on("$destroy", function() {
                 if (stack.length) {
                     var elementId = stack.pop();
                     var el = focusQuery.getElement(elementId);
                     if (el) {
-                        focusModel.focus(el);
+                        focusManager.focus(el);
                     }
                 }
             });
@@ -209,7 +209,7 @@ ux.factory("focusDispatcher", function() {
     return dispatcher;
 });
 
-ux.service("focusKeyboard", function(focusModel) {
+ux.service("focusKeyboard", function(focusManager) {
     var tabKeysEnabled = false;
     var arrowKeysEnabled = false;
     function enableTabKeys() {
@@ -257,10 +257,10 @@ ux.service("focusKeyboard", function(focusModel) {
         fireEvent(evt.target, "click");
     }
     function onFocusNext(evt) {
-        if (focusModel.enabled) {
-            focusModel.next();
+        if (focusManager.enabled) {
+            focusManager.next();
         }
-        if (!focusModel.enabled) {
+        if (!focusManager.enabled) {
             return;
         }
         evt.preventDefault();
@@ -268,10 +268,10 @@ ux.service("focusKeyboard", function(focusModel) {
         return false;
     }
     function onFocusPrev(evt) {
-        if (focusModel.enabled) {
-            focusModel.prev();
+        if (focusManager.enabled) {
+            focusManager.prev();
         }
-        if (!focusModel.enabled) {
+        if (!focusManager.enabled) {
             return;
         }
         evt.preventDefault();
@@ -354,12 +354,12 @@ ux.service("focusKeyboard", function(focusModel) {
     this.disableArrowKeys = disableArrowKeys;
     this.toggleTabArrowKeys = toggleTabArrowKeys;
     this.triggerClick = triggerClick;
-}).run(function(focusKeyboard, focusDispatcher, focusModel) {
+}).run(function(focusKeyboard, focusDispatcher, focusManager) {
     focusKeyboard.enable();
     focusKeyboard.enableTabKeys();
 });
 
-ux.service("focusModel", function(focusQuery, focusDispatcher) {
+ux.service("focusManager", function(focusQuery, focusDispatcher) {
     var scope = this;
     var dispatcher = focusDispatcher();
     function focus(el) {
@@ -601,7 +601,7 @@ ux.service("focusModel", function(focusQuery, focusDispatcher) {
     this.disable = utils.debounce(disable);
 });
 
-ux.service("focusMouse", function(focusModel, focusQuery) {
+ux.service("focusMouse", function(focusManager, focusQuery) {
     var scope = this;
     function enable() {
         scope.enabled = false;
@@ -615,13 +615,13 @@ ux.service("focusMouse", function(focusModel, focusQuery) {
         if (scope.enabled) {
             return;
         }
-        if (focusModel.canReceiveFocus(evt.target)) {
-            focusModel.focus(evt.target);
+        if (focusManager.canReceiveFocus(evt.target)) {
+            focusManager.focus(evt.target);
             var parentId = focusQuery.getParentId(evt.target);
             if (parentId) {
-                focusModel.enable();
+                focusManager.enable();
             } else {
-                focusModel.disable();
+                focusManager.disable();
             }
         }
     }

@@ -1,4 +1,4 @@
-ux.directive('focusGroup', function (focusModel, focusQuery, focusDispatcher) {
+ux.directive('focusGroup', function (focusManager, focusQuery, focusDispatcher) {
 
     var groupId = 1;
     var elementId = 1;
@@ -46,7 +46,7 @@ ux.directive('focusGroup', function (focusModel, focusQuery, focusDispatcher) {
         var bound = false;
 
         el.addEventListener('focus', function () {
-            focusModel.enable();
+            focusManager.enable();
         }, true);
 
         // using timeout to allow all groups to digest before performing container check

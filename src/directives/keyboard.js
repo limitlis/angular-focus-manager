@@ -1,4 +1,4 @@
-ux.directive('focusKeyboard', function (focusModel) {
+ux.directive('focusKeyboard', function (focusManager) {
     return {
         link: function (scope, element, attrs) {
 
@@ -11,7 +11,7 @@ ux.directive('focusKeyboard', function (focusModel) {
                         evt.preventDefault();
                         evt.stopPropagation();
 
-                        focusModel.focus(element[0]);
+                        focusManager.focus(element[0]);
 
                         return false;
                     });

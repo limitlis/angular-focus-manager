@@ -1,4 +1,4 @@
-ux.service('focusMouse', function (focusModel, focusQuery) {
+ux.service('focusMouse', function (focusManager, focusQuery) {
 
     var scope = this;
 
@@ -16,14 +16,14 @@ ux.service('focusMouse', function (focusModel, focusQuery) {
         if (scope.enabled) {
             return;
         }
-        if (focusModel.canReceiveFocus(evt.target)) {
-            focusModel.focus(evt.target);
+        if (focusManager.canReceiveFocus(evt.target)) {
+            focusManager.focus(evt.target);
 
             var parentId = focusQuery.getParentId(evt.target);
             if(parentId) {
-                focusModel.enable();
+                focusManager.enable();
             } else {
-                focusModel.disable();
+                focusManager.disable();
             }
         }
     }

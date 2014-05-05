@@ -231,6 +231,18 @@ In this phase, the goal is to be able to trap the focus only when the focus mana
 ---
 We have to disable tabindex and use our own internal focusIndex. This will prevent the browser from trying to consume FM enabled elements in the browser's internal focus manager.
 
-### Notes
+#####Stage 10: Support between Focus Manager and the Browser's Focus Manager
+---
+Any changes to the API necessary to accomplish this task. Unknown going in. This will mostly happen through experimentation.
+
+### Testing & Notes
 ---
 During this stage, I found that I was having difficulty implementing this feature due to Mousetrap. Mousetrap wasn't dispatching some of the key events. So in the case of the keyboard service, I am using native event listeners to handle keydown events. Mousetrap is still being used to handle key combos. I also found in doing this I no longer needed "focusTrap". In order to have granular control of what happens when we get to the end of an isolated focus group, I refactored "focus-loop" to "focus-group-head" and "focus-group-tail" which supports either "loop" or "stop". If neither are defined, then it will release focus back to the browser and continue its native course.
+
+I found some things to cleanup as well as cleanup the code with additional comments. I also renamed "focusModel" to "focusManager".
+
+**Notes on Firefox**
+
+If you want to to test Firefox on the Mac, make sure you go into your prefrences and enable "All controls". This is not a limitation of Firefox or the library, just something that has to be done.
+
+![image](http://f.cl.ly/items/2y050C0x0y3k0W041L3d/Image%202014-05-05%20at%204.46.03%20PM.png)

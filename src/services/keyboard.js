@@ -1,4 +1,4 @@
-ux.service('focusKeyboard', function (focusModel) {
+ux.service('focusKeyboard', function (focusManager) {
 
     var tabKeysEnabled = false;
     var arrowKeysEnabled = false;
@@ -56,11 +56,11 @@ ux.service('focusKeyboard', function (focusModel) {
 
     function onFocusNext(evt) {
 
-        if (focusModel.enabled) {
-            focusModel.next();
+        if (focusManager.enabled) {
+            focusManager.next();
         }
 
-        if (!focusModel.enabled) {
+        if (!focusManager.enabled) {
             return;
         }
 
@@ -72,11 +72,11 @@ ux.service('focusKeyboard', function (focusModel) {
 
     function onFocusPrev(evt) {
 
-        if (focusModel.enabled) {
-            focusModel.prev();
+        if (focusManager.enabled) {
+            focusManager.prev();
         }
 
-        if (!focusModel.enabled) {
+        if (!focusManager.enabled) {
             return;
         }
 
@@ -180,7 +180,7 @@ ux.service('focusKeyboard', function (focusModel) {
     this.toggleTabArrowKeys = toggleTabArrowKeys;
     this.triggerClick = triggerClick;
 })
-    .run(function (focusKeyboard, focusDispatcher, focusModel) {
+    .run(function (focusKeyboard, focusDispatcher, focusManager) {
         focusKeyboard.enable();
         focusKeyboard.enableTabKeys();
     });

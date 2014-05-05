@@ -1,4 +1,4 @@
-ux.directive('focusHighlight', function (focusModel, focusDispatcher) {
+ux.directive('focusHighlight', function (focusManager, focusDispatcher) {
 
     var dispatcher = focusDispatcher();
 
@@ -8,7 +8,7 @@ ux.directive('focusHighlight', function (focusModel, focusDispatcher) {
         link: function (scope, element, attrs) {
             var el = element[0];
             document.addEventListener('focus', utils.throttle(function (evt) {
-                if (focusModel.canReceiveFocus(evt.target)) {
+                if (focusManager.canReceiveFocus(evt.target)) {
                     var rect = evt.target.getBoundingClientRect();
                     el.style.left = rect.left + 'px';
                     el.style.top = rect.top + 'px';
