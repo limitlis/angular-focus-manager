@@ -45,14 +45,13 @@ ux.directive('focusGroup', function (focusModel, focusQuery, focusDispatcher) {
         var groupName = null;
         var bound = false;
 
-        // TODO: Cross-browser support required
-        el.addEventListener('focusout', function () {
-            focusModel.disable();
-        });
-
-        el.addEventListener('focusin', function () {
+        el.addEventListener('focus', function(){
             focusModel.enable();
-        });
+        }, true);
+
+        el.addEventListener('blur', function(){
+            focusModel.disable();
+        }, true);
 
         // using timeout to allow all groups to digest before performing container check
         setTimeout(function () {

@@ -9,7 +9,7 @@ ux.service('focusMouse', function (focusModel) {
 
     function unmute() {
         scope.muted = false;
-        document.addEventListener('mousedown', onMouseDown);
+        utils.addEvent(document, 'mousedown', onMouseDown);
     }
 
     function onMouseDown(evt) {

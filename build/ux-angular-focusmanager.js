@@ -59,12 +59,12 @@ ux.directive("focusGroup", function(focusModel, focusQuery, focusDispatcher) {
         var el = element[0];
         var groupName = null;
         var bound = false;
-        el.addEventListener("focusout", function() {
-            focusModel.disable();
-        });
-        el.addEventListener("focusin", function() {
+        el.addEventListener("focus", function() {
             focusModel.enable();
-        });
+        }, true);
+        el.addEventListener("blur", function() {
+            focusModel.disable();
+        }, true);
         setTimeout(function() {
             if (!focusQuery.getContainerId(el)) {
                 dispatcher.on("focusin", utils.debounce(function(evt) {
@@ -103,13 +103,13 @@ ux.directive("focusHighlight", function(focusModel, focusDispatcher) {
         replace: true,
         link: function(scope, element, attrs) {
             var el = element[0];
-            dispatcher.on("focusin", utils.throttle(function(evt) {
-                var rect = evt.newTarget.getBoundingClientRect();
+            document.addEventListener("focus", utils.throttle(function(evt) {
+                var rect = evt.target.getBoundingClientRect();
                 el.style.left = rect.left + "px";
                 el.style.top = rect.top + "px";
                 el.style.width = rect.width + "px";
                 el.style.height = rect.height + "px";
-            }, 100));
+            }, true), 100);
         },
         template: '<div class="focus-highlight"></div>'
     };
@@ -608,15 +608,13 @@ ux.service("focusMouse", function(focusModel) {
     }
     function unmute() {
         scope.muted = false;
-        document.addEventListener("mousedown", onMouseDown);
+        utils.addEvent(document, "mousedown", onMouseDown);
     }
     function onMouseDown(evt) {
         if (scope.muted) {
             return;
         }
-        if (focusModel.canReceiveFocus(evt.target)) {
-            focusModel.focus(evt.target);
-        }
+        if (focusModel.canReceiveFocus(evt.target)) {}
     }
     this.muted = false;
     this.mute = mute;
