@@ -614,7 +614,9 @@ ux.service("focusMouse", function(focusModel) {
         if (scope.muted) {
             return;
         }
-        if (focusModel.canReceiveFocus(evt.target)) {}
+        if (focusModel.canReceiveFocus(evt.target)) {
+            focusModel.focus(evt.target);
+        }
     }
     this.muted = false;
     this.mute = mute;
