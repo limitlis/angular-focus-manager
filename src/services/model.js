@@ -336,10 +336,27 @@ ux.service('focusModel', function (focusQuery, focusDispatcher) {
         }
     }
 
+    function enable() {
+        if(!scope.enabled) {
+            scope.enabled = true;
+            dispatcher.trigger('enabled');
+        }
+    }
+
+    function disable() {
+        if(scope.enabled) {
+            scope.enabled = false;
+            dispatcher.trigger('disabled');
+        }
+    }
+
+    this.enabled = false;
     this.activeElement = null;
     this.focus = focus;
     this.prev = prev;
     this.next = next;
     this.canReceiveFocus = canReceiveFocus;
+    this.enable = enable;
+    this.disable = disable;
 
 });

@@ -1,4 +1,4 @@
-ux.directive('focusGroup', function (focusQuery, focusDispatcher) {
+ux.directive('focusGroup', function (focusModel, focusQuery, focusDispatcher) {
 
     var groupId = 1;
     var elementId = 1;
@@ -19,6 +19,7 @@ ux.directive('focusGroup', function (focusQuery, focusDispatcher) {
             elementName = 'element-' + elementId;
             focusQuery.setParentId(els[i], groupName);
             focusQuery.setElementId(els[i], elementName);
+            focusQuery.setTabIndex(els[i], -1); // elements in focus manager should not be tab enabled through browser
             elementId += 1;
             i += 1;
         }

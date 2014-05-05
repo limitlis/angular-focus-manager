@@ -62,7 +62,7 @@ ux.directive("focusElement", function(focusModel, focusQuery) {
     };
 });
 
-ux.directive("focusGroup", function(focusQuery, focusDispatcher) {
+ux.directive("focusGroup", function(focusModel, focusQuery, focusDispatcher) {
     var groupId = 1;
     var elementId = 1;
     var dispatcher = focusDispatcher();
@@ -77,6 +77,7 @@ ux.directive("focusGroup", function(focusQuery, focusDispatcher) {
             elementName = "element-" + elementId;
             focusQuery.setParentId(els[i], groupName);
             focusQuery.setElementId(els[i], elementName);
+            focusQuery.setTabIndex(els[i], -1);
             elementId += 1;
             i += 1;
         }
@@ -557,11 +558,26 @@ ux.service("focusModel", function(focusQuery, focusDispatcher) {
             findPrevChildGroup();
         }
     }
+    function enable() {
+        if (!scope.enabled) {
+            scope.enabled = true;
+            dispatcher.trigger("enabled");
+        }
+    }
+    function disable() {
+        if (scope.enabled) {
+            scope.enabled = false;
+            dispatcher.trigger("disabled");
+        }
+    }
+    this.enabled = false;
     this.activeElement = null;
     this.focus = focus;
     this.prev = prev;
     this.next = next;
     this.canReceiveFocus = canReceiveFocus;
+    this.enable = enable;
+    this.disable = disable;
 });
 
 ux.service("focusMouse", function(focusModel) {
@@ -594,15 +610,17 @@ ux.service("focusQuery", function() {
     var focusGroupId = "focus-group-id";
     var focusParentId = "focus-parent-id";
     var focusContainerId = "focus-container-id";
+    var tabIndex = "tabindex";
     var focusGroup = "focus-group";
     var focusElement = "focus-element";
     var focusEnabled = "focus-enabled";
     var focusLoop = "focus-loop";
-    var selectable = "A,SELECT,BUTTON,INPUT,TEXTAREA,*[tabindex]";
+    var focusIndex = "focus-index";
+    var selectable = "A,SELECT,BUTTON,INPUT,TEXTAREA,*[focus-index]";
     function canReceiveFocus(el) {
         var isSelectable = new RegExp(el.nodeName.toUpperCase()).test(selectable);
         if (!isSelectable) {
-            isSelectable = el.getAttribute("tabindex") !== null;
+            isSelectable = el.getAttribute(focusIndex) !== null;
         }
         if (isSelectable) {
             isSelectable = el.getAttribute("disabled") === null;
@@ -643,7 +661,7 @@ ux.service("focusQuery", function() {
         return returnVal;
     }
     function getElementsWithoutParents(el) {
-        var query = "A:not({focusParentId})," + "SELECT:not({focusParentId})," + "BUTTON:not({focusParentId})," + "INPUT:not({focusParentId})," + "TEXTAREA:not({focusParentId})," + "*[tabindex]:not({focusParentId})";
+        var query = "A:not({focusParentId})," + "SELECT:not({focusParentId})," + "BUTTON:not({focusParentId})," + "INPUT:not({focusParentId})," + "TEXTAREA:not({focusParentId})," + "*[focus-index]:not({focusParentId})";
         query = query.supplant({
             focusParentId: "[" + focusParentId + "]"
         });
@@ -657,7 +675,7 @@ ux.service("focusQuery", function() {
         var q, isStrict, els, returnVal, i, len;
         isStrict = isGroupStrict(groupId);
         if (isStrict) {
-            q = '[{focusParentId}="{groupId}"][tabindex]:not([disabled]):not(.disabled)'.supplant({
+            q = '[{focusParentId}="{groupId}"][focus-index]:not([disabled]):not(.disabled)'.supplant({
                 focusParentId: focusParentId,
                 groupId: groupId
             });
@@ -747,6 +765,9 @@ ux.service("focusQuery", function() {
     function setContainerId(el, id) {
         el.setAttribute(focusContainerId, id);
     }
+    function setTabIndex(el, index) {
+        el.setAttribute(tabIndex, index);
+    }
     function contains(container, el) {
         var parent = el.parentNode;
         while (parent.nodeType !== 9) {
@@ -758,8 +779,8 @@ ux.service("focusQuery", function() {
         return false;
     }
     function sortByTabIndex(a, b) {
-        var aTabIndex = a.getAttribute("tabindex") || Number.POSITIVE_INFINITY;
-        var bTabIndex = b.getAttribute("tabindex") || Number.POSITIVE_INFINITY;
+        var aTabIndex = a.getAttribute("focus-index") || Number.POSITIVE_INFINITY;
+        var bTabIndex = b.getAttribute("focus-index") || Number.POSITIVE_INFINITY;
         if (aTabIndex < bTabIndex) {
             return -1;
         }
@@ -791,6 +812,7 @@ ux.service("focusQuery", function() {
     this.getGroup = getGroup;
     this.getFirstGroupId = getFirstGroupId;
     this.getLastGroupId = getLastGroupId;
+    this.setTabIndex = setTabIndex;
     this.getElementsWithoutParents = getElementsWithoutParents;
     this.getGroupsWithoutContainers = getGroupsWithoutContainers;
     this.isAutofocus = isAutofocus;

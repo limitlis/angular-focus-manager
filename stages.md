@@ -189,16 +189,19 @@ Browsers will sometimes cause focus to go to unexpected places if at the start o
 In this phase, the goal is to start controlling the behavior in which things receive focus using indexed elements and focus groups as well as different types of focus groups.
 
 #####Stage 5: Tab index
+---
 
 Support tab indexing as supported by the browser with the exception that tab index will be under focus groups and not traverse the entire page but move from one group to the next. 
 
 #####Stage 6: Focus Group Index
+---
 
 Like tab index, group index controls the order in which the groups will be traversed. Similar to tabindex, groups with an index will take priority over those that do not.
 
 	focus-group-index="1"
 	
 #####Stage 7: Focus Group Types
+---
 
 We have already implemented the first type, the other type we will implement is "strict" mode - only those elements with a tab index can receive focus.
 
@@ -206,7 +209,8 @@ We have already implemented the first type, the other type we will implement is 
 
 **focus-group="strict"** - only DOM elements with an attribute "tabindex" will be traversed
 
-######Stage 8: Stacked Groups
+#####Stage 8: Stacked Groups
+---
 
 If we have modals or popups or something of the such, it is likely that we will want the focus to go to that group and basically ignore the others. Fortunatedly, we are almost there, we have the isolate groups. Now we just need to remember the stack. This will use a combination of the things we already have...
 
@@ -218,3 +222,11 @@ If we have modals or popups or something of the such, it is likely that we will 
 
 Upon testing, there were a few issues that were fixed. Discovery of a new feature which is the ability to perform the trapping to correct focus issues but when at the start or end of the page, releasing the focus to the next item that would naturally take focus. This will be especially useful when embedding an application within a page that may have other controls of functionality that need to be navigated to outside of FM.
 
+###Phase 4: Catch and release
+---
+
+In this phase, the goal is to be able to trap the focus only when the focus manager has an element that can have focus. To be able to work with non-FM enabled DOM.
+
+#####Stage 9: Focus Index
+---
+We have to disable tabindex and use our own internal focusIndex. This will prevent the browser from trying to consume FM enabled elements in the browser's internal focus manager.
