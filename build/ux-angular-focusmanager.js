@@ -62,9 +62,6 @@ ux.directive("focusGroup", function(focusModel, focusQuery, focusDispatcher) {
         el.addEventListener("focus", function() {
             focusModel.enable();
         }, true);
-        el.addEventListener("blur", function() {
-            focusModel.disable();
-        }, true);
         setTimeout(function() {
             if (!focusQuery.getContainerId(el)) {
                 dispatcher.on("focusin", utils.debounce(function(evt) {
@@ -104,11 +101,13 @@ ux.directive("focusHighlight", function(focusModel, focusDispatcher) {
         link: function(scope, element, attrs) {
             var el = element[0];
             document.addEventListener("focus", utils.throttle(function(evt) {
-                var rect = evt.target.getBoundingClientRect();
-                el.style.left = rect.left + "px";
-                el.style.top = rect.top + "px";
-                el.style.width = rect.width + "px";
-                el.style.height = rect.height + "px";
+                if (focusModel.canReceiveFocus(evt.target)) {
+                    var rect = evt.target.getBoundingClientRect();
+                    el.style.left = rect.left + "px";
+                    el.style.top = rect.top + "px";
+                    el.style.width = rect.width + "px";
+                    el.style.height = rect.height + "px";
+                }
             }, true), 100);
         },
         template: '<div class="focus-highlight"></div>'
@@ -119,24 +118,26 @@ ux.directive("focusKeyboard", function(focusModel) {
     return {
         link: function(scope, element, attrs) {
             var bound = false;
+            function onBindKeys() {
+                if (!bound) {
+                    bound = true;
+                    Mousetrap.bind(attrs.focusKeyboard.split(","), function(evt) {
+                        evt.preventDefault();
+                        evt.stopPropagation();
+                        focusModel.focus(element[0]);
+                        return false;
+                    });
+                }
+            }
+            function onUnbindKeys() {
+                if (bound) {
+                    bound = false;
+                    Mousetrap.unbind(attrs.focusKeyboard.split(","));
+                }
+            }
             if (attrs.focusKeyboard) {
-                scope.$on("bindKeys", function() {
-                    if (!bound) {
-                        bound = true;
-                        Mousetrap.bind(attrs.focusKeyboard.split(","), function(evt) {
-                            evt.preventDefault();
-                            evt.stopPropagation();
-                            focusModel.focus(element[0]);
-                            return false;
-                        });
-                    }
-                });
-                scope.$on("unbindKeys", function() {
-                    if (bound) {
-                        bound = false;
-                        Mousetrap.unbind(attrs.focusKeyboard.split(","));
-                    }
-                });
+                scope.$on("bindKeys", onBindKeys);
+                scope.$on("unbindKeys", onUnbindKeys);
             }
         }
     };
@@ -596,33 +597,39 @@ ux.service("focusModel", function(focusQuery, focusDispatcher) {
     this.prev = prev;
     this.next = next;
     this.canReceiveFocus = canReceiveFocus;
-    this.enable = enable;
-    this.disable = disable;
+    this.enable = utils.debounce(enable);
+    this.disable = utils.debounce(disable);
 });
 
-ux.service("focusMouse", function(focusModel) {
+ux.service("focusMouse", function(focusModel, focusQuery) {
     var scope = this;
-    function mute() {
-        scope.muted = false;
-        document.removeEventListener("mousedown", onMouseDown);
-    }
-    function unmute() {
-        scope.muted = false;
+    function enable() {
+        scope.enabled = false;
         utils.addEvent(document, "mousedown", onMouseDown);
     }
+    function disable() {
+        scope.enabled = false;
+        utils.removeEvent(document, "mousedown", onMouseDown);
+    }
     function onMouseDown(evt) {
-        if (scope.muted) {
+        if (scope.enabled) {
             return;
         }
         if (focusModel.canReceiveFocus(evt.target)) {
             focusModel.focus(evt.target);
+            var parentId = focusQuery.getParentId(evt.target);
+            if (parentId) {
+                focusModel.enable();
+            } else {
+                focusModel.disable();
+            }
         }
     }
-    this.muted = false;
-    this.mute = mute;
-    this.unmute = unmute;
+    this.enabled = false;
+    this.enable = enable;
+    this.disable = disable;
 }).run(function(focusMouse) {
-    focusMouse.unmute();
+    focusMouse.enable();
 });
 
 ux.service("focusQuery", function() {

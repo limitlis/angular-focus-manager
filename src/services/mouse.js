@@ -1,31 +1,38 @@
-ux.service('focusMouse', function (focusModel) {
+ux.service('focusMouse', function (focusModel, focusQuery) {
 
     var scope = this;
 
-    function mute() {
-        scope.muted = false;
-        document.removeEventListener('mousedown', onMouseDown);
-    }
-
-    function unmute() {
-        scope.muted = false;
+    function enable() {
+        scope.enabled = false;
         utils.addEvent(document, 'mousedown', onMouseDown);
     }
 
+    function disable() {
+        scope.enabled = false;
+        utils.removeEvent(document, 'mousedown', onMouseDown);
+    }
+
     function onMouseDown(evt) {
-        if (scope.muted) {
+        if (scope.enabled) {
             return;
         }
         if (focusModel.canReceiveFocus(evt.target)) {
             focusModel.focus(evt.target);
+
+            var parentId = focusQuery.getParentId(evt.target);
+            if(parentId) {
+                focusModel.enable();
+            } else {
+                focusModel.disable();
+            }
         }
     }
 
-    this.muted = false;
-    this.mute = mute;
-    this.unmute = unmute;
+    this.enabled = false;
+    this.enable = enable;
+    this.disable = disable;
 
 }).run(function (focusMouse) {
-    focusMouse.unmute();
+    focusMouse.enable();
 });
 

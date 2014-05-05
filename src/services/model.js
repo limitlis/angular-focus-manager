@@ -365,7 +365,7 @@ ux.service('focusModel', function (focusQuery, focusDispatcher) {
     this.prev = prev;
     this.next = next;
     this.canReceiveFocus = canReceiveFocus;
-    this.enable = enable;
-    this.disable = disable;
+    this.enable = utils.debounce(enable);
+    this.disable = utils.debounce(disable);
 
 });
