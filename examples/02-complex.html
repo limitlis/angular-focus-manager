@@ -60,13 +60,16 @@
     </style>
 </head>
 <body ng-controller="AppCtrl as app">
+
 <div>
     <a href="">Home</a>
     <a href="">Contact</a>
     <a href="">About</a>
 </div>
+
 <div focus-group focus-group-head="loop" focus-group-tail="stop">
-    <select focus-first>
+
+    <select focus-entry>
         <option value="1">One</option>
         <option value="2">Two</option>
         <option value="3">Three</option>
@@ -144,26 +147,28 @@
     </div>
 
     <div focus-group>
-        <a href="" focus-index="3" focus-first>Link</a>
+        <a href="" focus-index="3" focus-entry>Link</a>
     </div>
 
 </div>
 
 
 <div style="margin-top: 15px" focus-group>
+
     <div focus-group>
         <div focus-group>
             <a href="" focus-index="3">Link 3</a>
             <a href="" focus-index="2">Link 2</a>
-            <a href="" focus-index="1" focus-first>Link 1</a>
+            <a href="" focus-index="1" focus-entry>Link 1</a>
         </div>
     </div>
 
     <div focus-group>
-        <a href="" focus-index="3" focus-first>Link 4</a>
+        <a href="" focus-index="3" focus-entry>Link 4</a>
     </div>
 
 </div>
+
 <div ng-if="app.showModal" class="modal-bg">
     <div focus-group focus-group-head="loop" focus-group-tail="loop" focus-stack class="dialog">
         <a href="" focus-element="autofocus" ng-click="app.toggleDialog()">Close</a>
@@ -171,6 +176,7 @@
         <a href="">Link 1</a>
     </div>
 </div>
+
 <div focus-highlight=""></div>
 
 <div>

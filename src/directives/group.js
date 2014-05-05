@@ -68,7 +68,7 @@ ux.directive('focusGroup', function (focusManager, focusQuery, focusDispatcher) 
                 }, 100));
 
                 // TODO: See if this can be automated
-                var els = document.querySelectorAll('[focus-first]');
+                var els = document.querySelectorAll('[focus-entry]');
                 var i = 0, len = els.length;
                 while (i < len) {
                     focusQuery.setTabIndex(els[i], null);
