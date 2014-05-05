@@ -37,7 +37,6 @@ ux.service('focusModel', function (focusQuery, focusDispatcher) {
      */
     function next() {
         var groupId, elementId;
-
         if (scope.activeElement) {
             groupId = focusQuery.getParentId(scope.activeElement);
             elementId = focusQuery.getElementId(scope.activeElement);
@@ -190,12 +189,17 @@ ux.service('focusModel', function (focusQuery, focusDispatcher) {
         } else {
             if (groupId) {
                 group = focusQuery.getGroup(groupId);
-                if (!focusQuery.isLoop(group)) {
+                var tail = focusQuery.getGroupTail(group);
+                if (tail === 'stop') {
                     return; // do nothing
+                } else if (!tail) {
+                    disable();
+                    return;
                 }
             } else {
                 groupId = focusQuery.getFirstGroupId();
             }
+            // loop
             findNextElement(groupId);
         }
     }
@@ -326,9 +330,13 @@ ux.service('focusModel', function (focusQuery, focusDispatcher) {
                     findPrevGroup(containerId, groupId);
                 } else {
                     // if there was no parent group, we are at the top of the isolate group
-                    if (focusQuery.isLoop(group)) {
+                    var tail = focusQuery.getGroupHead(group);
+                    if (tail === 'loop') {
                         findPrevChildGroup(groupId);
-                    } // else do nothing
+                    } else if (!tail) {
+                        disable();
+                    }
+                    // do nothing
                 }
             }
         } else {
@@ -337,14 +345,15 @@ ux.service('focusModel', function (focusQuery, focusDispatcher) {
     }
 
     function enable() {
-        if(!scope.enabled) {
+        if (!scope.enabled) {
             scope.enabled = true;
+            scope.activeElement = document.activeElement;
             dispatcher.trigger('enabled');
         }
     }
 
     function disable() {
-        if(scope.enabled) {
+        if (scope.enabled) {
             scope.enabled = false;
             dispatcher.trigger('disabled');
         }

@@ -230,3 +230,7 @@ In this phase, the goal is to be able to trap the focus only when the focus mana
 #####Stage 9: Focus Index
 ---
 We have to disable tabindex and use our own internal focusIndex. This will prevent the browser from trying to consume FM enabled elements in the browser's internal focus manager.
+
+### Notes
+---
+During this stage, I found that I was having difficulty implementing this feature due to Mousetrap. Mousetrap wasn't dispatching some of the key events. So in the case of the keyboard service, I am using native event listeners to handle keydown events. Mousetrap is still being used to handle key combos. I also found in doing this I no longer needed "focusTrap". In order to have granular control of what happens when we get to the end of an isolated focus group, I refactored "focus-loop" to "focus-group-head" and "focus-group-tail" which supports either "loop" or "stop". If neither are defined, then it will release focus back to the browser and continue its native course.

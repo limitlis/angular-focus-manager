@@ -6,16 +6,12 @@ ux.service('focusKeyboard', function (focusModel) {
     function enableTabKeys() {
         if (!tabKeysEnabled) {
             tabKeysEnabled = true;
-            Mousetrap.bind('tab', onFocusNext);
-            Mousetrap.bind('shift+tab', onFocusPrev);
         }
     }
 
     function disableTabKeys() {
         if (tabKeysEnabled) {
             tabKeysEnabled = false;
-            Mousetrap.unbind('tab', onFocusNext);
-            Mousetrap.unbind('shift+tab', onFocusPrev);
         }
     }
 
@@ -59,19 +55,33 @@ ux.service('focusKeyboard', function (focusModel) {
     }
 
     function onFocusNext(evt) {
+
+        if (focusModel.enabled) {
+            focusModel.next();
+        }
+
+        if (!focusModel.enabled) {
+            return;
+        }
+
         evt.preventDefault();
         evt.stopPropagation();
-
-        focusModel.next();
 
         return false;
     }
 
     function onFocusPrev(evt) {
+
+        if (focusModel.enabled) {
+            focusModel.prev();
+        }
+
+        if (!focusModel.enabled) {
+            return;
+        }
+
         evt.preventDefault();
         evt.stopPropagation();
-
-        focusModel.prev();
 
         return false;
     }
@@ -129,6 +139,40 @@ ux.service('focusKeyboard', function (focusModel) {
         }
     };
 
+    function enable() {
+        utils.addEvent(document, 'keydown', onKeyDown);
+    }
+
+    function disable() {
+        utils.removeEvent(document, 'keydown', onKeyDown);
+    }
+
+    function onKeyDown(evt) {
+        if (tabKeysEnabled) {
+            if (evt.keyCode === 9) {
+                if (evt.shiftKey) {
+                    onFocusPrev(evt);
+                } else {
+                    onFocusNext(evt);
+                }
+            }
+        }
+
+        if (arrowKeysEnabled) {
+            if (evt.keyCode === 37) {
+                onFocusPrev(evt);
+            } else if (evt.keyCode === 38) {
+                onFocusPrev(evt);
+            } else if (evt.keyCode === 39) {
+                onFocusNext(evt);
+            } else if (evt.keyCode === 40) {
+                onFocusNext(evt);
+            }
+        }
+    }
+
+    this.enable = enable;
+    this.disable = disable;
     this.enableTabKeys = enableTabKeys;
     this.disableTabKeys = disableTabKeys;
     this.enableArrowKeys = enableArrowKeys;
@@ -136,8 +180,8 @@ ux.service('focusKeyboard', function (focusModel) {
     this.toggleTabArrowKeys = toggleTabArrowKeys;
     this.triggerClick = triggerClick;
 })
-    .run(function (focusKeyboard) {
+    .run(function (focusKeyboard, focusDispatcher, focusModel) {
+        focusKeyboard.enable();
         focusKeyboard.enableTabKeys();
-        Mousetrap.bind('enter', focusKeyboard.triggerClick);
     });
 

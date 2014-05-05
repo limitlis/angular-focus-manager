@@ -9,9 +9,10 @@ ux.service('focusQuery', function () {
 
     var tabIndex = 'tabindex';
     var focusGroup = 'focus-group';
+    var focusGroupHead = 'focus-group-head';
+    var focusGroupTail = 'focus-group-tail';
     var focusElement = 'focus-element';
     var focusEnabled = 'focus-enabled';
-    var focusLoop = 'focus-loop';
     var focusIndex = 'focus-index';
     var selectable = 'A,SELECT,BUTTON,INPUT,TEXTAREA,*[focus-index]';
 
@@ -91,7 +92,7 @@ ux.service('focusQuery', function () {
         var q, isStrict, els, returnVal, i, len;
 
         isStrict = isGroupStrict(groupId);
-        if(isStrict) {
+        if (isStrict) {
             q = '[{focusParentId}="{groupId}"][focus-index]:not([disabled]):not(.disabled)'.supplant({
                 focusParentId: focusParentId,
                 groupId: groupId
@@ -157,8 +158,12 @@ ux.service('focusQuery', function () {
         return el.getAttribute(focusEnabled) !== 'false';
     }
 
-    function isLoop(el) {
-        return el.getAttribute(focusLoop) === 'true';
+    function getGroupHead(el) {
+        return el.getAttribute(focusGroupHead);
+    }
+
+    function getGroupTail(el) {
+        return el.getAttribute(focusGroupTail);
     }
 
     function getElement(elementId) {
@@ -211,7 +216,14 @@ ux.service('focusQuery', function () {
     }
 
     function setTabIndex(el, index) {
-        el.setAttribute(tabIndex, index);
+        if (!el) {
+            return;
+        }
+        if (index === null) {
+            el.removeAttribute(tabIndex);
+        } else {
+            el.setAttribute(tabIndex, index);
+        }
     }
 
     function contains(container, el) {
@@ -268,7 +280,8 @@ ux.service('focusQuery', function () {
     this.getElementsWithoutParents = getElementsWithoutParents;
     this.getGroupsWithoutContainers = getGroupsWithoutContainers;
     this.isAutofocus = isAutofocus;
-    this.isLoop = isLoop;
+    this.getGroupHead = getGroupHead;
+    this.getGroupTail = getGroupTail;
     this.isEnabled = isEnabled;
     this.getGroupElements = getGroupElements;
     this.getChildGroups = getChildGroups;

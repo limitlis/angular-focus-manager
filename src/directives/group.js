@@ -45,6 +45,15 @@ ux.directive('focusGroup', function (focusModel, focusQuery, focusDispatcher) {
         var groupName = null;
         var bound = false;
 
+        // TODO: Cross-browser support required
+        el.addEventListener('focusout', function () {
+            focusModel.disable();
+        });
+
+        el.addEventListener('focusin', function () {
+            focusModel.enable();
+        });
+
         // using timeout to allow all groups to digest before performing container check
         setTimeout(function () {
             if (!focusQuery.getContainerId(el)) {
@@ -54,16 +63,22 @@ ux.directive('focusGroup', function (focusModel, focusQuery, focusDispatcher) {
                         if (bound === false) {
                             bound = true;
                             scope.$broadcast('bindKeys', groupName);
-//                            console.log('bind', groupName);
                         }
                     } else {
                         if (bound === true) {
                             bound = false;
                             scope.$broadcast('unbindKeys');
-//                            console.log('unbind', groupName);
                         }
                     }
                 }, 100));
+
+                // TODO: See if this can be automated
+                var els = document.querySelectorAll('[focus-first]');
+                var i = 0, len = els.length;
+                while (i < len) {
+                    focusQuery.setTabIndex(els[i], null);
+                    i += 1;
+                }
             }
         }, 10);
 

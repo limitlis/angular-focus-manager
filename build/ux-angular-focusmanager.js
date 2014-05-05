@@ -13,42 +13,6 @@ try {
     ux = angular.module("ux", []);
 }
 
-var exports = {};
-
-var utils = {};
-
-utils.debounce = function(func, wait, immediate) {
-    var timeout;
-    return function() {
-        var context = this, args = arguments;
-        clearTimeout(timeout);
-        timeout = setTimeout(function() {
-            timeout = null;
-            if (!immediate) func.apply(context, args);
-        }, wait);
-        if (immediate && !timeout) func.apply(context, args);
-    };
-};
-
-utils.throttle = function(func, threshhold, scope) {
-    threshhold || (threshhold = 250);
-    var last, deferTimer;
-    return function() {
-        var context = scope || this;
-        var now = +new Date(), args = arguments;
-        if (last && now < last + threshhold) {
-            clearTimeout(deferTimer);
-            deferTimer = setTimeout(function() {
-                last = now;
-                func.apply(context, args);
-            }, threshhold);
-        } else {
-            last = now;
-            func.apply(context, args);
-        }
-    };
-};
-
 ux.directive("focusElement", function(focusModel, focusQuery) {
     return {
         link: function(scope, element, attr) {
@@ -95,6 +59,12 @@ ux.directive("focusGroup", function(focusModel, focusQuery, focusDispatcher) {
         var el = element[0];
         var groupName = null;
         var bound = false;
+        el.addEventListener("focusout", function() {
+            focusModel.disable();
+        });
+        el.addEventListener("focusin", function() {
+            focusModel.enable();
+        });
         setTimeout(function() {
             if (!focusQuery.getContainerId(el)) {
                 dispatcher.on("focusin", utils.debounce(function(evt) {
@@ -110,6 +80,12 @@ ux.directive("focusGroup", function(focusModel, focusQuery, focusDispatcher) {
                         }
                     }
                 }, 100));
+                var els = document.querySelectorAll("[focus-first]");
+                var i = 0, len = els.length;
+                while (i < len) {
+                    focusQuery.setTabIndex(els[i], null);
+                    i += 1;
+                }
             }
         }, 10);
         groupName = compile(el);
@@ -238,15 +214,11 @@ ux.service("focusKeyboard", function(focusModel) {
     function enableTabKeys() {
         if (!tabKeysEnabled) {
             tabKeysEnabled = true;
-            Mousetrap.bind("tab", onFocusNext);
-            Mousetrap.bind("shift+tab", onFocusPrev);
         }
     }
     function disableTabKeys() {
         if (tabKeysEnabled) {
             tabKeysEnabled = false;
-            Mousetrap.unbind("tab", onFocusNext);
-            Mousetrap.unbind("shift+tab", onFocusPrev);
         }
     }
     function enableArrowKeys() {
@@ -284,15 +256,25 @@ ux.service("focusKeyboard", function(focusModel) {
         fireEvent(evt.target, "click");
     }
     function onFocusNext(evt) {
+        if (focusModel.enabled) {
+            focusModel.next();
+        }
+        if (!focusModel.enabled) {
+            return;
+        }
         evt.preventDefault();
         evt.stopPropagation();
-        focusModel.next();
         return false;
     }
     function onFocusPrev(evt) {
+        if (focusModel.enabled) {
+            focusModel.prev();
+        }
+        if (!focusModel.enabled) {
+            return;
+        }
         evt.preventDefault();
         evt.stopPropagation();
-        focusModel.prev();
         return false;
     }
     function fireEvent(node, eventName) {
@@ -335,15 +317,45 @@ ux.service("focusKeyboard", function(focusModel) {
             node.fireEvent("on" + eventName, event);
         }
     }
+    function enable() {
+        utils.addEvent(document, "keydown", onKeyDown);
+    }
+    function disable() {
+        utils.removeEvent(document, "keydown", onKeyDown);
+    }
+    function onKeyDown(evt) {
+        if (tabKeysEnabled) {
+            if (evt.keyCode === 9) {
+                if (evt.shiftKey) {
+                    onFocusPrev(evt);
+                } else {
+                    onFocusNext(evt);
+                }
+            }
+        }
+        if (arrowKeysEnabled) {
+            if (evt.keyCode === 37) {
+                onFocusPrev(evt);
+            } else if (evt.keyCode === 38) {
+                onFocusPrev(evt);
+            } else if (evt.keyCode === 39) {
+                onFocusNext(evt);
+            } else if (evt.keyCode === 40) {
+                onFocusNext(evt);
+            }
+        }
+    }
+    this.enable = enable;
+    this.disable = disable;
     this.enableTabKeys = enableTabKeys;
     this.disableTabKeys = disableTabKeys;
     this.enableArrowKeys = enableArrowKeys;
     this.disableArrowKeys = disableArrowKeys;
     this.toggleTabArrowKeys = toggleTabArrowKeys;
     this.triggerClick = triggerClick;
-}).run(function(focusKeyboard) {
+}).run(function(focusKeyboard, focusDispatcher, focusModel) {
+    focusKeyboard.enable();
     focusKeyboard.enableTabKeys();
-    Mousetrap.bind("enter", focusKeyboard.triggerClick);
 });
 
 ux.service("focusModel", function(focusQuery, focusDispatcher) {
@@ -465,7 +477,11 @@ ux.service("focusModel", function(focusQuery, focusDispatcher) {
         } else {
             if (groupId) {
                 group = focusQuery.getGroup(groupId);
-                if (!focusQuery.isLoop(group)) {
+                var tail = focusQuery.getGroupTail(group);
+                if (tail === "stop") {
+                    return;
+                } else if (!tail) {
+                    disable();
                     return;
                 }
             } else {
@@ -549,8 +565,11 @@ ux.service("focusModel", function(focusQuery, focusDispatcher) {
                 if (containerId) {
                     findPrevGroup(containerId, groupId);
                 } else {
-                    if (focusQuery.isLoop(group)) {
+                    var tail = focusQuery.getGroupHead(group);
+                    if (tail === "loop") {
                         findPrevChildGroup(groupId);
+                    } else if (!tail) {
+                        disable();
                     }
                 }
             }
@@ -561,6 +580,7 @@ ux.service("focusModel", function(focusQuery, focusDispatcher) {
     function enable() {
         if (!scope.enabled) {
             scope.enabled = true;
+            scope.activeElement = document.activeElement;
             dispatcher.trigger("enabled");
         }
     }
@@ -612,9 +632,10 @@ ux.service("focusQuery", function() {
     var focusContainerId = "focus-container-id";
     var tabIndex = "tabindex";
     var focusGroup = "focus-group";
+    var focusGroupHead = "focus-group-head";
+    var focusGroupTail = "focus-group-tail";
     var focusElement = "focus-element";
     var focusEnabled = "focus-enabled";
-    var focusLoop = "focus-loop";
     var focusIndex = "focus-index";
     var selectable = "A,SELECT,BUTTON,INPUT,TEXTAREA,*[focus-index]";
     function canReceiveFocus(el) {
@@ -724,8 +745,11 @@ ux.service("focusQuery", function() {
     function isEnabled(el) {
         return el.getAttribute(focusEnabled) !== "false";
     }
-    function isLoop(el) {
-        return el.getAttribute(focusLoop) === "true";
+    function getGroupHead(el) {
+        return el.getAttribute(focusGroupHead);
+    }
+    function getGroupTail(el) {
+        return el.getAttribute(focusGroupTail);
     }
     function getElement(elementId) {
         var q = '[{focusElementId}="{elementId}"]'.supplant({
@@ -766,7 +790,14 @@ ux.service("focusQuery", function() {
         el.setAttribute(focusContainerId, id);
     }
     function setTabIndex(el, index) {
-        el.setAttribute(tabIndex, index);
+        if (!el) {
+            return;
+        }
+        if (index === null) {
+            el.removeAttribute(tabIndex);
+        } else {
+            el.setAttribute(tabIndex, index);
+        }
     }
     function contains(container, el) {
         var parent = el.parentNode;
@@ -816,7 +847,8 @@ ux.service("focusQuery", function() {
     this.getElementsWithoutParents = getElementsWithoutParents;
     this.getGroupsWithoutContainers = getGroupsWithoutContainers;
     this.isAutofocus = isAutofocus;
-    this.isLoop = isLoop;
+    this.getGroupHead = getGroupHead;
+    this.getGroupTail = getGroupTail;
     this.isEnabled = isEnabled;
     this.getGroupElements = getGroupElements;
     this.getChildGroups = getChildGroups;
@@ -824,32 +856,57 @@ ux.service("focusQuery", function() {
     this.canReceiveFocus = canReceiveFocus;
 });
 
-ux.service("focusTrap", function(focusModel) {
-    var activeElement;
-    var body = document.body || document.getElementsByTagName("body")[0];
-    var startAnchorTag = document.createElement("a");
-    startAnchorTag.setAttribute("href", "");
-    body.insertBefore(startAnchorTag, body.firstChild);
-    var endAnchorTag = document.createElement("a");
-    endAnchorTag.setAttribute("href", "");
-    body.appendChild(endAnchorTag);
-    var syncFocus = utils.debounce(function() {
-        focusModel.focus().focus();
-    });
-    document.addEventListener("keydown", function(evt) {
-        if (evt.keyCode === 9) {
-            if (focusModel.activeElement === activeElement) {
-                if (evt.shiftKey) {
-                    focusModel.prev();
-                } else {
-                    focusModel.next();
-                }
-                syncFocus();
-            }
+var exports = {};
+
+var utils = {};
+
+utils.addEvent = function(object, type, callback) {
+    if (object.addEventListener) {
+        object.addEventListener(type, callback, false);
+        return;
+    }
+    object.attachEvent("on" + type, callback);
+};
+
+utils.removeEvent = function(object, type, callback) {
+    if (object.removeEventListener) {
+        object.removeEventListener(type, callback, false);
+        return;
+    }
+    object.detachEvent("on" + type, callback);
+};
+
+utils.debounce = function(func, wait, immediate) {
+    var timeout;
+    return function() {
+        var context = this, args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(function() {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+        }, wait);
+        if (immediate && !timeout) func.apply(context, args);
+    };
+};
+
+utils.throttle = function(func, threshhold, scope) {
+    threshhold || (threshhold = 250);
+    var last, deferTimer;
+    return function() {
+        var context = scope || this;
+        var now = +new Date(), args = arguments;
+        if (last && now < last + threshhold) {
+            clearTimeout(deferTimer);
+            deferTimer = setTimeout(function() {
+                last = now;
+                func.apply(context, args);
+            }, threshhold);
+        } else {
+            last = now;
+            func.apply(context, args);
         }
-        activeElement = focusModel.activeElement;
-    });
-}).run(function(focusTrap) {});
+    };
+};
 
 (function(J, r, f) {
     function s(a, b, d) {

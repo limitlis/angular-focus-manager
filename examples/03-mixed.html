@@ -22,6 +22,7 @@
             pointer-events: none;
             margin-left: -2px;
             margin-top: -2px;
+            pointer-events: none;
             z-index: 1000;
         }
 
@@ -64,8 +65,8 @@
     <a href="">Contact</a>
     <a href="">About</a>
 </div>
-<div focus-group focus-loop="true">
-    <select>
+<div focus-group focus-group-head="loop" focus-group-tail="loop">
+    <select focus-first>
         <option value="1">One</option>
         <option value="2">Two</option>
         <option value="3">Three</option>
@@ -143,34 +144,34 @@
     </div>
 
     <div focus-group>
-        <a href="" focus-index="3">Link</a>
+        <a href="" focus-index="3" focus-first>Link</a>
     </div>
 
 </div>
 
 
-<div style="margin-top: 15px" focus-group focus-loop="false">
+<div style="margin-top: 15px" focus-group>
     <div focus-group>
         <div focus-group>
             <a href="" focus-index="3">Link 3</a>
             <a href="" focus-index="2">Link 2</a>
-            <a href="" focus-index="1">Link 1</a>
+            <a href="" focus-index="1" focus-first>Link 1</a>
         </div>
     </div>
 
     <div focus-group>
-        <a href="" focus-index="3">Link 4</a>
+        <a href="" focus-index="3" focus-first>Link 4</a>
     </div>
 
 </div>
 <div ng-if="app.showModal" class="modal-bg">
-    <div focus-group focus-loop="true" focus-stack class="dialog">
+    <div focus-group focus-group-head="loop" focus-group-tail="loop" focus-stack class="dialog">
         <a href="" focus-element="autofocus" ng-click="app.toggleDialog()">Close</a>
         <a href="">Link 2</a>
         <a href="">Link 1</a>
     </div>
 </div>
-<div focus-highlight=""></div>
+<!--<div focus-highlight=""></div>-->
 
 <div>
     <a href="">Home</a>
