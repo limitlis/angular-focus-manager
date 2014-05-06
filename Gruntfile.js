@@ -39,13 +39,24 @@ module.exports = function (grunt) {
             }
         },
         ngmin: {
-            client: {
+            all: {
                 src: [
                     'src/ux.js',
-                    'src/consts.js',
+                    'src/utils.js',
                     'src/**/*.js'
                 ],
                 dest: './build/<%= pkg.filename %>.js'
+            },
+            lite: {
+                src: [
+                    'src/ux.js',
+                    'src/utils.js',
+                    'src/prototypes/*.js',
+                    'src/directives/element.js',
+                    'src/directives/group.js',
+                    'src/services/*.js'
+                ],
+                dest: './build/<%= pkg.filename %>-lite.js'
             }
         },
         uglify: {
@@ -60,7 +71,8 @@ module.exports = function (grunt) {
                     footer: '<%= wrapEnd %>'
                 },
                 files: {
-                    './build/<%= pkg.filename %>.js': ['./build/<%= pkg.filename %>.js']
+                    './build/<%= pkg.filename %>.js': ['./build/<%= pkg.filename %>.js'],
+                    './build/<%= pkg.filename %>-lite.js': ['./build/<%= pkg.filename %>-lite.js']
                 }
             },
             build_min: {
@@ -70,7 +82,8 @@ module.exports = function (grunt) {
                     banner: '<%= banner %>'
                 },
                 files: {
-                    './build/<%= pkg.filename %>.min.js': ['./build/<%= pkg.filename %>.js']
+                    './build/<%= pkg.filename %>.min.js': ['./build/<%= pkg.filename %>.js'],
+                    './build/<%= pkg.filename %>-lite.min.js': ['./build/<%= pkg.filename %>-lite.js']
                 }
             }
         }

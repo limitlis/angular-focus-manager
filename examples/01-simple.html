@@ -2,15 +2,16 @@
 <html ng-app="app">
 <head lang="en">
     <meta charset="UTF-8">
-    <title></title>
+    <title>Focus Manager - Simple Example</title>
+    <link rel="stylesheet" href="css/styles.css"/>
 </head>
 <body>
 <div focus-group>
     <a href="">Link 1</a>
     <a href="">Link 2</a>
     <div tabindex="0">DIV Link</div>
-    <div focus-group="auto">
-        <div focus-group="auto">
+    <div focus-group>
+        <div focus-group>
             <a href="" focus-keyboard="command+k">Link 3</a>
         </div>
     </div>
@@ -23,7 +24,7 @@
 </div>
 
 <script src="../bower_components/angular/angular.js"></script>
-<script src="../build/ux-angular-focusmanager.js"></script>
+<script src="../build/angular-ux-focusmanager.js"></script>
 <script>
     angular.module('app', ['ux'])
 </script>

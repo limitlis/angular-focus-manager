@@ -2,62 +2,9 @@
 <html ng-app="app">
 <head lang="en">
     <meta charset="UTF-8">
-    <title></title>
-    <style>
-        * {
-            /*outline: none;*/
-        }
-
-        body {
-            font-size: 13px;
-            font-family: Arial, Helvetica, sans-serif, Tahoma, Verdana, sans-serif;
-        }
-
-        .focus-highlight {
-            position: absolute;
-            -webkit-transition: left 100ms ease-out, top 100ms ease-out, width 100ms ease-out, height 100ms ease-out;
-            transition: left 100ms ease-out, top 100ms ease-out, width 100ms ease-out, height 100ms ease-out;
-            outline: 2px solid #FF0000;
-            border: 2px solid #fff;
-            pointer-events: none;
-            margin-left: -2px;
-            margin-top: -2px;
-            pointer-events: none;
-            z-index: 1000;
-        }
-
-        .header {
-            font-size: 15px;
-            margin: 10px 0;
-        }
-
-        [focus-group] {
-            outline: 1px dashed lightgray;
-            padding: 10px;
-        }
-
-        .modal-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            background-color: rgba(0, 0, 0, 0.15);
-        }
-
-        .dialog {
-            position: fixed;
-            left: 50%;
-            top: 50%;
-            margin-left: -200px;
-            margin-top: -125px;
-            width: 400px;
-            height: 250px;
-            background-color: #ffffff;
-            border: 1px solid blue;
-        }
-
-    </style>
+    <title>Focus Manager - Complex Example</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/styles.css"/>
 </head>
 <body ng-controller="AppCtrl as app">
 
@@ -185,7 +132,7 @@
 </div>
 
 <script src="../bower_components/angular/angular.js"></script>
-<script src="../build/ux-angular-focusmanager.js"></script>
+<script src="../build/angular-ux-focusmanager.js"></script>
 <script>
     angular.module('app', ['ux'])
             .controller('AppCtrl', function () {
