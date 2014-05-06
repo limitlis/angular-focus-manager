@@ -1,4 +1,4 @@
-/* global ux, utils, Mousetrap */
+/* global ux, utils */
 ux.service('focusKeyboard', function (focusManager) {
 
     var tabKeysEnabled = false,

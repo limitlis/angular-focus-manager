@@ -1,4 +1,4 @@
-/* global ux, utils, Mousetrap */
+/* global ux, utils */
 ux.service('focusQuery', function () {
 
     // http://quirksmode.org/dom/core/

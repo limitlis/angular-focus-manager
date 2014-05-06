@@ -65,6 +65,7 @@ module.exports = function (grunt) {
             },
             build_min: {
                 options: {
+                    report: 'gzip',
                     wrap: '<%= pkg.packageName %>',
                     banner: '<%= banner %>'
                 },

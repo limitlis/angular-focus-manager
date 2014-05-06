@@ -1,4 +1,4 @@
-/* global ux, utils, Mousetrap */
+/* global ux, utils */
 ux.service('focusManager', function (focusQuery, focusDispatcher) {
 
     var scope = this,
