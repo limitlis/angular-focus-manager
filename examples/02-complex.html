@@ -69,7 +69,7 @@
 
 <div focus-group focus-group-head="loop" focus-group-tail="stop">
 
-    <select focus-entry>
+    <select>
         <option value="1">One</option>
         <option value="2">Two</option>
         <option value="3">Three</option>
@@ -147,11 +147,10 @@
     </div>
 
     <div focus-group>
-        <a href="" focus-index="3" focus-entry>Link</a>
+        <a href="" focus-index="3">Link</a>
     </div>
 
 </div>
-
 
 <div style="margin-top: 15px" focus-group>
 
@@ -159,12 +158,12 @@
         <div focus-group>
             <a href="" focus-index="3">Link 3</a>
             <a href="" focus-index="2">Link 2</a>
-            <a href="" focus-index="1" focus-entry>Link 1</a>
+            <a href="" focus-index="1">Link 1</a>
         </div>
     </div>
 
     <div focus-group>
-        <a href="" focus-index="3" focus-entry>Link 4</a>
+        <a href="" focus-index="3">Link 4</a>
     </div>
 
 </div>
@@ -191,9 +190,6 @@
     angular.module('app', ['ux'])
             .controller('AppCtrl', function () {
                 this.showModal = false;
-                this.callAction = function () {
-                    console.log('action called', Date.now());
-                }
                 this.toggleDialog = function () {
                     this.showModal = !this.showModal;
                 }

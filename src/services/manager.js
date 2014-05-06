@@ -37,6 +37,7 @@ ux.service('focusManager', function (focusQuery, focusDispatcher) {
      */
     function next() {
         var groupId, elementId;
+
         if (scope.activeElement) {
             groupId = focusQuery.getParentId(scope.activeElement);
             elementId = focusQuery.getElementId(scope.activeElement);
@@ -241,7 +242,11 @@ ux.service('focusManager', function (focusQuery, focusDispatcher) {
             nextElement = getNextElement(els, elementId);
             if (nextElement) {
                 // focus on next element
-                focus(nextElement);
+                if (scope.callback) {
+                    scope.callback(nextElement);
+                } else {
+                    focus(nextElement);
+                }
             } else {
                 // there are no focus elements, go to next child focus group
                 findNextChildGroup(groupId);
@@ -321,7 +326,11 @@ ux.service('focusManager', function (focusQuery, focusDispatcher) {
             prevEl = getPrevElement(els, elementId);
             if (prevEl) {
                 // set focus to next element
-                focus(prevEl);
+                if (scope.callback) {
+                    scope.callback(prevEl);
+                } else {
+                    focus(prevEl);
+                }
             } else {
                 // if there is a parent group then go to it, otherwise check for a loop
                 group = focusQuery.getGroup(groupId);
@@ -364,6 +373,10 @@ ux.service('focusManager', function (focusQuery, focusDispatcher) {
     this.focus = focus;
     this.prev = prev;
     this.next = next;
+
+    this.findPrevChildGroup = findPrevChildGroup;
+    this.findNextElement = findNextElement;
+
     this.canReceiveFocus = canReceiveFocus;
     // used to throttle enable /disable to prevent too many calls
     this.enable = utils.debounce(enable);

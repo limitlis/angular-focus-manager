@@ -77,12 +77,12 @@ ux.directive("focusGroup", function(focusManager, focusQuery, focusDispatcher) {
                         }
                     }
                 }, 100));
-                var els = document.querySelectorAll("[focus-entry]");
-                var i = 0, len = els.length;
-                while (i < len) {
-                    focusQuery.setTabIndex(els[i], null);
-                    i += 1;
-                }
+                focusManager.callback = function(el) {
+                    focusQuery.setTabIndex(el, null);
+                };
+                focusManager.findPrevChildGroup(groupName);
+                focusManager.findNextElement(groupName);
+                focusManager.callback = null;
             }
         }, 10);
         groupName = compile(el);
@@ -93,8 +93,24 @@ ux.directive("focusGroup", function(focusManager, focusQuery, focusDispatcher) {
     };
 });
 
-ux.directive("focusHighlight", function(focusManager, focusDispatcher) {
-    var dispatcher = focusDispatcher();
+ux.directive("focusHighlight", function(focusManager) {
+    function getOffsetRect(elem) {
+        var box = elem.getBoundingClientRect();
+        var body = document.body;
+        var docElem = document.documentElement;
+        var scrollTop = window.pageYOffset || docElem.scrollTop || body.scrollTop;
+        var scrollLeft = window.pageXOffset || docElem.scrollLeft || body.scrollLeft;
+        var clientTop = docElem.clientTop || body.clientTop || 0;
+        var clientLeft = docElem.clientLeft || body.clientLeft || 0;
+        var top = box.top + scrollTop - clientTop;
+        var left = box.left + scrollLeft - clientLeft;
+        return {
+            top: Math.round(top),
+            left: Math.round(left),
+            width: box.width,
+            height: box.height
+        };
+    }
     return {
         scope: true,
         replace: true,
@@ -102,7 +118,7 @@ ux.directive("focusHighlight", function(focusManager, focusDispatcher) {
             var el = element[0];
             document.addEventListener("focus", utils.throttle(function(evt) {
                 if (focusManager.canReceiveFocus(evt.target)) {
-                    var rect = evt.target.getBoundingClientRect();
+                    var rect = getOffsetRect(evt.target);
                     el.style.left = rect.left + "px";
                     el.style.top = rect.top + "px";
                     el.style.width = rect.width + "px";
@@ -509,7 +525,11 @@ ux.service("focusManager", function(focusQuery, focusDispatcher) {
             els = focusQuery.getGroupElements(groupId);
             nextElement = getNextElement(els, elementId);
             if (nextElement) {
-                focus(nextElement);
+                if (scope.callback) {
+                    scope.callback(nextElement);
+                } else {
+                    focus(nextElement);
+                }
             } else {
                 findNextChildGroup(groupId);
             }
@@ -559,7 +579,11 @@ ux.service("focusManager", function(focusQuery, focusDispatcher) {
             els = focusQuery.getGroupElements(groupId);
             prevEl = getPrevElement(els, elementId);
             if (prevEl) {
-                focus(prevEl);
+                if (scope.callback) {
+                    scope.callback(prevEl);
+                } else {
+                    focus(prevEl);
+                }
             } else {
                 group = focusQuery.getGroup(groupId);
                 containerId = focusQuery.getContainerId(group);
@@ -596,6 +620,8 @@ ux.service("focusManager", function(focusQuery, focusDispatcher) {
     this.focus = focus;
     this.prev = prev;
     this.next = next;
+    this.findPrevChildGroup = findPrevChildGroup;
+    this.findNextElement = findNextElement;
     this.canReceiveFocus = canReceiveFocus;
     this.enable = utils.debounce(enable);
     this.disable = utils.debounce(disable);
