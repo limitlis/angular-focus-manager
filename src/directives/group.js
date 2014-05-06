@@ -1,8 +1,9 @@
+/* global ux, utils */
 ux.directive('focusGroup', function (focusManager, focusQuery, focusDispatcher) {
 
-    var groupId = 1;
-    var elementId = 1;
-    var dispatcher = focusDispatcher();
+    var groupId = 1,
+        elementId = 1,
+        dispatcher = focusDispatcher();
 
     function compile(el) {
         var els, i, len, elementName;
@@ -69,7 +70,7 @@ ux.directive('focusGroup', function (focusManager, focusQuery, focusDispatcher) 
 
                 focusManager.callback = function (el) {
                     focusQuery.setTabIndex(el, null);
-                }
+                };
                 focusManager.findPrevChildGroup(groupName);
                 focusManager.findNextElement(groupName);
 
@@ -78,7 +79,7 @@ ux.directive('focusGroup', function (focusManager, focusQuery, focusDispatcher) 
             }
         }, 10);
 
-        groupName = compile(el)
+        groupName = compile(el);
     }
 
     return {

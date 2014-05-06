@@ -1,3 +1,4 @@
+/* global ux, utils, Mousetrap */
 ux.service('focusMouse', function (focusManager, focusQuery) {
 
     var scope = this;
@@ -20,7 +21,7 @@ ux.service('focusMouse', function (focusManager, focusQuery) {
             focusManager.focus(evt.target);
 
             var parentId = focusQuery.getParentId(evt.target);
-            if(parentId) {
+            if (parentId) {
                 focusManager.enable();
             } else {
                 focusManager.disable();

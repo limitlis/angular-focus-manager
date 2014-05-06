@@ -1,3 +1,4 @@
+/* global ux, utils */
 String.prototype.supplant = function (o) {
     'use strict';
     return this.replace(

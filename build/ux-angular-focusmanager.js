@@ -27,9 +27,7 @@ ux.directive("focusElement", function(focusManager, focusQuery) {
 });
 
 ux.directive("focusGroup", function(focusManager, focusQuery, focusDispatcher) {
-    var groupId = 1;
-    var elementId = 1;
-    var dispatcher = focusDispatcher();
+    var groupId = 1, elementId = 1, dispatcher = focusDispatcher();
     function compile(el) {
         var els, i, len, elementName;
         var groupName = "group-" + groupId;
@@ -226,8 +224,7 @@ ux.factory("focusDispatcher", function() {
 });
 
 ux.service("focusKeyboard", function(focusManager) {
-    var tabKeysEnabled = false;
-    var arrowKeysEnabled = false;
+    var tabKeysEnabled = false, arrowKeysEnabled = false;
     function enableTabKeys() {
         if (!tabKeysEnabled) {
             tabKeysEnabled = true;
@@ -241,19 +238,11 @@ ux.service("focusKeyboard", function(focusManager) {
     function enableArrowKeys() {
         if (!arrowKeysEnabled) {
             arrowKeysEnabled = true;
-            Mousetrap.bind("up", onFocusPrev);
-            Mousetrap.bind("left", onFocusPrev);
-            Mousetrap.bind("down", onFocusNext);
-            Mousetrap.bind("right", onFocusNext);
         }
     }
     function disableArrowKeys() {
         if (arrowKeysEnabled) {
             arrowKeysEnabled = false;
-            Mousetrap.unbind("up", onFocusPrev);
-            Mousetrap.unbind("left", onFocusPrev);
-            Mousetrap.unbind("down", onFocusNext);
-            Mousetrap.unbind("right", onFocusNext);
         }
     }
     function toggleTabArrowKeys() {
@@ -295,13 +284,11 @@ ux.service("focusKeyboard", function(focusManager) {
         return false;
     }
     function fireEvent(node, eventName) {
-        var doc;
+        var doc, event;
         if (node.ownerDocument) {
             doc = node.ownerDocument;
-        } else if (node.nodeType == 9) {
+        } else if (node.nodeType === 9) {
             doc = node;
-        } else {
-            throw new Error("Invalid node passed to fireEvent: " + node.id);
         }
         if (node.dispatchEvent) {
             var eventClass = "";
@@ -311,25 +298,14 @@ ux.service("focusKeyboard", function(focusManager) {
               case "mouseup":
                 eventClass = "MouseEvents";
                 break;
-
-              case "focus":
-              case "change":
-              case "blur":
-              case "select":
-                eventClass = "HTMLEvents";
-                break;
-
-              default:
-                throw "fireEvent: Couldn't find an event class for event '" + eventName + "'.";
-                break;
             }
-            var event = doc.createEvent(eventClass);
-            var bubbles = eventName == "change" ? false : true;
+            event = doc.createEvent(eventClass);
+            var bubbles = eventName === "change" ? false : true;
             event.initEvent(eventName, bubbles, true);
             event.synthetic = true;
             node.dispatchEvent(event, true);
         } else if (node.fireEvent) {
-            var event = doc.createEventObject();
+            event = doc.createEventObject();
             event.synthetic = true;
             node.fireEvent("on" + eventName, event);
         }
@@ -351,14 +327,16 @@ ux.service("focusKeyboard", function(focusManager) {
             }
         }
         if (arrowKeysEnabled) {
-            if (evt.keyCode === 37) {
-                onFocusPrev(evt);
-            } else if (evt.keyCode === 38) {
-                onFocusPrev(evt);
-            } else if (evt.keyCode === 39) {
-                onFocusNext(evt);
-            } else if (evt.keyCode === 40) {
-                onFocusNext(evt);
+            if (!(evt.shiftKey || evt.altKey || evt.ctrlKey)) {
+                if (evt.keyCode === 37) {
+                    onFocusPrev(evt);
+                } else if (evt.keyCode === 38) {
+                    onFocusPrev(evt);
+                } else if (evt.keyCode === 39) {
+                    onFocusNext(evt);
+                } else if (evt.keyCode === 40) {
+                    onFocusNext(evt);
+                }
             }
         }
     }
@@ -370,14 +348,13 @@ ux.service("focusKeyboard", function(focusManager) {
     this.disableArrowKeys = disableArrowKeys;
     this.toggleTabArrowKeys = toggleTabArrowKeys;
     this.triggerClick = triggerClick;
-}).run(function(focusKeyboard, focusDispatcher, focusManager) {
+}).run(function(focusKeyboard) {
     focusKeyboard.enable();
     focusKeyboard.enableTabKeys();
 });
 
 ux.service("focusManager", function(focusQuery, focusDispatcher) {
-    var scope = this;
-    var dispatcher = focusDispatcher();
+    var scope = this, dispatcher = focusDispatcher();
     function focus(el) {
         if (typeof el === "undefined") {
             return scope.activeElement;
@@ -889,8 +866,6 @@ ux.service("focusQuery", function() {
     this.canReceiveFocus = canReceiveFocus;
 });
 
-var exports = {};
-
 var utils = {};
 
 utils.addEvent = function(object, type, callback) {
@@ -918,12 +893,14 @@ utils.debounce = function(func, wait, immediate) {
             timeout = null;
             if (!immediate) func.apply(context, args);
         }, wait);
-        if (immediate && !timeout) func.apply(context, args);
+        if (immediate && !timeout) {
+            func.apply(context, args);
+        }
     };
 };
 
 utils.throttle = function(func, threshhold, scope) {
-    threshhold || (threshhold = 250);
+    threshhold = threshhold || 250;
     var last, deferTimer;
     return function() {
         var context = scope || this;

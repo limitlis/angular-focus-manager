@@ -1,3 +1,4 @@
+/* global ux, utils */
 ux.directive('focusElement', function (focusManager, focusQuery) {
 
     return {

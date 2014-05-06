@@ -1,7 +1,8 @@
+/* global ux, utils, Mousetrap */
 ux.service('focusManager', function (focusQuery, focusDispatcher) {
 
-    var scope = this;
-    var dispatcher = focusDispatcher();
+    var scope = this,
+        dispatcher = focusDispatcher();
 
     /**
      * Set the focus to a particular element
@@ -370,6 +371,7 @@ ux.service('focusManager', function (focusQuery, focusDispatcher) {
 
     this.enabled = false;
     this.activeElement = null;
+
     this.focus = focus;
     this.prev = prev;
     this.next = next;
@@ -378,6 +380,7 @@ ux.service('focusManager', function (focusQuery, focusDispatcher) {
     this.findNextElement = findNextElement;
 
     this.canReceiveFocus = canReceiveFocus;
+
     // used to throttle enable /disable to prevent too many calls
     this.enable = utils.debounce(enable);
     this.disable = utils.debounce(disable);

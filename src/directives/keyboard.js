@@ -1,3 +1,4 @@
+/* global ux, utils, Mousetrap */
 ux.directive('focusKeyboard', function (focusManager) {
     return {
         link: function (scope, element, attrs) {

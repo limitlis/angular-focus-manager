@@ -1,7 +1,8 @@
+/* global ux, utils, Mousetrap */
 ux.service('focusKeyboard', function (focusManager) {
 
-    var tabKeysEnabled = false;
-    var arrowKeysEnabled = false;
+    var tabKeysEnabled = false,
+        arrowKeysEnabled = false;
 
     function enableTabKeys() {
         if (!tabKeysEnabled) {
@@ -18,20 +19,12 @@ ux.service('focusKeyboard', function (focusManager) {
     function enableArrowKeys() {
         if (!arrowKeysEnabled) {
             arrowKeysEnabled = true;
-            Mousetrap.bind('up', onFocusPrev);
-            Mousetrap.bind('left', onFocusPrev);
-            Mousetrap.bind('down', onFocusNext);
-            Mousetrap.bind('right', onFocusNext);
         }
     }
 
     function disableArrowKeys() {
         if (arrowKeysEnabled) {
             arrowKeysEnabled = false;
-            Mousetrap.unbind('up', onFocusPrev);
-            Mousetrap.unbind('left', onFocusPrev);
-            Mousetrap.unbind('down', onFocusNext);
-            Mousetrap.unbind('right', onFocusNext);
         }
     }
 
@@ -88,15 +81,16 @@ ux.service('focusKeyboard', function (focusManager) {
 
     function fireEvent(node, eventName) {
         // Make sure we use the ownerDocument from the provided node to avoid cross-window problems
-        var doc;
+        var doc, event;
         if (node.ownerDocument) {
             doc = node.ownerDocument;
-        } else if (node.nodeType == 9) {
+        } else if (node.nodeType === 9) {
             // the node may be the document itself, nodeType 9 = DOCUMENT_NODE
             doc = node;
-        } else {
-            throw new Error("Invalid node passed to fireEvent: " + node.id);
         }
+//        else {
+//            throw new Error("Invalid node passed to fireEvent: " + node.id);
+//        }
 
         if (node.dispatchEvent) {
             // Gecko-style approach (now the standard) takes more work
@@ -112,20 +106,20 @@ ux.service('focusKeyboard', function (focusManager) {
                     eventClass = "MouseEvents";
                     break;
 
-                case "focus":
-                case "change":
-                case "blur":
-                case "select":
-                    eventClass = "HTMLEvents";
-                    break;
+//                case "focus":
+//                case "change":
+//                case "blur":
+//                case "select":
+//                    eventClass = "HTMLEvents";
+//                    break;
 
-                default:
-                    throw "fireEvent: Couldn't find an event class for event '" + eventName + "'.";
-                    break;
+//                default:
+//                    throw "fireEvent: Couldn't find an event class for event '" + eventName + "'.";
+//                    break;
             }
-            var event = doc.createEvent(eventClass);
+            event = doc.createEvent(eventClass);
 
-            var bubbles = eventName == "change" ? false : true;
+            var bubbles = eventName === "change" ? false : true;
             event.initEvent(eventName, bubbles, true); // All events created as bubbling and cancelable.
 
             event.synthetic = true; // allow detection of synthetic events
@@ -133,11 +127,11 @@ ux.service('focusKeyboard', function (focusManager) {
             node.dispatchEvent(event, true);
         } else if (node.fireEvent) {
             // IE-old school style
-            var event = doc.createEventObject();
+            event = doc.createEventObject();
             event.synthetic = true; // allow detection of synthetic events
             node.fireEvent("on" + eventName, event);
         }
-    };
+    }
 
     function enable() {
         utils.addEvent(document, 'keydown', onKeyDown);
@@ -149,7 +143,7 @@ ux.service('focusKeyboard', function (focusManager) {
 
     function onKeyDown(evt) {
         if (tabKeysEnabled) {
-            if (evt.keyCode === 9) {
+            if (evt.keyCode === 9) { // tab
                 if (evt.shiftKey) {
                     onFocusPrev(evt);
                 } else {
@@ -159,14 +153,16 @@ ux.service('focusKeyboard', function (focusManager) {
         }
 
         if (arrowKeysEnabled) {
-            if (evt.keyCode === 37) {
-                onFocusPrev(evt);
-            } else if (evt.keyCode === 38) {
-                onFocusPrev(evt);
-            } else if (evt.keyCode === 39) {
-                onFocusNext(evt);
-            } else if (evt.keyCode === 40) {
-                onFocusNext(evt);
+            if (!(evt.shiftKey || evt.altKey || evt.ctrlKey)) {
+                if (evt.keyCode === 37) { // left arrow
+                    onFocusPrev(evt);
+                } else if (evt.keyCode === 38) { // up arrow
+                    onFocusPrev(evt);
+                } else if (evt.keyCode === 39) { //right arrow
+                    onFocusNext(evt);
+                } else if (evt.keyCode === 40) { // down arrow
+                    onFocusNext(evt);
+                }
             }
         }
     }
@@ -180,7 +176,7 @@ ux.service('focusKeyboard', function (focusManager) {
     this.toggleTabArrowKeys = toggleTabArrowKeys;
     this.triggerClick = triggerClick;
 })
-    .run(function (focusKeyboard, focusDispatcher, focusManager) {
+    .run(function (focusKeyboard) {
         focusKeyboard.enable();
         focusKeyboard.enableTabKeys();
     });

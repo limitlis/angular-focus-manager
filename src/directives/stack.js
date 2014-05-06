@@ -1,3 +1,4 @@
+/* global ux, utils */
 ux.directive('focusStack', function (focusManager, focusQuery) {
     var stack = [];
     return {
@@ -14,5 +15,5 @@ ux.directive('focusStack', function (focusManager, focusQuery) {
                 }
             });
         }
-    }
+    };
 });
