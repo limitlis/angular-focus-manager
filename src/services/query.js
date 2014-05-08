@@ -10,6 +10,7 @@ ux.service('focusQuery', function () {
 
     var tabIndex = 'tabindex';
     var focusGroup = 'focus-group';
+    var focusGroupIndex = 'focus-group-index';
     var focusGroupHead = 'focus-group-head';
     var focusGroupTail = 'focus-group-tail';
     var focusElement = 'focus-element';
@@ -18,6 +19,10 @@ ux.service('focusQuery', function () {
     var selectable = 'A,SELECT,BUTTON,INPUT,TEXTAREA,*[focus-index]';
 
     function canReceiveFocus(el) {
+        if (!el) {
+            return false;
+        }
+
         var isSelectable = new RegExp(el.nodeName.toUpperCase()).test(selectable);
 
         if (!isSelectable) {
@@ -64,13 +69,16 @@ ux.service('focusQuery', function () {
             returnVal.push(els[i]);
             i += 1;
         }
-
         returnVal.sort(sortByGroupIndex);
-
+//        returnVal = sort(returnVal, sortByGroupIndex);
         return returnVal;
     }
 
     function getElementsWithoutParents(el) {
+
+        if (!el) {
+            return [];
+        }
 
         var query = 'A:not({focusParentId}),' +
             'SELECT:not({focusParentId}),' +
@@ -85,6 +93,10 @@ ux.service('focusQuery', function () {
     }
 
     function getGroupsWithoutContainers(el) {
+        if (!el) {
+            return [];
+        }
+
         var q = '[' + focusGroupId + ']:not([' + focusContainerId + '])';
         return el.querySelectorAll(q);
     }
@@ -122,12 +134,17 @@ ux.service('focusQuery', function () {
         }
 
         returnVal.sort(sortByTabIndex);
+//        returnVal = sort(returnVal, sortByTabIndex);
 
         return returnVal;
 
     }
 
     function isVisible(el) {
+        if (!el) {
+            return false;
+        }
+
         if (el.parentNode.nodeType === 9) {
             return true;
         }
@@ -152,19 +169,43 @@ ux.service('focusQuery', function () {
     }
 
     function isAutofocus(el) {
-        return el.getAttribute(focusElement) === 'autofocus';
+        if (el) {
+            return el.getAttribute(focusElement) === 'autofocus';
+        }
+        return false;
     }
 
     function isEnabled(el) {
-        return el.getAttribute(focusEnabled) !== 'false';
+        if (el) {
+            return el.getAttribute(focusEnabled) !== 'false';
+        }
+        return false;
+    }
+
+    function hasGroupHead(el) {
+        if (el) {
+            return el.hasAttribute(focusGroupHead);
+        }
+        return false;
     }
 
     function getGroupHead(el) {
-        return el.getAttribute(focusGroupHead);
+        if (el) {
+            return el.getAttribute(focusGroupHead);
+        }
+    }
+
+    function hasGroupTail(el) {
+        if (el) {
+            return el.hasAttribute(focusGroupTail);
+        }
+        return false;
     }
 
     function getGroupTail(el) {
-        return el.getAttribute(focusGroupTail);
+        if (el) {
+            return el.getAttribute(focusGroupTail);
+        }
     }
 
     function getElement(elementId) {
@@ -176,7 +217,9 @@ ux.service('focusQuery', function () {
     }
 
     function getGroup(groupId) {
-        return document.querySelector('[' + focusGroupId + '="' + groupId + '"]');
+        if (groupId) {
+            return document.querySelector('[' + focusGroupId + '="' + groupId + '"]');
+        }
     }
 
     function isGroupStrict(groupId) {
@@ -185,7 +228,9 @@ ux.service('focusQuery', function () {
     }
 
     function getElementId(el) {
-        return el.getAttribute(focusElementId);
+        if (el) {
+            return el.getAttribute(focusElementId);
+        }
     }
 
     function setElementId(el, id) {
@@ -193,7 +238,9 @@ ux.service('focusQuery', function () {
     }
 
     function getGroupId(el) {
-        return el.getAttribute(focusGroupId);
+        if (el) {
+            return el.getAttribute(focusGroupId);
+        }
     }
 
     function setGroupId(el, id) {
@@ -201,7 +248,9 @@ ux.service('focusQuery', function () {
     }
 
     function getParentId(el) {
-        return el.getAttribute(focusParentId);
+        if (el) {
+            return el.getAttribute(focusParentId);
+        }
     }
 
     function setParentId(el, id) {
@@ -209,7 +258,9 @@ ux.service('focusQuery', function () {
     }
 
     function getContainerId(el) {
-        return el.getAttribute(focusContainerId);
+        if (el) {
+            return el.getAttribute(focusContainerId);
+        }
     }
 
     function setContainerId(el, id) {
@@ -229,18 +280,40 @@ ux.service('focusQuery', function () {
 
     function contains(container, el) {
         var parent = el.parentNode;
-        while (parent.nodeType !== 9) {
-            if (parent === container) {
-                return true;
+        if (parent) {
+            while (parent.nodeType !== 9) {
+                if (parent === container) {
+                    return true;
+                }
+                parent = parent.parentNode;
             }
-            parent = parent.parentNode;
         }
         return false;
     }
 
+    function sort(list, compareFn) {
+        var i = 0,
+            len = list.length - 1,
+            holder;
+        if (!compareFn) { // default compare function.
+            compareFn = function (a, b) {
+                return a > b ? 1 : (a < b ? -1 : 0);
+            };
+        }
+        while (i < len) {
+            if (compareFn(list[i], list[i + 1]) > 0) {
+                holder = list[i + 1];
+                list[i + 1] = list[i];
+                list[i] = holder;
+            }
+            i = i + 1;
+        }
+        return list;
+    }
+
     function sortByTabIndex(a, b) {
-        var aTabIndex = a.getAttribute('focus-index') || Number.POSITIVE_INFINITY;
-        var bTabIndex = b.getAttribute('focus-index') || Number.POSITIVE_INFINITY;
+        var aTabIndex = a.getAttribute(focusIndex) || Number.POSITIVE_INFINITY;
+        var bTabIndex = b.getAttribute(focusIndex) || Number.POSITIVE_INFINITY;
 
         if (aTabIndex < bTabIndex) {
             return -1;
@@ -252,8 +325,8 @@ ux.service('focusQuery', function () {
     }
 
     function sortByGroupIndex(a, b) {
-        var aGroupIndex = a.getAttribute('focus-group-index') || Number.POSITIVE_INFINITY;
-        var bGroupIndex = b.getAttribute('focus-group-index') || Number.POSITIVE_INFINITY;
+        var aGroupIndex = a.getAttribute(focusGroupIndex) || Number.POSITIVE_INFINITY;
+        var bGroupIndex = b.getAttribute(focusGroupIndex) || Number.POSITIVE_INFINITY;
 
         if (aGroupIndex < bGroupIndex) {
             return -1;
@@ -263,6 +336,18 @@ ux.service('focusQuery', function () {
         }
         return 0;
     }
+
+//    function sortByTabIndex(a, b) {
+//        var compA = a.attributes[focusIndex] ? Number(a.attributes[focusIndex].value) : Number.POSITIVE_INFINITY,
+//            compB = b.attributes[focusIndex] ? Number(b.attributes[focusIndex].value) : Number.POSITIVE_INFINITY;
+//        return compA - compB;
+//    }
+//
+//    function sortByGroupIndex(a, b) {
+//        var compA = a.attributes[focusGroupIndex] ? Number(a.attributes[focusGroupIndex].value) : Number.POSITIVE_INFINITY,
+//            compB = b.attributes[focusGroupIndex] ? Number(b.attributes[focusGroupIndex].value) : Number.POSITIVE_INFINITY;
+//        return compA - compB;
+//    }
 
     this.getElement = getElement;
     this.getElementId = getElementId;
@@ -281,6 +366,8 @@ ux.service('focusQuery', function () {
     this.getElementsWithoutParents = getElementsWithoutParents;
     this.getGroupsWithoutContainers = getGroupsWithoutContainers;
     this.isAutofocus = isAutofocus;
+    this.hasGroupHead = hasGroupHead;
+    this.hasGroupTail = hasGroupTail;
     this.getGroupHead = getGroupHead;
     this.getGroupTail = getGroupTail;
     this.isEnabled = isEnabled;

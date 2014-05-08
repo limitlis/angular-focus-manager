@@ -165,6 +165,11 @@ ux.service('focusKeyboard', function (focusManager) {
                 }
             }
         }
+        if (!(evt.shiftKey || evt.altKey || evt.ctrlKey)) {
+            if (evt.keyCode === 13) {
+                triggerClick(evt);
+            }
+        }
     }
 
     this.enable = enable;

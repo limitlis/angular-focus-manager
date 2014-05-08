@@ -14,7 +14,7 @@ ux.service('focusMouse', function (focusManager, focusQuery) {
     }
 
     function onMouseDown(evt) {
-        if (scope.enabled) {
+        if (focusManager.enabled) {
             return;
         }
         if (focusManager.canReceiveFocus(evt.target)) {

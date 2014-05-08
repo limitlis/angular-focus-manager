@@ -3,18 +3,14 @@ ux.directive('focusGroup', function (focusManager, focusQuery, focusDispatcher) 
 
     var groupId = 1,
         elementId = 1,
-        dispatcher = focusDispatcher();
+        dispatcher = focusDispatcher(),
+        delay = 100;
 
-    function compile(el) {
+    function compile(groupName, el) {
         var els, i, len, elementName;
-
-        var groupName = 'group-' + groupId;
-
-        focusQuery.setGroupId(el, groupName);
 
         els = focusQuery.getElementsWithoutParents(el);
         len = els.length;
-
         i = 0;
         while (i < len) {
             elementName = 'element-' + elementId;
@@ -34,25 +30,47 @@ ux.directive('focusGroup', function (focusManager, focusQuery, focusDispatcher) 
             i += 1;
         }
 
-        groupId += 1;
-
         return groupName;
-
     }
 
     function linker(scope, element, attr) {
 
         var el = element[0];
-        var groupName = null;
+        var groupName = 'group-' + (groupId++);
         var bound = false;
+        var cacheHtml = '';
+        var cacheCount = 0;
+        var newCacheHtml = '';
+        var newCacheCount = 0;
 
-        el.addEventListener('focus', function () {
-            focusManager.enable();
-        }, true);
+        function init() {
+            scope.$on('focus::' + groupName, function(){
+                compile(groupName, el);
+            });
 
-        // using timeout to allow all groups to digest before performing container check
-        setTimeout(function () {
-            if (!focusQuery.getContainerId(el)) {
+            if (!focusQuery.getContainerId(el)) { // this is an isolate focus group
+
+                cacheHtml = el.innerHTML;
+                cacheCount = cacheHtml.match(/<\w+/g).length;
+
+                scope.$watch(utils.debounce(function () {
+                    newCacheHtml = el.innerHTML;
+                    if (cacheHtml !== newCacheHtml) {
+                        newCacheCount = newCacheHtml.match(/<\w+/g).length;
+                        if (cacheCount !== newCacheCount) {
+                            var els = el.querySelectorAll('[focus-group]');
+                            var i = els.length, groupId;
+                            while (i) {
+                                i -= 1;
+                                groupId = els[i].getAttribute('focus-group-id');
+                                scope.$broadcast('focus::' + groupId);
+                            }
+                        }
+                        cacheHtml = newCacheHtml;
+                        cacheCount = newCacheCount;
+                    }
+                }, delay));
+
                 dispatcher.on('focusin', utils.debounce(function (evt) {
                     // if group contains target then bind keys
                     if (focusQuery.contains(el, evt.newTarget)) {
@@ -66,7 +84,7 @@ ux.directive('focusGroup', function (focusManager, focusQuery, focusDispatcher) 
                             scope.$broadcast('unbindKeys');
                         }
                     }
-                }, 100));
+                }, delay));
 
                 focusManager.callback = function (el) {
                     focusQuery.setTabIndex(el, null);
@@ -75,15 +93,24 @@ ux.directive('focusGroup', function (focusManager, focusQuery, focusDispatcher) 
                 focusManager.findNextElement(groupName);
 
                 focusManager.callback = null;
-
             }
-        }, 10);
+        }
 
-        groupName = compile(el);
+        function onFocus() {
+            focusManager.enable();
+        }
+
+        el.addEventListener('focus', onFocus, true);
+
+        // using timeout to allow all groups to digest before performing container check
+        setTimeout(init, delay);
+
+        focusQuery.setGroupId(el, groupName);
+        compile(groupName, el);
     }
 
     return {
-        scope: true,
+//        scope: true,
         link: linker
     };
 

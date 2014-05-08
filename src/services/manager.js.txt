@@ -178,7 +178,7 @@ ux.service('focusManager', function (focusQuery, focusDispatcher) {
         group = focusQuery.getGroup(groupId);
         hasTail = focusQuery.hasGroupTail(group);
 
-        if (hasTail || !containerId) {
+        if (hasTail) {
             findNextStep(groupId);
         } else {
             containerId = focusQuery.getContainerId(group);
@@ -360,9 +360,8 @@ ux.service('focusManager', function (focusQuery, focusDispatcher) {
         var containerId, group, hasHead;
         group = focusQuery.getGroup(groupId);
         hasHead = focusQuery.hasGroupHead(group);
-        containerId = focusQuery.getContainerId(group);
         // if there is a parent group then go to it, otherwise check for a loop
-        if (hasHead || !containerId) {
+        if (hasHead) {
             // if there was no parent group, we are at the top of the isolate group
             var head = focusQuery.getGroupHead(group);
             if (head === 'loop') {
@@ -371,6 +370,7 @@ ux.service('focusManager', function (focusQuery, focusDispatcher) {
                 disable();
             }
         } else {
+            containerId = focusQuery.getContainerId(group);
             findPrevGroup(containerId, groupId);
         }
     }

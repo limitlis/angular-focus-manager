@@ -87,11 +87,9 @@ ux.directive("focusElement", function(focusManager, focusQuery) {
 });
 
 ux.directive("focusGroup", function(focusManager, focusQuery, focusDispatcher) {
-    var groupId = 1, elementId = 1, dispatcher = focusDispatcher();
-    function compile(el) {
+    var groupId = 1, elementId = 1, dispatcher = focusDispatcher(), delay = 100;
+    function compile(groupName, el) {
         var els, i, len, elementName;
-        var groupName = "group-" + groupId;
-        focusQuery.setGroupId(el, groupName);
         els = focusQuery.getElementsWithoutParents(el);
         len = els.length;
         i = 0;
@@ -110,18 +108,40 @@ ux.directive("focusGroup", function(focusManager, focusQuery, focusDispatcher) {
             focusQuery.setContainerId(els[i], groupName);
             i += 1;
         }
-        groupId += 1;
         return groupName;
     }
     function linker(scope, element, attr) {
         var el = element[0];
-        var groupName = null;
+        var groupName = "group-" + groupId++;
         var bound = false;
-        el.addEventListener("focus", function() {
-            focusManager.enable();
-        }, true);
-        setTimeout(function() {
+        var cacheHtml = "";
+        var cacheCount = 0;
+        var newCacheHtml = "";
+        var newCacheCount = 0;
+        function init() {
+            scope.$on("focus::" + groupName, function() {
+                compile(groupName, el);
+            });
             if (!focusQuery.getContainerId(el)) {
+                cacheHtml = el.innerHTML;
+                cacheCount = cacheHtml.match(/<\w+/g).length;
+                scope.$watch(utils.debounce(function() {
+                    newCacheHtml = el.innerHTML;
+                    if (cacheHtml !== newCacheHtml) {
+                        newCacheCount = newCacheHtml.match(/<\w+/g).length;
+                        if (cacheCount !== newCacheCount) {
+                            var els = el.querySelectorAll("[focus-group]");
+                            var i = els.length, groupId;
+                            while (i) {
+                                i -= 1;
+                                groupId = els[i].getAttribute("focus-group-id");
+                                scope.$broadcast("focus::" + groupId);
+                            }
+                        }
+                        cacheHtml = newCacheHtml;
+                        cacheCount = newCacheCount;
+                    }
+                }, delay));
                 dispatcher.on("focusin", utils.debounce(function(evt) {
                     if (focusQuery.contains(el, evt.newTarget)) {
                         if (bound === false) {
@@ -134,7 +154,7 @@ ux.directive("focusGroup", function(focusManager, focusQuery, focusDispatcher) {
                             scope.$broadcast("unbindKeys");
                         }
                     }
-                }, 100));
+                }, delay));
                 focusManager.callback = function(el) {
                     focusQuery.setTabIndex(el, null);
                 };
@@ -142,11 +162,16 @@ ux.directive("focusGroup", function(focusManager, focusQuery, focusDispatcher) {
                 focusManager.findNextElement(groupName);
                 focusManager.callback = null;
             }
-        }, 10);
-        groupName = compile(el);
+        }
+        function onFocus() {
+            focusManager.enable();
+        }
+        el.addEventListener("focus", onFocus, true);
+        setTimeout(init, delay);
+        focusQuery.setGroupId(el, groupName);
+        compile(groupName, el);
     }
     return {
-        scope: true,
         link: linker
     };
 });
@@ -307,6 +332,11 @@ ux.service("focusKeyboard", function(focusManager) {
                 }
             }
         }
+        if (!(evt.shiftKey || evt.altKey || evt.ctrlKey)) {
+            if (evt.keyCode === 13) {
+                triggerClick(evt);
+            }
+        }
     }
     this.enable = enable;
     this.disable = disable;
@@ -424,33 +454,41 @@ ux.service("focusManager", function(focusQuery, focusDispatcher) {
         }
     }
     function findNextGroup(containerId, groupId) {
-        var group, groups, nextGroup, nextGroupId, parentContainer, parentContainerId;
-        if (containerId) {
+        var group, groups, nextGroup, nextGroupId, parentContainer, parentContainerId, hasTail;
+        group = focusQuery.getGroup(groupId);
+        hasTail = focusQuery.hasGroupTail(group);
+        if (hasTail || !containerId) {
+            findNextStep(groupId);
+        } else {
+            containerId = focusQuery.getContainerId(group);
             groups = focusQuery.getChildGroups(containerId);
             nextGroup = getNextGroup(groups, groupId);
             if (nextGroup) {
                 nextGroupId = focusQuery.getGroupId(nextGroup);
-                findNextElement(nextGroupId);
+                return findNextElement(nextGroupId);
             } else {
                 parentContainer = focusQuery.getGroup(containerId);
                 parentContainerId = focusQuery.getContainerId(parentContainer);
-                findNextGroup(parentContainerId, containerId);
+                return findNextGroup(parentContainerId, containerId);
+            }
+        }
+    }
+    function findNextStep(groupId) {
+        var group, tail;
+        group = focusQuery.getGroup(groupId);
+        tail = focusQuery.getGroupTail(group);
+        if (groupId) {
+            if (tail === "stop") {
+                return;
+            }
+            if (!tail) {
+                disable();
+                return;
             }
         } else {
-            if (groupId) {
-                group = focusQuery.getGroup(groupId);
-                var tail = focusQuery.getGroupTail(group);
-                if (tail === "stop") {
-                    return;
-                } else if (!tail) {
-                    disable();
-                    return;
-                }
-            } else {
-                groupId = focusQuery.getFirstGroupId();
-            }
-            findNextElement(groupId);
+            groupId = focusQuery.getFirstGroupId();
         }
+        findNextElement(groupId);
     }
     function findNextChildGroup(groupId) {
         var groups, group, nextGroupId, containerId;
@@ -519,7 +557,7 @@ ux.service("focusManager", function(focusQuery, focusDispatcher) {
         }
     }
     function findPrevElement(groupId, elementId) {
-        var els, prevEl, group, containerId;
+        var els, prevEl, group, hasHead;
         if (groupId) {
             els = focusQuery.getGroupElements(groupId);
             prevEl = getPrevElement(els, elementId);
@@ -530,21 +568,26 @@ ux.service("focusManager", function(focusQuery, focusDispatcher) {
                     focus(prevEl);
                 }
             } else {
-                group = focusQuery.getGroup(groupId);
-                containerId = focusQuery.getContainerId(group);
-                if (containerId) {
-                    findPrevGroup(containerId, groupId);
-                } else {
-                    var tail = focusQuery.getGroupHead(group);
-                    if (tail === "loop") {
-                        findPrevChildGroup(groupId);
-                    } else if (!tail) {
-                        disable();
-                    }
-                }
+                findPrevStep(groupId);
             }
         } else {
             findPrevChildGroup();
+        }
+    }
+    function findPrevStep(groupId) {
+        var containerId, group, hasHead;
+        group = focusQuery.getGroup(groupId);
+        hasHead = focusQuery.hasGroupHead(group);
+        containerId = focusQuery.getContainerId(group);
+        if (hasHead || !containerId) {
+            var head = focusQuery.getGroupHead(group);
+            if (head === "loop") {
+                findPrevChildGroup(groupId);
+            } else if (!head) {
+                disable();
+            }
+        } else {
+            findPrevGroup(containerId, groupId);
         }
     }
     function enable() {
@@ -583,7 +626,7 @@ ux.service("focusMouse", function(focusManager, focusQuery) {
         utils.removeEvent(document, "mousedown", onMouseDown);
     }
     function onMouseDown(evt) {
-        if (scope.enabled) {
+        if (focusManager.enabled) {
             return;
         }
         if (focusManager.canReceiveFocus(evt.target)) {
@@ -610,6 +653,7 @@ ux.service("focusQuery", function() {
     var focusContainerId = "focus-container-id";
     var tabIndex = "tabindex";
     var focusGroup = "focus-group";
+    var focusGroupIndex = "focus-group-index";
     var focusGroupHead = "focus-group-head";
     var focusGroupTail = "focus-group-tail";
     var focusElement = "focus-element";
@@ -617,6 +661,9 @@ ux.service("focusQuery", function() {
     var focusIndex = "focus-index";
     var selectable = "A,SELECT,BUTTON,INPUT,TEXTAREA,*[focus-index]";
     function canReceiveFocus(el) {
+        if (!el) {
+            return false;
+        }
         var isSelectable = new RegExp(el.nodeName.toUpperCase()).test(selectable);
         if (!isSelectable) {
             isSelectable = el.getAttribute(focusIndex) !== null;
@@ -660,6 +707,9 @@ ux.service("focusQuery", function() {
         return returnVal;
     }
     function getElementsWithoutParents(el) {
+        if (!el) {
+            return [];
+        }
         var query = "A:not({focusParentId})," + "SELECT:not({focusParentId})," + "BUTTON:not({focusParentId})," + "INPUT:not({focusParentId})," + "TEXTAREA:not({focusParentId})," + "*[focus-index]:not({focusParentId})";
         query = query.supplant({
             focusParentId: "[" + focusParentId + "]"
@@ -667,6 +717,9 @@ ux.service("focusQuery", function() {
         return el.querySelectorAll(query);
     }
     function getGroupsWithoutContainers(el) {
+        if (!el) {
+            return [];
+        }
         var q = "[" + focusGroupId + "]:not([" + focusContainerId + "])";
         return el.querySelectorAll(q);
     }
@@ -700,6 +753,9 @@ ux.service("focusQuery", function() {
         return returnVal;
     }
     function isVisible(el) {
+        if (!el) {
+            return false;
+        }
         if (el.parentNode.nodeType === 9) {
             return true;
         }
@@ -718,16 +774,38 @@ ux.service("focusQuery", function() {
         return true;
     }
     function isAutofocus(el) {
-        return el.getAttribute(focusElement) === "autofocus";
+        if (el) {
+            return el.getAttribute(focusElement) === "autofocus";
+        }
+        return false;
     }
     function isEnabled(el) {
-        return el.getAttribute(focusEnabled) !== "false";
+        if (el) {
+            return el.getAttribute(focusEnabled) !== "false";
+        }
+        return false;
+    }
+    function hasGroupHead(el) {
+        if (el) {
+            return el.hasAttribute(focusGroupHead);
+        }
+        return false;
     }
     function getGroupHead(el) {
-        return el.getAttribute(focusGroupHead);
+        if (el) {
+            return el.getAttribute(focusGroupHead);
+        }
+    }
+    function hasGroupTail(el) {
+        if (el) {
+            return el.hasAttribute(focusGroupTail);
+        }
+        return false;
     }
     function getGroupTail(el) {
-        return el.getAttribute(focusGroupTail);
+        if (el) {
+            return el.getAttribute(focusGroupTail);
+        }
     }
     function getElement(elementId) {
         var q = '[{focusElementId}="{elementId}"]'.supplant({
@@ -737,32 +815,42 @@ ux.service("focusQuery", function() {
         return document.querySelector(q);
     }
     function getGroup(groupId) {
-        return document.querySelector("[" + focusGroupId + '="' + groupId + '"]');
+        if (groupId) {
+            return document.querySelector("[" + focusGroupId + '="' + groupId + '"]');
+        }
     }
     function isGroupStrict(groupId) {
         var group = getGroup(groupId);
         return group.getAttribute(focusGroup) === "strict";
     }
     function getElementId(el) {
-        return el.getAttribute(focusElementId);
+        if (el) {
+            return el.getAttribute(focusElementId);
+        }
     }
     function setElementId(el, id) {
         el.setAttribute(focusElementId, id);
     }
     function getGroupId(el) {
-        return el.getAttribute(focusGroupId);
+        if (el) {
+            return el.getAttribute(focusGroupId);
+        }
     }
     function setGroupId(el, id) {
         el.setAttribute(focusGroupId, id);
     }
     function getParentId(el) {
-        return el.getAttribute(focusParentId);
+        if (el) {
+            return el.getAttribute(focusParentId);
+        }
     }
     function setParentId(el, id) {
         el.setAttribute(focusParentId, id);
     }
     function getContainerId(el) {
-        return el.getAttribute(focusContainerId);
+        if (el) {
+            return el.getAttribute(focusContainerId);
+        }
     }
     function setContainerId(el, id) {
         el.setAttribute(focusContainerId, id);
@@ -779,17 +867,36 @@ ux.service("focusQuery", function() {
     }
     function contains(container, el) {
         var parent = el.parentNode;
-        while (parent.nodeType !== 9) {
-            if (parent === container) {
-                return true;
+        if (parent) {
+            while (parent.nodeType !== 9) {
+                if (parent === container) {
+                    return true;
+                }
+                parent = parent.parentNode;
             }
-            parent = parent.parentNode;
         }
         return false;
     }
+    function sort(list, compareFn) {
+        var i = 0, len = list.length - 1, holder;
+        if (!compareFn) {
+            compareFn = function(a, b) {
+                return a > b ? 1 : a < b ? -1 : 0;
+            };
+        }
+        while (i < len) {
+            if (compareFn(list[i], list[i + 1]) > 0) {
+                holder = list[i + 1];
+                list[i + 1] = list[i];
+                list[i] = holder;
+            }
+            i = i + 1;
+        }
+        return list;
+    }
     function sortByTabIndex(a, b) {
-        var aTabIndex = a.getAttribute("focus-index") || Number.POSITIVE_INFINITY;
-        var bTabIndex = b.getAttribute("focus-index") || Number.POSITIVE_INFINITY;
+        var aTabIndex = a.getAttribute(focusIndex) || Number.POSITIVE_INFINITY;
+        var bTabIndex = b.getAttribute(focusIndex) || Number.POSITIVE_INFINITY;
         if (aTabIndex < bTabIndex) {
             return -1;
         }
@@ -799,8 +906,8 @@ ux.service("focusQuery", function() {
         return 0;
     }
     function sortByGroupIndex(a, b) {
-        var aGroupIndex = a.getAttribute("focus-group-index") || Number.POSITIVE_INFINITY;
-        var bGroupIndex = b.getAttribute("focus-group-index") || Number.POSITIVE_INFINITY;
+        var aGroupIndex = a.getAttribute(focusGroupIndex) || Number.POSITIVE_INFINITY;
+        var bGroupIndex = b.getAttribute(focusGroupIndex) || Number.POSITIVE_INFINITY;
         if (aGroupIndex < bGroupIndex) {
             return -1;
         }
@@ -825,6 +932,8 @@ ux.service("focusQuery", function() {
     this.getElementsWithoutParents = getElementsWithoutParents;
     this.getGroupsWithoutContainers = getGroupsWithoutContainers;
     this.isAutofocus = isAutofocus;
+    this.hasGroupHead = hasGroupHead;
+    this.hasGroupTail = hasGroupTail;
     this.getGroupHead = getGroupHead;
     this.getGroupTail = getGroupTail;
     this.isEnabled = isEnabled;
