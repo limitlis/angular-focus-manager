@@ -1,5 +1,5 @@
 /* global ux, utils, Mousetrap */
-ux.directive('focusShortcut', function (focusManager) {
+angular.module('ux').directive('focusShortcut', function (focusManager) {
     return {
         link: function (scope, element, attrs) {
 

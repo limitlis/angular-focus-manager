@@ -1,5 +1,5 @@
 /* global ux, utils */
-ux.directive('focusStack', function (focusManager, focusQuery) {
+angular.module('ux').directive('focusStack', function (focusManager, focusQuery) {
     var stack = [];
     return {
         link: function (scope, element, attrs) {

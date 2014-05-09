@@ -1,5 +1,5 @@
 /* global ux, utils */
-ux.service('focusManager', function (focusQuery, focusDispatcher) {
+angular.module('ux').service('focusManager', function (focusQuery, focusDispatcher) {
 
     var scope = this,
         dispatcher = focusDispatcher();

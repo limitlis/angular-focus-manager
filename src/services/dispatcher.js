@@ -1,5 +1,5 @@
 /* global ux, utils */
-ux.factory('focusDispatcher', function () {
+angular.module('ux').factory('focusDispatcher', function () {
 
     var dispatchers = {};
 

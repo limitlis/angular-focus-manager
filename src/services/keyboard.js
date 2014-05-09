@@ -1,5 +1,5 @@
 /* global ux, utils */
-ux.service('focusKeyboard', function (focusManager) {
+angular.module('ux').service('focusKeyboard', function (focusManager) {
 
     var tabKeysEnabled = false,
         arrowKeysEnabled = false;

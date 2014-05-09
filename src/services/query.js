@@ -1,5 +1,5 @@
 /* global ux, utils */
-ux.service('focusQuery', function () {
+angular.module('ux').service('focusQuery', function () {
 
     // http://quirksmode.org/dom/core/
 

@@ -1,5 +1,5 @@
 /* global ux, utils */
-ux.directive('focusElement', function (focusManager, focusQuery) {
+angular.module('ux').directive('focusElement', function (focusManager, focusQuery) {
     return {
         link: function (scope, element, attr) {
             var el = element[0];

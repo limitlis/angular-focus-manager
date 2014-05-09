@@ -1,5 +1,5 @@
 /* global ux, utils */
-ux.service('focusMouse', function (focusManager, focusQuery) {
+angular.module('ux').service('focusMouse', function (focusManager, focusQuery) {
 
     var scope = this;
 
@@ -14,7 +14,7 @@ ux.service('focusMouse', function (focusManager, focusQuery) {
     }
 
     function onMouseDown(evt) {
-        if (focusManager.enabled) {
+        if (!focusManager.enabled) {
             return;
         }
         if (focusManager.canReceiveFocus(evt.target)) {

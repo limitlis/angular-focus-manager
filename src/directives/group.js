@@ -1,5 +1,5 @@
 /* global ux, utils */
-ux.directive('focusGroup', function (focusManager, focusQuery, focusDispatcher) {
+angular.module('ux').directive('focusGroup', function (focusManager, focusQuery, focusDispatcher) {
 
     var groupId = 1,
         elementId = 1,

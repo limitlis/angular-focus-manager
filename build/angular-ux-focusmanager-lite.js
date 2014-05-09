@@ -73,7 +73,7 @@ String.prototype.supplant = function(o) {
     });
 };
 
-ux.directive("focusElement", function(focusManager, focusQuery) {
+angular.module("ux").directive("focusElement", [ "focusManager", "focusQuery", function(focusManager, focusQuery) {
     return {
         link: function(scope, element, attr) {
             var el = element[0];
@@ -84,9 +84,9 @@ ux.directive("focusElement", function(focusManager, focusQuery) {
             }
         }
     };
-});
+} ]);
 
-ux.directive("focusGroup", function(focusManager, focusQuery, focusDispatcher) {
+angular.module("ux").directive("focusGroup", [ "focusManager", "focusQuery", "focusDispatcher", function(focusManager, focusQuery, focusDispatcher) {
     var groupId = 1, elementId = 1, dispatcher = focusDispatcher(), delay = 100;
     function compile(groupName, el) {
         var els, i, len, elementName;
@@ -174,9 +174,9 @@ ux.directive("focusGroup", function(focusManager, focusQuery, focusDispatcher) {
     return {
         link: linker
     };
-});
+} ]);
 
-ux.factory("focusDispatcher", function() {
+angular.module("ux").factory("focusDispatcher", function() {
     var dispatchers = {};
     function EventDispatcher() {
         this.events = {};
@@ -216,7 +216,7 @@ ux.factory("focusDispatcher", function() {
     return dispatcher;
 });
 
-ux.service("focusKeyboard", function(focusManager) {
+angular.module("ux").service("focusKeyboard", [ "focusManager", function(focusManager) {
     var tabKeysEnabled = false, arrowKeysEnabled = false;
     function enableTabKeys() {
         if (!tabKeysEnabled) {
@@ -346,12 +346,12 @@ ux.service("focusKeyboard", function(focusManager) {
     this.disableArrowKeys = disableArrowKeys;
     this.toggleTabArrowKeys = toggleTabArrowKeys;
     this.triggerClick = triggerClick;
-}).run(function(focusKeyboard) {
+} ]).run([ "focusKeyboard", function(focusKeyboard) {
     focusKeyboard.enable();
     focusKeyboard.enableTabKeys();
-});
+} ]);
 
-ux.service("focusManager", function(focusQuery, focusDispatcher) {
+angular.module("ux").service("focusManager", [ "focusQuery", "focusDispatcher", function(focusQuery, focusDispatcher) {
     var scope = this, dispatcher = focusDispatcher();
     function focus(el) {
         if (typeof el === "undefined") {
@@ -613,9 +613,9 @@ ux.service("focusManager", function(focusQuery, focusDispatcher) {
     this.canReceiveFocus = canReceiveFocus;
     this.enable = utils.debounce(enable);
     this.disable = utils.debounce(disable);
-});
+} ]);
 
-ux.service("focusMouse", function(focusManager, focusQuery) {
+angular.module("ux").service("focusMouse", [ "focusManager", "focusQuery", function(focusManager, focusQuery) {
     var scope = this;
     function enable() {
         scope.enabled = false;
@@ -626,7 +626,7 @@ ux.service("focusMouse", function(focusManager, focusQuery) {
         utils.removeEvent(document, "mousedown", onMouseDown);
     }
     function onMouseDown(evt) {
-        if (focusManager.enabled) {
+        if (!focusManager.enabled) {
             return;
         }
         if (focusManager.canReceiveFocus(evt.target)) {
@@ -642,11 +642,11 @@ ux.service("focusMouse", function(focusManager, focusQuery) {
     this.enabled = false;
     this.enable = enable;
     this.disable = disable;
-}).run(function(focusMouse) {
+} ]).run([ "focusMouse", function(focusMouse) {
     focusMouse.enable();
-});
+} ]);
 
-ux.service("focusQuery", function() {
+angular.module("ux").service("focusQuery", function() {
     var focusElementId = "focus-element-id";
     var focusGroupId = "focus-group-id";
     var focusParentId = "focus-parent-id";
