@@ -14,9 +14,6 @@ angular.module('ux').service('focusMouse', function (focusManager, focusQuery) {
     }
 
     function onMouseDown(evt) {
-        if (!focusManager.enabled) {
-            return;
-        }
         if (focusManager.canReceiveFocus(evt.target)) {
             focusManager.focus(evt.target);
 

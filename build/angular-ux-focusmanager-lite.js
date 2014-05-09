@@ -626,9 +626,6 @@ angular.module("ux").service("focusMouse", [ "focusManager", "focusQuery", funct
         utils.removeEvent(document, "mousedown", onMouseDown);
     }
     function onMouseDown(evt) {
-        if (!focusManager.enabled) {
-            return;
-        }
         if (focusManager.canReceiveFocus(evt.target)) {
             focusManager.focus(evt.target);
             var parentId = focusQuery.getParentId(evt.target);
