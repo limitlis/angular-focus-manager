@@ -17,7 +17,14 @@
     <a href="">About</a>
 </div>
 
-<div focus-group focus-group-tail="loop">
+<div focus-group>
+
+    <div>
+        <div tabindex="0" focus-index="1">Link 1</div>
+        <div focus-index="2">Link 2</div>
+        <div focus-index="3">Link 3</div>
+    </div>
+
 
     <select>
         <option value="1">One</option>
@@ -28,7 +35,7 @@
     <a href="">My Only link ({{app.counter}})</a>
 
     <div focus-group>
-<div focus-group="strict" focus-group-index="1">
+        <div focus-group="strict" focus-group-index="1">
             <div class="header">Group 1</div>
             <a href="" focus-index="4">Link 4</a>
             <a href="" focus-index="3" focus-shortcut="command+k">Link 3</a>
@@ -79,7 +86,7 @@
     </div>
 
     <div focus-group>
-        <div ng-if="app.showView" focus-group focus-group-head="loop" focus-group-tail="loop">
+        <div ng-if="app.showView">
             <a href="" focus-index="1" focus-element="autofocus">Link1 </a>
             <a href="" focus-index="2">Link</a>
             <a href="" focus-index="3" disabled="disabled">Link (Disabled)</a>
@@ -97,7 +104,7 @@
     </div>
 
     <div focus-group>
-        <a href="" focus-index="3">Link</a>
+        <a tabindex="0" href="" focus-index="3">Link</a>
     </div>
 
 </div>
@@ -108,12 +115,12 @@
         <div focus-group>
             <a href="" focus-index="3">Link 3</a>
             <a href="" focus-index="2">Link 2</a>
-            <a href="" focus-index="1">Link 1</a>
+            <a tabindex="0" href="" focus-index="1">Link 1</a>
         </div>
     </div>
 
     <div focus-group>
-        <a href="" focus-index="3">Link 4</a>
+        <a tabindex="0" href="" focus-index="3">Link 4</a>
     </div>
 
 </div>
@@ -145,10 +152,10 @@
                 this.toggleDialog = function () {
                     this.showModal = !this.showModal;
                 }
-                this.toggleView = function(){
+                this.toggleView = function () {
                     this.showView = !this.showView;
                 }
-                this.changeDisplay = function(){
+                this.changeDisplay = function () {
                     this.counter++;
                 }
             })
