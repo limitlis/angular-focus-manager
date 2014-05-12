@@ -290,15 +290,8 @@ angular.module('ux').service('focusManager', function (focusQuery, focusDispatch
                 prevGroupId = focusQuery.getGroupId(prevGroup);
                 findPrevChildGroup(prevGroupId);
             } else {
-                parentContainer = focusQuery.getGroup(containerId);
-                parentContainerId = focusQuery.getContainerId(parentContainer);
-                if (parentContainerId) {
-                    // if we found a parent container, then continue traverse up the parent groups
-                    findPrevGroup(parentContainerId, containerId);
-                } else {
-                    // otherwise, find an focus element in this container
-                    findPrevElement(containerId);
-                }
+                // otherwise find an element in this container
+                findPrevElement(containerId);
             }
         } else {
             // find the top most isolated group and start traversing through its child groups
