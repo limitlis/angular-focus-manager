@@ -26,11 +26,15 @@ angular.module('ux').service('focusQuery', function () {
         var isSelectable = new RegExp(el.nodeName.toUpperCase()).test(selectable);
 
         if (!isSelectable) {
-            isSelectable = el.getAttribute(focusIndex) !== null;
+            isSelectable = el.hasAttribute(focusIndex);
+        }
+
+        if (!isSelectable) {
+            isSelectable = el.hasAttribute(tabIndex) && el.getAttribute(tabIndex) > -1;
         }
 
         if (isSelectable) {
-            isSelectable = el.getAttribute('disabled') === null;
+            isSelectable = !el.hasAttribute('disabled');
         }
 
         if (isSelectable) {
@@ -69,27 +73,23 @@ angular.module('ux').service('focusQuery', function () {
             returnVal.push(els[i]);
             i += 1;
         }
-        returnVal.sort(sortByGroupIndex);
-//        returnVal = sort(returnVal, sortByGroupIndex);
+//        returnVal.sort(sortByGroupIndex);
+        returnVal = sort(returnVal, sortByGroupIndex);
         return returnVal;
     }
 
     function getElementsWithoutParents(el) {
-
-        if (!el) {
-            return [];
+        if (el) {
+            var query = 'A:not({focusParentId}),' +
+                'SELECT:not({focusParentId}),' +
+                'BUTTON:not({focusParentId}),' +
+                'INPUT:not({focusParentId}),' +
+                'TEXTAREA:not({focusParentId}),' +
+                '*[focus-index]:not({focusParentId})';
+            query = query.supplant({focusParentId: '[' + focusParentId + ']'});
+            return el.querySelectorAll(query);
         }
-
-        var query = 'A:not({focusParentId}),' +
-            'SELECT:not({focusParentId}),' +
-            'BUTTON:not({focusParentId}),' +
-            'INPUT:not({focusParentId}),' +
-            'TEXTAREA:not({focusParentId}),' +
-            '*[focus-index]:not({focusParentId})';
-
-        query = query.supplant({focusParentId: '[' + focusParentId + ']'});
-
-        return el.querySelectorAll(query);
+        return [];
     }
 
     function getGroupsWithoutContainers(el) {
@@ -133,8 +133,8 @@ angular.module('ux').service('focusQuery', function () {
             i += 1;
         }
 
-        returnVal.sort(sortByTabIndex);
-//        returnVal = sort(returnVal, sortByTabIndex);
+//        returnVal.sort(sortByTabIndex);
+        returnVal = sort(returnVal, sortByTabIndex);
 
         return returnVal;
 
@@ -209,11 +209,13 @@ angular.module('ux').service('focusQuery', function () {
     }
 
     function getElement(elementId) {
-        var q = '[{focusElementId}="{elementId}"]'.supplant({
-            focusElementId: focusElementId,
-            elementId: elementId
-        });
-        return document.querySelector(q);
+        if (elementId) {
+            var q = '[{focusElementId}="{elementId}"]'.supplant({
+                focusElementId: focusElementId,
+                elementId: elementId
+            });
+            return document.querySelector(q);
+        }
     }
 
     function getGroup(groupId) {
@@ -224,7 +226,10 @@ angular.module('ux').service('focusQuery', function () {
 
     function isGroupStrict(groupId) {
         var group = getGroup(groupId);
-        return group.getAttribute(focusGroup) === 'strict';
+        if (group) {
+            return group.getAttribute(focusGroup) === 'strict';
+        }
+        return false;
     }
 
     function getElementId(el) {
@@ -267,25 +272,35 @@ angular.module('ux').service('focusQuery', function () {
         el.setAttribute(focusContainerId, id);
     }
 
-    function setTabIndex(el, index) {
-        if (!el) {
-            return;
+    function getTabIndex(el) {
+        if (el) {
+            return el.getAttribute(tabIndex);
         }
-        if (index === null) {
-            el.removeAttribute(tabIndex);
-        } else {
-            el.setAttribute(tabIndex, index);
+    }
+
+    function setTabIndex(el, index) {
+        if (el) {
+            if (index === null) {
+                el.removeAttribute(tabIndex);
+            } else {
+                el.setAttribute(tabIndex, index);
+            }
         }
     }
 
     function contains(container, el) {
-        var parent = el.parentNode;
-        if (parent) {
-            while (parent.nodeType !== 9) {
-                if (parent === container) {
-                    return true;
+        if (el) {
+            var parent = el.parentNode;
+            if (parent) {
+                while (parent) {
+                    if(parent.nodeType === 9) {
+                        break;
+                    }
+                    if (parent === container) {
+                        return true;
+                    }
+                    parent = parent.parentNode;
                 }
-                parent = parent.parentNode;
             }
         }
         return false;
@@ -361,6 +376,7 @@ angular.module('ux').service('focusQuery', function () {
     this.getGroup = getGroup;
     this.getFirstGroupId = getFirstGroupId;
     this.getLastGroupId = getLastGroupId;
+    this.getTabIndex = getTabIndex;
     this.setTabIndex = setTabIndex;
 
     this.getElementsWithoutParents = getElementsWithoutParents;
