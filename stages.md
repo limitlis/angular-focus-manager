@@ -246,3 +246,8 @@ I found some things to cleanup as well as cleanup the code with additional comme
 If you want to to test Firefox on the Mac, make sure you go into your prefrences and enable "All controls". This is not a limitation of Firefox or the library, just something that has to be done.
 
 ![image](http://f.cl.ly/items/2y050C0x0y3k0W041L3d/Image%202014-05-05%20at%204.46.03%20PM.png)
+
+###Phase 5: Testing and more fixing
+---
+
+Obviously, not everything can be thought of during development. So while integrating in various projects, fixed, enhancments and other changes are made.

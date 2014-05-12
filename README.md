@@ -3,7 +3,7 @@
 ###Allow flexible key and mouse navigation in your web application.
 ---
 
-**[Download 0.1.0](http://webux.github.io/ux-focusmanager/build/webux-router.js)** (or **[Minified](http://webux.github.io/ux-focusmanager/build/webux-router.min.js)**) **|**
+**[Download 0.1.1](http://webux.github.io/ux-focusmanager/build/webux-router.js)** (or **[Minified](http://webux.github.io/ux-focusmanager/build/webux-router.min.js)**) **|**
 **[Guide](https://github.com/webux/ux-focusmanager/wiki) |**
 **[API](http://webux.github.io/ux-focusmanager/site) |**
 **[Examples](http://webux.github.com/ux-focusmanager/examples/) ([Src](https://github.com/webux/ux-focusmanager/tree/gh-pages/sample)) |**
@@ -16,7 +16,7 @@
 
 ---
 
-**Angular UX Focus Manager** allows you to organize your interface to into ***groups*** to have better control over the order in which elements receive focus. Focus Manager is built for web applications that have complex UI such as panels, popups, sections, and custom widgets. Here are some of the feature benefits to using Focus Manager:
+**Angular UX Focus Manager** allows you to organize your interface to into ***groups*** to have better control over the order in which elements receive focus. Focus Manager is built for web applications that have complex UI such as panels, popups, sections, and custom widgets. Here are some of the benefits to using Focus Manager:
 
 * Simple integration
 * ARIA compatible
