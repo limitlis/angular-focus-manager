@@ -42,9 +42,7 @@ angular.module('ux').directive('focusGroup', function (focusManager, focusQuery,
         var groupName = 'group-' + (groupId++);
         var bound = false;
         var cacheHtml = '';
-        var cacheCount = 0;
         var newCacheHtml = '';
-        var newCacheCount = 0;
 
         function init() {
             scope.$on('focus::' + groupName, function () {
@@ -55,23 +53,18 @@ angular.module('ux').directive('focusGroup', function (focusManager, focusQuery,
             if (!focusQuery.getContainerId(el)) { // this is an isolate focus group
 
                 cacheHtml = el.innerHTML;
-                cacheCount = cacheHtml.match(/<\w+/g).length;
 
-                scope.$watch(utils.debounce(function () {
+                scope.$watch(utils.debounce(function() {
                     newCacheHtml = el.innerHTML;
                     if (cacheHtml !== newCacheHtml) {
-                        newCacheCount = newCacheHtml.match(/<\w+/g).length;
-                        if (cacheCount !== newCacheCount) {
-                            var els = el.querySelectorAll('[focus-group]');
-                            var i = els.length, groupId;
-                            while (i) {
-                                i -= 1;
-                                groupId = els[i].getAttribute('focus-group-id');
-                                scope.$broadcast('focus::' + groupId);
-                            }
+                        var els = el.querySelectorAll('[focus-group]');
+                        var i = els.length, groupId;
+                        while (i) {
+                            i -= 1;
+                            groupId = els[i].getAttribute('focus-group-id');
+                            scope.$broadcast("focus::" + groupId);
                         }
                         cacheHtml = newCacheHtml;
-                        cacheCount = newCacheCount;
                     }
                     compile(groupName, el);
                     createBrowserEntryPoints();
