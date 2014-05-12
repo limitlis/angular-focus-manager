@@ -3,10 +3,11 @@ angular.module('ux').directive('focusElement', function (focusManager, focusQuer
     return {
         link: function (scope, element, attr) {
             var el = element[0];
-            if (focusQuery.isAutofocus(el)) {
-                setTimeout(function () {
+            if (focusQuery.isAutofocus(el)){
+                var off = scope.$watch(utils.debounce(function(){
+                    off();
                     focusManager.focus(el);
-                });
+                }, 100));
             }
         }
     };
