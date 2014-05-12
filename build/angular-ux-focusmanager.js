@@ -1,5 +1,5 @@
 /*
-* angular-ux-focusmanager v.0.1.0
+* angular-ux-focusmanager v.0.1.1
 * (c) 2014, WebUX
 * https://github.com/webux/angular-ux-focusmanager
 * License: MIT.
@@ -70,9 +70,10 @@ angular.module("ux").directive("focusElement", [ "focusManager", "focusQuery", f
         link: function(scope, element, attr) {
             var el = element[0];
             if (focusQuery.isAutofocus(el)) {
-                setTimeout(function() {
+                var off = scope.$watch(utils.debounce(function() {
+                    off();
                     focusManager.focus(el);
-                });
+                }, 100));
             }
         }
     };
@@ -89,7 +90,10 @@ angular.module("ux").directive("focusGroup", [ "focusManager", "focusQuery", "fo
             elementName = "element-" + elementId;
             focusQuery.setParentId(els[i], groupName);
             focusQuery.setElementId(els[i], elementName);
-            focusQuery.setTabIndex(els[i], -1);
+            var tabIndex = focusQuery.getTabIndex(els[i]);
+            if (tabIndex === undefined || tabIndex === null) {
+                focusQuery.setTabIndex(els[i], -1);
+            }
             elementId += 1;
             i += 1;
         }
@@ -100,39 +104,34 @@ angular.module("ux").directive("focusGroup", [ "focusManager", "focusQuery", "fo
             focusQuery.setContainerId(els[i], groupName);
             i += 1;
         }
-        return groupName;
     }
     function linker(scope, element, attr) {
         var el = element[0];
         var groupName = "group-" + groupId++;
         var bound = false;
         var cacheHtml = "";
-        var cacheCount = 0;
         var newCacheHtml = "";
-        var newCacheCount = 0;
         function init() {
             scope.$on("focus::" + groupName, function() {
                 compile(groupName, el);
+                createBrowserEntryPoints();
             });
             if (!focusQuery.getContainerId(el)) {
                 cacheHtml = el.innerHTML;
-                cacheCount = cacheHtml.match(/<\w+/g).length;
                 scope.$watch(utils.debounce(function() {
                     newCacheHtml = el.innerHTML;
                     if (cacheHtml !== newCacheHtml) {
-                        newCacheCount = newCacheHtml.match(/<\w+/g).length;
-                        if (cacheCount !== newCacheCount) {
-                            var els = el.querySelectorAll("[focus-group]");
-                            var i = els.length, groupId;
-                            while (i) {
-                                i -= 1;
-                                groupId = els[i].getAttribute("focus-group-id");
-                                scope.$broadcast("focus::" + groupId);
-                            }
+                        var els = el.querySelectorAll("[focus-group]");
+                        var i = els.length, groupId;
+                        while (i) {
+                            i -= 1;
+                            groupId = els[i].getAttribute("focus-group-id");
+                            scope.$broadcast("focus::" + groupId);
                         }
                         cacheHtml = newCacheHtml;
-                        cacheCount = newCacheCount;
                     }
+                    compile(groupName, el);
+                    createBrowserEntryPoints();
                 }, delay));
                 dispatcher.on("focusin", utils.debounce(function(evt) {
                     if (focusQuery.contains(el, evt.newTarget)) {
@@ -147,13 +146,15 @@ angular.module("ux").directive("focusGroup", [ "focusManager", "focusQuery", "fo
                         }
                     }
                 }, delay));
-                focusManager.callback = function(el) {
-                    focusQuery.setTabIndex(el, null);
-                };
-                focusManager.findPrevChildGroup(groupName);
-                focusManager.findNextElement(groupName);
-                focusManager.callback = null;
             }
+        }
+        function createBrowserEntryPoints() {
+            focusManager.callback = function(el) {
+                focusQuery.setTabIndex(el, 0);
+            };
+            focusManager.findPrevChildGroup(groupName);
+            focusManager.findNextElement(groupName);
+            focusManager.callback = null;
         }
         function onFocus() {
             focusManager.enable();
@@ -186,20 +187,23 @@ angular.module("ux").directive("focusHighlight", [ "focusManager", function(focu
             height: box.height
         };
     }
+    function updateDisplay(el, activeElement) {
+        if (focusManager.canReceiveFocus(activeElement)) {
+            var rect = getOffsetRect(activeElement);
+            el.style.left = rect.left + "px";
+            el.style.top = rect.top + "px";
+            el.style.width = rect.width + "px";
+            el.style.height = rect.height + "px";
+        }
+    }
     return {
         scope: true,
         replace: true,
         link: function(scope, element, attrs) {
             var el = element[0];
-            document.addEventListener("focus", utils.throttle(function(evt) {
-                if (focusManager.canReceiveFocus(evt.target)) {
-                    var rect = getOffsetRect(evt.target);
-                    el.style.left = rect.left + "px";
-                    el.style.top = rect.top + "px";
-                    el.style.width = rect.width + "px";
-                    el.style.height = rect.height + "px";
-                }
-            }, true), 100);
+            document.addEventListener("focus", function(evt) {
+                updateDisplay(el, evt.target);
+            }, true);
         },
         template: '<div class="focus-highlight"></div>'
     };
@@ -334,9 +338,10 @@ angular.module("ux").service("focusKeyboard", [ "focusManager", function(focusMa
     function triggerClick(evt) {
         evt.preventDefault();
         evt.stopPropagation();
-        fireEvent(evt.target, "mousedown");
-        fireEvent(evt.target, "mouseup");
-        fireEvent(evt.target, "click");
+        var activeElement = focusManager.activeElement || evt.target;
+        fireEvent(activeElement, "mousedown");
+        fireEvent(activeElement, "mouseup");
+        fireEvent(activeElement, "click");
     }
     function onFocusNext(evt) {
         if (focusManager.enabled) {
@@ -613,13 +618,7 @@ angular.module("ux").service("focusManager", [ "focusQuery", "focusDispatcher", 
                 prevGroupId = focusQuery.getGroupId(prevGroup);
                 findPrevChildGroup(prevGroupId);
             } else {
-                parentContainer = focusQuery.getGroup(containerId);
-                parentContainerId = focusQuery.getContainerId(parentContainer);
-                if (parentContainerId) {
-                    findPrevGroup(parentContainerId, containerId);
-                } else {
-                    findPrevElement(containerId);
-                }
+                findPrevElement(containerId);
             }
         } else {
             groupId = focusQuery.getLastGroupId();
@@ -747,10 +746,13 @@ angular.module("ux").service("focusQuery", function() {
         }
         var isSelectable = new RegExp(el.nodeName.toUpperCase()).test(selectable);
         if (!isSelectable) {
-            isSelectable = el.getAttribute(focusIndex) !== null;
+            isSelectable = el.hasAttribute(focusIndex);
+        }
+        if (!isSelectable) {
+            isSelectable = el.hasAttribute(tabIndex) && el.getAttribute(tabIndex) > -1;
         }
         if (isSelectable) {
-            isSelectable = el.getAttribute("disabled") === null;
+            isSelectable = !el.hasAttribute("disabled");
         }
         if (isSelectable) {
             isSelectable = isVisible(el);
@@ -784,18 +786,18 @@ angular.module("ux").service("focusQuery", function() {
             returnVal.push(els[i]);
             i += 1;
         }
-        returnVal.sort(sortByGroupIndex);
+        returnVal = sort(returnVal, sortByGroupIndex);
         return returnVal;
     }
     function getElementsWithoutParents(el) {
-        if (!el) {
-            return [];
+        if (el) {
+            var query = "A:not({focusParentId})," + "SELECT:not({focusParentId})," + "BUTTON:not({focusParentId})," + "INPUT:not({focusParentId})," + "TEXTAREA:not({focusParentId})," + "*[focus-index]:not({focusParentId})";
+            query = query.supplant({
+                focusParentId: "[" + focusParentId + "]"
+            });
+            return el.querySelectorAll(query);
         }
-        var query = "A:not({focusParentId})," + "SELECT:not({focusParentId})," + "BUTTON:not({focusParentId})," + "INPUT:not({focusParentId})," + "TEXTAREA:not({focusParentId})," + "*[focus-index]:not({focusParentId})";
-        query = query.supplant({
-            focusParentId: "[" + focusParentId + "]"
-        });
-        return el.querySelectorAll(query);
+        return [];
     }
     function getGroupsWithoutContainers(el) {
         if (!el) {
@@ -830,7 +832,7 @@ angular.module("ux").service("focusQuery", function() {
             returnVal.push(els[i]);
             i += 1;
         }
-        returnVal.sort(sortByTabIndex);
+        returnVal = sort(returnVal, sortByTabIndex);
         return returnVal;
     }
     function isVisible(el) {
@@ -889,11 +891,13 @@ angular.module("ux").service("focusQuery", function() {
         }
     }
     function getElement(elementId) {
-        var q = '[{focusElementId}="{elementId}"]'.supplant({
-            focusElementId: focusElementId,
-            elementId: elementId
-        });
-        return document.querySelector(q);
+        if (elementId) {
+            var q = '[{focusElementId}="{elementId}"]'.supplant({
+                focusElementId: focusElementId,
+                elementId: elementId
+            });
+            return document.querySelector(q);
+        }
     }
     function getGroup(groupId) {
         if (groupId) {
@@ -902,7 +906,10 @@ angular.module("ux").service("focusQuery", function() {
     }
     function isGroupStrict(groupId) {
         var group = getGroup(groupId);
-        return group.getAttribute(focusGroup) === "strict";
+        if (group) {
+            return group.getAttribute(focusGroup) === "strict";
+        }
+        return false;
     }
     function getElementId(el) {
         if (el) {
@@ -936,24 +943,33 @@ angular.module("ux").service("focusQuery", function() {
     function setContainerId(el, id) {
         el.setAttribute(focusContainerId, id);
     }
-    function setTabIndex(el, index) {
-        if (!el) {
-            return;
+    function getTabIndex(el) {
+        if (el) {
+            return el.getAttribute(tabIndex);
         }
-        if (index === null) {
-            el.removeAttribute(tabIndex);
-        } else {
-            el.setAttribute(tabIndex, index);
+    }
+    function setTabIndex(el, index) {
+        if (el) {
+            if (index === null) {
+                el.removeAttribute(tabIndex);
+            } else {
+                el.setAttribute(tabIndex, index);
+            }
         }
     }
     function contains(container, el) {
-        var parent = el.parentNode;
-        if (parent) {
-            while (parent.nodeType !== 9) {
-                if (parent === container) {
-                    return true;
+        if (el) {
+            var parent = el.parentNode;
+            if (parent) {
+                while (parent) {
+                    if (parent.nodeType === 9) {
+                        break;
+                    }
+                    if (parent === container) {
+                        return true;
+                    }
+                    parent = parent.parentNode;
                 }
-                parent = parent.parentNode;
             }
         }
         return false;
@@ -1009,6 +1025,7 @@ angular.module("ux").service("focusQuery", function() {
     this.getGroup = getGroup;
     this.getFirstGroupId = getFirstGroupId;
     this.getLastGroupId = getLastGroupId;
+    this.getTabIndex = getTabIndex;
     this.setTabIndex = setTabIndex;
     this.getElementsWithoutParents = getElementsWithoutParents;
     this.getGroupsWithoutContainers = getGroupsWithoutContainers;
