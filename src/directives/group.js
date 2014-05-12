@@ -16,7 +16,12 @@ angular.module('ux').directive('focusGroup', function (focusManager, focusQuery,
             elementName = 'element-' + elementId;
             focusQuery.setParentId(els[i], groupName);
             focusQuery.setElementId(els[i], elementName);
-            focusQuery.setTabIndex(els[i], -1); // elements in focus manager should not be tab enabled through browser
+
+            var tabIndex = focusQuery.getTabIndex(els[i]);
+            if (tabIndex === undefined || tabIndex === null) {
+                focusQuery.setTabIndex(els[i], -1); // elements in focus manager should not be tab enabled through browser
+            }
+
             elementId += 1;
             i += 1;
         }
@@ -29,8 +34,6 @@ angular.module('ux').directive('focusGroup', function (focusManager, focusQuery,
             focusQuery.setContainerId(els[i], groupName);
             i += 1;
         }
-
-        return groupName;
     }
 
     function linker(scope, element, attr) {
@@ -44,8 +47,9 @@ angular.module('ux').directive('focusGroup', function (focusManager, focusQuery,
         var newCacheCount = 0;
 
         function init() {
-            scope.$on('focus::' + groupName, function(){
+            scope.$on('focus::' + groupName, function () {
                 compile(groupName, el);
+                createBrowserEntryPoints();
             });
 
             if (!focusQuery.getContainerId(el)) { // this is an isolate focus group
@@ -69,6 +73,8 @@ angular.module('ux').directive('focusGroup', function (focusManager, focusQuery,
                         cacheHtml = newCacheHtml;
                         cacheCount = newCacheCount;
                     }
+                    compile(groupName, el);
+                    createBrowserEntryPoints();
                 }, delay));
 
                 dispatcher.on('focusin', utils.debounce(function (evt) {
@@ -85,15 +91,17 @@ angular.module('ux').directive('focusGroup', function (focusManager, focusQuery,
                         }
                     }
                 }, delay));
-
-                focusManager.callback = function (el) {
-                    focusQuery.setTabIndex(el, null);
-                };
-                focusManager.findPrevChildGroup(groupName);
-                focusManager.findNextElement(groupName);
-
-                focusManager.callback = null;
             }
+        }
+
+        function createBrowserEntryPoints() {
+            focusManager.callback = function (el) {
+                focusQuery.setTabIndex(el, 0);
+            };
+            focusManager.findPrevChildGroup(groupName);
+            focusManager.findNextElement(groupName);
+
+            focusManager.callback = null;
         }
 
         function onFocus() {
