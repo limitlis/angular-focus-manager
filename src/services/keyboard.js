@@ -42,9 +42,11 @@ angular.module('ux').service('focusKeyboard', function (focusManager) {
         evt.preventDefault();
         evt.stopPropagation();
 
-        fireEvent(evt.target, 'mousedown');
-        fireEvent(evt.target, 'mouseup');
-        fireEvent(evt.target, 'click');
+        var activeElement = focusManager.activeElement || evt.target;
+
+        fireEvent(activeElement, "mousedown");
+        fireEvent(activeElement, "mouseup");
+        fireEvent(activeElement, "click");
     }
 
     function onFocusNext(evt) {
