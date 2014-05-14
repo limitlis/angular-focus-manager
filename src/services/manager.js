@@ -368,8 +368,16 @@ angular.module('ux').service('focusManager', function (focusQuery, focusDispatch
         }
     }
 
+    function on() {
+        scope.active = true;
+    }
+
+    function off() {
+        scope.active = false;
+    }
+
     function enable() {
-        if (!scope.enabled) {
+        if (!scope.enabled && scope.active) {
             scope.enabled = true;
             scope.activeElement = document.activeElement;
             dispatcher.trigger('enabled');
@@ -383,6 +391,7 @@ angular.module('ux').service('focusManager', function (focusQuery, focusDispatch
         }
     }
 
+    this.active = true;
     this.enabled = false;
     this.activeElement = null;
 
@@ -395,8 +404,9 @@ angular.module('ux').service('focusManager', function (focusQuery, focusDispatch
 
     this.canReceiveFocus = canReceiveFocus;
 
-    // used to throttle enable /disable to prevent too many calls
-    this.enable = utils.debounce(enable);
-    this.disable = utils.debounce(disable);
+    this.on = on;
+    this.off = off;
+    this.enable = enable;
+    this.disable = disable;
 
 });

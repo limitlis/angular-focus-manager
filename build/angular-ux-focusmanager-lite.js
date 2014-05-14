@@ -1,5 +1,5 @@
 /*
-* angular-ux-focusmanager v.0.1.1
+* angular-ux-focusmanager v.0.1.2
 * (c) 2014, WebUX
 * https://github.com/webux/angular-ux-focusmanager
 * License: MIT.
@@ -586,8 +586,14 @@ angular.module("ux").service("focusManager", [ "focusQuery", "focusDispatcher", 
             findPrevGroup(containerId, groupId);
         }
     }
+    function on() {
+        scope.active = true;
+    }
+    function off() {
+        scope.active = false;
+    }
     function enable() {
-        if (!scope.enabled) {
+        if (!scope.enabled && scope.active) {
             scope.enabled = true;
             scope.activeElement = document.activeElement;
             dispatcher.trigger("enabled");
@@ -599,6 +605,7 @@ angular.module("ux").service("focusManager", [ "focusQuery", "focusDispatcher", 
             dispatcher.trigger("disabled");
         }
     }
+    this.active = true;
     this.enabled = false;
     this.activeElement = null;
     this.focus = focus;
@@ -607,8 +614,10 @@ angular.module("ux").service("focusManager", [ "focusQuery", "focusDispatcher", 
     this.findPrevChildGroup = findPrevChildGroup;
     this.findNextElement = findNextElement;
     this.canReceiveFocus = canReceiveFocus;
-    this.enable = utils.debounce(enable);
-    this.disable = utils.debounce(disable);
+    this.on = on;
+    this.off = off;
+    this.enable = enable;
+    this.disable = disable;
 } ]);
 
 angular.module("ux").service("focusMouse", [ "focusManager", "focusQuery", function(focusManager, focusQuery) {
