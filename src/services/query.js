@@ -3,10 +3,10 @@ angular.module('ux').service('focusQuery', function () {
 
     // http://quirksmode.org/dom/core/
 
-    var focusElementId = 'focus-element-id';
-    var focusGroupId = 'focus-group-id';
-    var focusParentId = 'focus-parent-id';
-    var focusContainerId = 'focus-container-id';
+    var focusElementId = 'fm-el';
+    var focusGroupId = 'fm-group';
+    var focusParentId = 'fm-par';
+    var focusParentGroupId = 'fm-par-group';
 
     var tabIndex = 'tabindex';
     var focusGroup = 'focus-group';
@@ -44,26 +44,26 @@ angular.module('ux').service('focusQuery', function () {
     }
 
     function getFirstGroupId() {
-        var q = '[{focusGroup}]:not([{focusContainerId}])'.supplant({
+        var q = '[{focusGroup}]:not([{focusParentGroupId}])'.supplant({
             focusGroup: focusGroup,
-            focusContainerId: focusContainerId
+            focusParentGroupId: focusParentGroupId
         });
         var groupEl = document.querySelector(q);
         return getGroupId(groupEl);
     }
 
     function getLastGroupId() {
-        var q = '[{focusGroup}]:not([{focusContainerId}])'.supplant({
+        var q = '[{focusGroup}]:not([{focusParentGroupId}])'.supplant({
             focusGroup: focusGroup,
-            focusContainerId: focusContainerId
+            focusParentGroupId: focusParentGroupId
         });
         var groupEls = document.querySelectorAll(q);
         return getGroupId(groupEls[groupEls.length - 1]);
     }
 
     function getChildGroups(groupId) {
-        var els = document.querySelectorAll('[{focusContainerId}="{groupId}"]'.supplant({
-            focusContainerId: focusContainerId,
+        var els = document.querySelectorAll('[{focusParentGroupId}="{groupId}"]'.supplant({
+            focusParentGroupId: focusParentGroupId,
             groupId: groupId
         }));
 
@@ -92,12 +92,12 @@ angular.module('ux').service('focusQuery', function () {
         return [];
     }
 
-    function getGroupsWithoutContainers(el) {
+    function getGroupsWithoutParentGroup(el) {
         if (!el) {
             return [];
         }
 
-        var q = '[' + focusGroupId + ']:not([' + focusContainerId + '])';
+        var q = '[' + focusGroupId + ']:not([' + focusParentGroupId + '])';
         return el.querySelectorAll(q);
     }
 
@@ -262,14 +262,14 @@ angular.module('ux').service('focusQuery', function () {
         el.setAttribute(focusParentId, id);
     }
 
-    function getContainerId(el) {
+    function getParentGroupId(el) {
         if (el) {
-            return el.getAttribute(focusContainerId);
+            return el.getAttribute(focusParentGroupId);
         }
     }
 
-    function setContainerId(el, id) {
-        el.setAttribute(focusContainerId, id);
+    function setParentGroupId(el, id) {
+        el.setAttribute(focusParentGroupId, id);
     }
 
     function getTabIndex(el) {
@@ -288,7 +288,7 @@ angular.module('ux').service('focusQuery', function () {
         }
     }
 
-    function contains(container, el) {
+    function contains(ParentGroup, el) {
         if (el) {
             var parent = el.parentNode;
             if (parent) {
@@ -296,7 +296,7 @@ angular.module('ux').service('focusQuery', function () {
                     if(parent.nodeType === 9) {
                         break;
                     }
-                    if (parent === container) {
+                    if (parent === ParentGroup) {
                         return true;
                     }
                     parent = parent.parentNode;
@@ -371,8 +371,8 @@ angular.module('ux').service('focusQuery', function () {
     this.setGroupId = setGroupId;
     this.getParentId = getParentId;
     this.setParentId = setParentId;
-    this.getContainerId = getContainerId;
-    this.setContainerId = setContainerId;
+    this.getParentGroupId = getParentGroupId;
+    this.setParentGroupId = setParentGroupId;
     this.getGroup = getGroup;
     this.getFirstGroupId = getFirstGroupId;
     this.getLastGroupId = getLastGroupId;
@@ -380,7 +380,7 @@ angular.module('ux').service('focusQuery', function () {
     this.setTabIndex = setTabIndex;
 
     this.getElementsWithoutParents = getElementsWithoutParents;
-    this.getGroupsWithoutContainers = getGroupsWithoutContainers;
+    this.getGroupsWithoutParentGroup = getGroupsWithoutParentGroup;
     this.isAutofocus = isAutofocus;
     this.hasGroupHead = hasGroupHead;
     this.hasGroupTail = hasGroupTail;

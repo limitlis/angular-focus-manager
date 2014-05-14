@@ -1,11 +1,19 @@
 /* global ux, utils */
 angular.module('ux').directive('focusGroup', function (focusManager, focusQuery, focusDispatcher) {
 
-    var groupId = 1,
-        elementId = 1,
-        dispatcher = focusDispatcher(),
-        delay = 100;
+    var groupId = 1, // unique id counter for groups
+        elementId = 1, // unique id counter for selectable elements
+        dispatcher = focusDispatcher(), // general reference to dispatcher
+        delay = 100; // amount of time to delay before performing an action
 
+    /**
+     * Compile finds elements within a focus group and assigns them a unique element id
+     * and a parent id (which references the group they belong to). If no tab index is
+     * defined, then they will assigned a tabindex of -1 to prevent conflicts between
+     * the browser's focus manager and this focus manager.
+     * @param groupName
+     * @param el
+     */
     function compile(groupName, el) {
         var els, i, len, elementName;
 
@@ -13,7 +21,7 @@ angular.module('ux').directive('focusGroup', function (focusManager, focusQuery,
         len = els.length;
         i = 0;
         while (i < len) {
-            elementName = 'element-' + elementId;
+            elementName = elementId;
             focusQuery.setParentId(els[i], groupName);
             focusQuery.setElementId(els[i], elementName);
 
@@ -26,12 +34,12 @@ angular.module('ux').directive('focusGroup', function (focusManager, focusQuery,
             i += 1;
         }
 
-        els = focusQuery.getGroupsWithoutContainers(el);
+        els = focusQuery.getGroupsWithoutParentGroup(el);
         len = els.length;
 
         i = 0;
         while (i < len) {
-            focusQuery.setContainerId(els[i], groupName);
+            focusQuery.setParentGroupId(els[i], groupName);
             i += 1;
         }
     }
@@ -39,7 +47,7 @@ angular.module('ux').directive('focusGroup', function (focusManager, focusQuery,
     function linker(scope, element, attr) {
 
         var el = element[0];
-        var groupName = 'group-' + (groupId++);
+        var groupName = groupTag + (groupId++);
         var bound = false;
         var cacheHtml = '';
         var newCacheHtml = '';
@@ -50,7 +58,7 @@ angular.module('ux').directive('focusGroup', function (focusManager, focusQuery,
                 createBrowserEntryPoints();
             });
 
-            if (!focusQuery.getContainerId(el)) { // this is an isolate focus group
+            if (!focusQuery.getParentGroupId(el)) { // this is an isolate focus group
 
                 cacheHtml = el.innerHTML;
 
@@ -103,7 +111,7 @@ angular.module('ux').directive('focusGroup', function (focusManager, focusQuery,
 
         el.addEventListener('focus', onFocus, true);
 
-        // using timeout to allow all groups to digest before performing container check
+        // using timeout to allow all groups to digest before performing ParentGroup check
         setTimeout(init, delay);
 
         focusQuery.setGroupId(el, groupName);

@@ -170,28 +170,28 @@ angular.module('ux').service('focusManager', function (focusQuery, focusDispatch
      * If no group is found, it will go up the parent groups to find another group. If no groupId is
      * passed in it will find the first isolate group encountered.
      *
-     * @param containerId
+     * @param ParentGroupId
      * @param groupId
      */
-    function findNextGroup(containerId, groupId) {
-        var group, groups, nextGroup, nextGroupId, parentContainer, parentContainerId, hasTail;
+    function findNextGroup(ParentGroupId, groupId) {
+        var group, groups, nextGroup, nextGroupId, parentParentGroup, parentParentGroupId, hasTail;
         group = focusQuery.getGroup(groupId);
         hasTail = focusQuery.hasGroupTail(group);
 
-        if (hasTail || !containerId) {
+        if (hasTail || !ParentGroupId) {
             findNextStep(groupId);
         } else {
-            containerId = focusQuery.getContainerId(group);
-            groups = focusQuery.getChildGroups(containerId);
+            ParentGroupId = focusQuery.getParentGroupId(group);
+            groups = focusQuery.getChildGroups(ParentGroupId);
             nextGroup = getNextGroup(groups, groupId);
             if (nextGroup) {
                 nextGroupId = focusQuery.getGroupId(nextGroup);
                 return findNextElement(nextGroupId);
             } else {
-                // no next group go up, if there is not a container, we are at the top of the isolate group
-                parentContainer = focusQuery.getGroup(containerId);
-                parentContainerId = focusQuery.getContainerId(parentContainer);
-                return findNextGroup(parentContainerId, containerId);
+                // no next group go up, if there is not a ParentGroup, we are at the top of the isolate group
+                parentParentGroup = focusQuery.getGroup(ParentGroupId);
+                parentParentGroupId = focusQuery.getParentGroupId(parentParentGroup);
+                return findNextGroup(parentParentGroupId, ParentGroupId);
             }
         }
     }
@@ -227,7 +227,7 @@ angular.module('ux').service('focusManager', function (focusQuery, focusDispatch
      * @param groupId
      */
     function findNextChildGroup(groupId) {
-        var groups, group, nextGroupId, containerId;
+        var groups, group, nextGroupId, ParentGroupId;
 
         groups = focusQuery.getChildGroups(groupId);
         if (groups.length) {
@@ -236,8 +236,8 @@ angular.module('ux').service('focusManager', function (focusQuery, focusDispatch
         } else {
             // there are no child groups, go back up parent chain
             group = focusQuery.getGroup(groupId);
-            containerId = focusQuery.getContainerId(group);
-            findNextGroup(containerId, groupId);
+            ParentGroupId = focusQuery.getParentGroupId(group);
+            findNextGroup(ParentGroupId, groupId);
         }
     }
 
@@ -276,22 +276,22 @@ angular.module('ux').service('focusManager', function (focusQuery, focusDispatch
      * is found, it will then search for elements within the group. If no elements are found, it will go back up
      * parent groups to find next available group.
      *
-     * @param containerId
+     * @param ParentGroupId
      * @param groupId
      */
-    function findPrevGroup(containerId, groupId) {
-        var groups, prevGroup, prevGroupId, parentContainer, parentContainerId;
+    function findPrevGroup(ParentGroupId, groupId) {
+        var groups, prevGroup, prevGroupId, parentParentGroup, parentParentGroupId;
 
-        if (containerId) {
-            groups = focusQuery.getChildGroups(containerId);
+        if (ParentGroupId) {
+            groups = focusQuery.getChildGroups(ParentGroupId);
             prevGroup = getPrevGroup(groups, groupId);
             if (prevGroup) {
                 // found group, now find child group
                 prevGroupId = focusQuery.getGroupId(prevGroup);
                 findPrevChildGroup(prevGroupId);
             } else {
-                // otherwise find an element in this container
-                findPrevElement(containerId);
+                // otherwise find an element in this ParentGroup
+                findPrevElement(ParentGroupId);
             }
         } else {
             // find the top most isolated group and start traversing through its child groups
@@ -350,12 +350,12 @@ angular.module('ux').service('focusManager', function (focusQuery, focusDispatch
      * @param groupId
      */
     function findPrevStep(groupId) {
-        var containerId, group, hasHead;
+        var ParentGroupId, group, hasHead;
         group = focusQuery.getGroup(groupId);
         hasHead = focusQuery.hasGroupHead(group);
-        containerId = focusQuery.getContainerId(group);
+        ParentGroupId = focusQuery.getParentGroupId(group);
         // if there is a parent group then go to it, otherwise check for a loop
-        if (hasHead || !containerId) {
+        if (hasHead || !ParentGroupId) {
             // if there was no parent group, we are at the top of the isolate group
             var head = focusQuery.getGroupHead(group);
             if (head === 'loop') {
@@ -364,7 +364,7 @@ angular.module('ux').service('focusManager', function (focusQuery, focusDispatch
                 disable();
             }
         } else {
-            findPrevGroup(containerId, groupId);
+            findPrevGroup(ParentGroupId, groupId);
         }
     }
 
