@@ -47,7 +47,7 @@ angular.module('ux').directive('focusGroup', function (focusManager, focusQuery,
     function linker(scope, element, attr) {
 
         var el = element[0];
-        var groupName = groupTag + (groupId++);
+        var groupName = groupId++;
         var bound = false;
         var cacheHtml = '';
         var newCacheHtml = '';
