@@ -1,5 +1,5 @@
 /*
-* angular-ux-focusmanager v.0.1.2
+* angular-ux-focusmanager v.0.1.3
 * (c) 2014, WebUX
 * https://github.com/webux/angular-ux-focusmanager
 * License: MIT.
@@ -87,7 +87,7 @@ angular.module("ux").directive("focusGroup", [ "focusManager", "focusQuery", "fo
         len = els.length;
         i = 0;
         while (i < len) {
-            elementName = "element-" + elementId;
+            elementName = elementId;
             focusQuery.setParentId(els[i], groupName);
             focusQuery.setElementId(els[i], elementName);
             var tabIndex = focusQuery.getTabIndex(els[i]);
@@ -97,17 +97,17 @@ angular.module("ux").directive("focusGroup", [ "focusManager", "focusQuery", "fo
             elementId += 1;
             i += 1;
         }
-        els = focusQuery.getGroupsWithoutContainers(el);
+        els = focusQuery.getGroupsWithoutParentGroup(el);
         len = els.length;
         i = 0;
         while (i < len) {
-            focusQuery.setContainerId(els[i], groupName);
+            focusQuery.setParentGroupId(els[i], groupName);
             i += 1;
         }
     }
     function linker(scope, element, attr) {
         var el = element[0];
-        var groupName = "group-" + groupId++;
+        var groupName = groupTag + groupId++;
         var bound = false;
         var cacheHtml = "";
         var newCacheHtml = "";
@@ -116,7 +116,7 @@ angular.module("ux").directive("focusGroup", [ "focusManager", "focusQuery", "fo
                 compile(groupName, el);
                 createBrowserEntryPoints();
             });
-            if (!focusQuery.getContainerId(el)) {
+            if (!focusQuery.getParentGroupId(el)) {
                 cacheHtml = el.innerHTML;
                 scope.$watch(utils.debounce(function() {
                     newCacheHtml = el.innerHTML;
@@ -338,7 +338,7 @@ angular.module("ux").service("focusKeyboard", [ "focusManager", function(focusMa
     function triggerClick(evt) {
         evt.preventDefault();
         evt.stopPropagation();
-        var activeElement = focusManager.activeElement || evt.target;
+        var activeElement = evt.target;
         fireEvent(activeElement, "mousedown");
         fireEvent(activeElement, "mouseup");
         fireEvent(activeElement, "click");
@@ -542,23 +542,23 @@ angular.module("ux").service("focusManager", [ "focusQuery", "focusDispatcher", 
             }
         }
     }
-    function findNextGroup(containerId, groupId) {
-        var group, groups, nextGroup, nextGroupId, parentContainer, parentContainerId, hasTail;
+    function findNextGroup(ParentGroupId, groupId) {
+        var group, groups, nextGroup, nextGroupId, parentParentGroup, parentParentGroupId, hasTail;
         group = focusQuery.getGroup(groupId);
         hasTail = focusQuery.hasGroupTail(group);
-        if (hasTail || !containerId) {
+        if (hasTail || !ParentGroupId) {
             findNextStep(groupId);
         } else {
-            containerId = focusQuery.getContainerId(group);
-            groups = focusQuery.getChildGroups(containerId);
+            ParentGroupId = focusQuery.getParentGroupId(group);
+            groups = focusQuery.getChildGroups(ParentGroupId);
             nextGroup = getNextGroup(groups, groupId);
             if (nextGroup) {
                 nextGroupId = focusQuery.getGroupId(nextGroup);
                 return findNextElement(nextGroupId);
             } else {
-                parentContainer = focusQuery.getGroup(containerId);
-                parentContainerId = focusQuery.getContainerId(parentContainer);
-                return findNextGroup(parentContainerId, containerId);
+                parentParentGroup = focusQuery.getGroup(ParentGroupId);
+                parentParentGroupId = focusQuery.getParentGroupId(parentParentGroup);
+                return findNextGroup(parentParentGroupId, ParentGroupId);
             }
         }
     }
@@ -580,15 +580,15 @@ angular.module("ux").service("focusManager", [ "focusQuery", "focusDispatcher", 
         findNextElement(groupId);
     }
     function findNextChildGroup(groupId) {
-        var groups, group, nextGroupId, containerId;
+        var groups, group, nextGroupId, ParentGroupId;
         groups = focusQuery.getChildGroups(groupId);
         if (groups.length) {
             nextGroupId = focusQuery.getGroupId(groups[0]);
             findNextElement(nextGroupId);
         } else {
             group = focusQuery.getGroup(groupId);
-            containerId = focusQuery.getContainerId(group);
-            findNextGroup(containerId, groupId);
+            ParentGroupId = focusQuery.getParentGroupId(group);
+            findNextGroup(ParentGroupId, groupId);
         }
     }
     function findNextElement(groupId, elementId) {
@@ -609,16 +609,16 @@ angular.module("ux").service("focusManager", [ "focusQuery", "focusDispatcher", 
             findNextGroup();
         }
     }
-    function findPrevGroup(containerId, groupId) {
-        var groups, prevGroup, prevGroupId, parentContainer, parentContainerId;
-        if (containerId) {
-            groups = focusQuery.getChildGroups(containerId);
+    function findPrevGroup(ParentGroupId, groupId) {
+        var groups, prevGroup, prevGroupId, parentParentGroup, parentParentGroupId;
+        if (ParentGroupId) {
+            groups = focusQuery.getChildGroups(ParentGroupId);
             prevGroup = getPrevGroup(groups, groupId);
             if (prevGroup) {
                 prevGroupId = focusQuery.getGroupId(prevGroup);
                 findPrevChildGroup(prevGroupId);
             } else {
-                findPrevElement(containerId);
+                findPrevElement(ParentGroupId);
             }
         } else {
             groupId = focusQuery.getLastGroupId();
@@ -658,11 +658,11 @@ angular.module("ux").service("focusManager", [ "focusQuery", "focusDispatcher", 
         }
     }
     function findPrevStep(groupId) {
-        var containerId, group, hasHead;
+        var ParentGroupId, group, hasHead;
         group = focusQuery.getGroup(groupId);
         hasHead = focusQuery.hasGroupHead(group);
-        containerId = focusQuery.getContainerId(group);
-        if (hasHead || !containerId) {
+        ParentGroupId = focusQuery.getParentGroupId(group);
+        if (hasHead || !ParentGroupId) {
             var head = focusQuery.getGroupHead(group);
             if (head === "loop") {
                 findPrevChildGroup(groupId);
@@ -670,7 +670,7 @@ angular.module("ux").service("focusManager", [ "focusQuery", "focusDispatcher", 
                 disable();
             }
         } else {
-            findPrevGroup(containerId, groupId);
+            findPrevGroup(ParentGroupId, groupId);
         }
     }
     function on() {
@@ -736,10 +736,10 @@ angular.module("ux").service("focusMouse", [ "focusManager", "focusQuery", funct
 } ]);
 
 angular.module("ux").service("focusQuery", function() {
-    var focusElementId = "focus-element-id";
-    var focusGroupId = "focus-group-id";
-    var focusParentId = "focus-parent-id";
-    var focusContainerId = "focus-container-id";
+    var focusElementId = "fm-el";
+    var focusGroupId = "fm-group";
+    var focusParentId = "fm-par";
+    var focusParentGroupId = "fm-par-group";
     var tabIndex = "tabindex";
     var focusGroup = "focus-group";
     var focusGroupIndex = "focus-group-index";
@@ -769,24 +769,24 @@ angular.module("ux").service("focusQuery", function() {
         return isSelectable;
     }
     function getFirstGroupId() {
-        var q = "[{focusGroup}]:not([{focusContainerId}])".supplant({
+        var q = "[{focusGroup}]:not([{focusParentGroupId}])".supplant({
             focusGroup: focusGroup,
-            focusContainerId: focusContainerId
+            focusParentGroupId: focusParentGroupId
         });
         var groupEl = document.querySelector(q);
         return getGroupId(groupEl);
     }
     function getLastGroupId() {
-        var q = "[{focusGroup}]:not([{focusContainerId}])".supplant({
+        var q = "[{focusGroup}]:not([{focusParentGroupId}])".supplant({
             focusGroup: focusGroup,
-            focusContainerId: focusContainerId
+            focusParentGroupId: focusParentGroupId
         });
         var groupEls = document.querySelectorAll(q);
         return getGroupId(groupEls[groupEls.length - 1]);
     }
     function getChildGroups(groupId) {
-        var els = document.querySelectorAll('[{focusContainerId}="{groupId}"]'.supplant({
-            focusContainerId: focusContainerId,
+        var els = document.querySelectorAll('[{focusParentGroupId}="{groupId}"]'.supplant({
+            focusParentGroupId: focusParentGroupId,
             groupId: groupId
         }));
         var returnVal = [];
@@ -808,11 +808,11 @@ angular.module("ux").service("focusQuery", function() {
         }
         return [];
     }
-    function getGroupsWithoutContainers(el) {
+    function getGroupsWithoutParentGroup(el) {
         if (!el) {
             return [];
         }
-        var q = "[" + focusGroupId + "]:not([" + focusContainerId + "])";
+        var q = "[" + focusGroupId + "]:not([" + focusParentGroupId + "])";
         return el.querySelectorAll(q);
     }
     function getGroupElements(groupId) {
@@ -944,13 +944,13 @@ angular.module("ux").service("focusQuery", function() {
     function setParentId(el, id) {
         el.setAttribute(focusParentId, id);
     }
-    function getContainerId(el) {
+    function getParentGroupId(el) {
         if (el) {
-            return el.getAttribute(focusContainerId);
+            return el.getAttribute(focusParentGroupId);
         }
     }
-    function setContainerId(el, id) {
-        el.setAttribute(focusContainerId, id);
+    function setParentGroupId(el, id) {
+        el.setAttribute(focusParentGroupId, id);
     }
     function getTabIndex(el) {
         if (el) {
@@ -966,7 +966,7 @@ angular.module("ux").service("focusQuery", function() {
             }
         }
     }
-    function contains(container, el) {
+    function contains(ParentGroup, el) {
         if (el) {
             var parent = el.parentNode;
             if (parent) {
@@ -974,7 +974,7 @@ angular.module("ux").service("focusQuery", function() {
                     if (parent.nodeType === 9) {
                         break;
                     }
-                    if (parent === container) {
+                    if (parent === ParentGroup) {
                         return true;
                     }
                     parent = parent.parentNode;
@@ -1029,15 +1029,15 @@ angular.module("ux").service("focusQuery", function() {
     this.setGroupId = setGroupId;
     this.getParentId = getParentId;
     this.setParentId = setParentId;
-    this.getContainerId = getContainerId;
-    this.setContainerId = setContainerId;
+    this.getParentGroupId = getParentGroupId;
+    this.setParentGroupId = setParentGroupId;
     this.getGroup = getGroup;
     this.getFirstGroupId = getFirstGroupId;
     this.getLastGroupId = getLastGroupId;
     this.getTabIndex = getTabIndex;
     this.setTabIndex = setTabIndex;
     this.getElementsWithoutParents = getElementsWithoutParents;
-    this.getGroupsWithoutContainers = getGroupsWithoutContainers;
+    this.getGroupsWithoutParentGroup = getGroupsWithoutParentGroup;
     this.isAutofocus = isAutofocus;
     this.hasGroupHead = hasGroupHead;
     this.hasGroupTail = hasGroupTail;
