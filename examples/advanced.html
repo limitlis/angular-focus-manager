@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Focus Manager - Complex Example</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body ng-controller="AppCtrl as app">
+
+<button ng-click="app.toggleView()">Toggle View</button>
+<button ng-click="app.changeDisplay()">Change Display</button>
+
+<div>
+    <a href="">Home</a>
+    <a href="">Contact</a>
+    <a href="">About</a>
+</div>
+
+<div focus-group>
+
+    <div>
+        <div tabindex="0" focus-index="1">Link 1</div>
+        <div focus-index="2">Link 2</div>
+        <div focus-index="3">Link 3</div>
+    </div>
+
+
+    <select>
+        <option value="1">One</option>
+        <option value="2">Two</option>
+        <option value="3">Three</option>
+    </select>
+
+    <a href="">My Only link ({{app.counter}})</a>
+
+    <div focus-group>
+        <div focus-group="strict" focus-group-index="1">
+            <div class="header">Group 1</div>
+            <a href="" focus-index="4">Link 4</a>
+            <a href="" focus-index="3" focus-shortcut="command+k">Link 3</a>
+            <a href="" focus-index="2" disabled="disabled">Link 2 (Disabled)</a>
+            <a href="" focus-index="1">Link 1</a>
+
+            <div style="display: none">
+                <a href="" focus-index="5">Link</a>
+                <a href="" focus-index="5">Link</a>
+            </div>
+
+            <a href="" focus-index="6">Link A</a>
+            <a href="" focus-shortcut="g i">Link B</a>
+            <a href="" focus-index="7">Link C</a>
+        </div>
+
+        <div focus-group focus-group-index="3">
+            <div class="header">Group 3</div>
+            <a href="">Link</a>
+            <a href="">Link</a>
+            <a href="">Link</a>
+        </div>
+
+        <div focus-group focus-group-index="2">
+            <div class="header">Group 2</div>
+            <div focus-group>
+                <a href="" focus-index="1" ng-click="app.toggleDialog()">Toggle Dialog</a>
+
+                <div focus-index="0" ng-click="app.callAction()">DIV Link</div>
+                <a href="" focus-index="2">Link</a>
+                <a href="" focus-index="3" disabled="disabled">Link (Disabled)</a>
+                <a href="" focus-index="3">Link</a>
+
+                <div style="display: none">
+                    <a href="" focus-index="3">Link</a>
+                    <a href="" focus-index="3">Link</a>
+                </div>
+                <select>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                </select>
+                <a href="" focus-index="3">Link A</a>
+                <a href="" focus-index="3">Link B</a>
+                <a href="" focus-index="4">Link C</a>
+            </div>
+        </div>
+    </div>
+
+    <div focus-group>
+        <div ng-if="app.showView">
+            <a href="" focus-index="1" focus-element="autofocus">Link1 </a>
+            <a href="" focus-index="2">Link</a>
+            <a href="" focus-index="3" disabled="disabled">Link (Disabled)</a>
+            <a href="" focus-index="3">Link</a>
+
+            <div style="display: none">
+                <a href="" focus-index="3">Link</a>
+                <a href="" focus-index="3">Link</a>
+            </div>
+
+            <a href="" focus-index="3">Link A</a>
+            <a href="" focus-index="3">Link B</a>
+            <a href="" focus-index="4">Link C</a>
+        </div>
+    </div>
+
+    <div focus-group>
+        <a tabindex="0" href="" focus-index="3">Link</a>
+    </div>
+
+</div>
+
+<div style="margin-top: 15px" focus-group>
+
+    <div focus-group>
+        <div focus-group>
+            <a href="" focus-index="3">Link 3</a>
+            <a href="" focus-index="2">Link 2</a>
+            <a tabindex="0" href="" focus-index="1">Link 1</a>
+        </div>
+    </div>
+
+    <div focus-group>
+        <a tabindex="0" href="" focus-index="3">Link 4</a>
+    </div>
+
+</div>
+
+<div ng-if="app.showModal" class="modal-bg">
+    <div focus-group focus-group-head="loop" focus-group-tail="loop" focus-stack class="dialog">
+        <a href="" focus-element="autofocus" ng-click="app.toggleDialog()">Close</a>
+        <a href="">Link 2</a>
+        <a href="">Link 1</a>
+    </div>
+</div>
+
+<div focus-highlight=""></div>
+
+<div>
+    <a href="">Home</a>
+    <a href="">Contact</a>
+    <a href="">About</a>
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.8/angular.js"></script>
+<script src="//raw.githubusercontent.com/webux/angular-ux-focusmanager/master/build/angular-ux-focusmanager.js"></script>
+<script>
+    angular.module('app', ['ux'])
+            .controller('AppCtrl', function () {
+                this.showModal = false;
+                this.showView = false;
+                this.counter = 1;
+                this.toggleDialog = function () {
+                    this.showModal = !this.showModal;
+                }
+                this.toggleView = function () {
+                    this.showView = !this.showView;
+                }
+                this.changeDisplay = function () {
+                    this.counter++;
+                }
+            })
+</script>
+</body>
+</html>
