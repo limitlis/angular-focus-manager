@@ -65,11 +65,11 @@ angular.module('ux').directive('focusGroup', function (focusManager, focusQuery,
                 scope.$watch(utils.debounce(function() {
                     newCacheHtml = el.innerHTML;
                     if (cacheHtml !== newCacheHtml) {
-                        var els = el.querySelectorAll('[focus-group]');
+                        var els = el.querySelectorAll('['+focusGroup+']');
                         var i = els.length, groupId;
                         while (i) {
                             i -= 1;
-                            groupId = els[i].getAttribute('focus-group-id');
+                            groupId = els[i].getAttribute(focusGroupId);
                             scope.$broadcast("focus::" + groupId);
                         }
                         cacheHtml = newCacheHtml;

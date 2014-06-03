@@ -42,6 +42,7 @@ module.exports = function (grunt) {
             all: {
                 src: [
                     'src/ux.js',
+                    'src/consts.js',
                     'src/utils.js',
                     'src/**/*.js'
                 ],

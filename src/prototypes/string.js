@@ -1,7 +1,10 @@
 /* global ux, utils */
-String.prototype.supplant = function (o) {
+function supplant (str, o) {
     'use strict';
-    return this.replace(
+    if (!str.replace) {
+        return o;
+    }
+    return str.replace(
         /{([^{}]*)}/g,
         function (a, b) {
             var r = o[b];

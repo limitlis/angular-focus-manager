@@ -65,13 +65,16 @@ utils.throttle = function(func, threshhold, scope) {
     };
 };
 
-String.prototype.supplant = function(o) {
+function supplant(str, o) {
     "use strict";
-    return this.replace(/{([^{}]*)}/g, function(a, b) {
+    if (!str.replace) {
+        return o;
+    }
+    return str.replace(/{([^{}]*)}/g, function(a, b) {
         var r = o[b];
         return typeof r === "string" || typeof r === "number" ? r : a;
     });
-};
+}
 
 angular.module("ux").directive("focusElement", [ "focusManager", "focusQuery", function(focusManager, focusQuery) {
     return {
@@ -115,7 +118,7 @@ angular.module("ux").directive("focusGroup", [ "focusManager", "focusQuery", "fo
     }
     function linker(scope, element, attr) {
         var el = element[0];
-        var groupName = groupTag + groupId++;
+        var groupName = groupId++;
         var bound = false;
         var cacheHtml = "";
         var newCacheHtml = "";
@@ -129,11 +132,11 @@ angular.module("ux").directive("focusGroup", [ "focusManager", "focusQuery", "fo
                 scope.$watch(utils.debounce(function() {
                     newCacheHtml = el.innerHTML;
                     if (cacheHtml !== newCacheHtml) {
-                        var els = el.querySelectorAll("[focus-group]");
+                        var els = el.querySelectorAll("[" + focusGroup + "]");
                         var i = els.length, groupId;
                         while (i) {
                             i -= 1;
-                            groupId = els[i].getAttribute("focus-group-id");
+                            groupId = els[i].getAttribute(focusGroupId);
                             scope.$broadcast("focus::" + groupId);
                         }
                         cacheHtml = newCacheHtml;
@@ -649,19 +652,6 @@ angular.module("ux").service("focusMouse", [ "focusManager", "focusQuery", funct
 } ]);
 
 angular.module("ux").service("focusQuery", function() {
-    var focusElementId = "fm-el";
-    var focusGroupId = "fm-group";
-    var focusParentId = "fm-par";
-    var focusParentGroupId = "fm-par-group";
-    var tabIndex = "tabindex";
-    var focusGroup = "focus-group";
-    var focusGroupIndex = "focus-group-index";
-    var focusGroupHead = "focus-group-head";
-    var focusGroupTail = "focus-group-tail";
-    var focusElement = "focus-element";
-    var focusEnabled = "focus-enabled";
-    var focusIndex = "focus-index";
-    var selectable = "A,SELECT,BUTTON,INPUT,TEXTAREA,*[focus-index]";
     function canReceiveFocus(el) {
         if (!el) {
             return false;
@@ -682,7 +672,7 @@ angular.module("ux").service("focusQuery", function() {
         return isSelectable;
     }
     function getFirstGroupId() {
-        var q = "[{focusGroup}]:not([{focusParentGroupId}])".supplant({
+        var q = supplant("[{focusGroup}]:not([{focusParentGroupId}])", {
             focusGroup: focusGroup,
             focusParentGroupId: focusParentGroupId
         });
@@ -690,7 +680,7 @@ angular.module("ux").service("focusQuery", function() {
         return getGroupId(groupEl);
     }
     function getLastGroupId() {
-        var q = "[{focusGroup}]:not([{focusParentGroupId}])".supplant({
+        var q = supplant("[{focusGroup}]:not([{focusParentGroupId}])", {
             focusGroup: focusGroup,
             focusParentGroupId: focusParentGroupId
         });
@@ -698,10 +688,11 @@ angular.module("ux").service("focusQuery", function() {
         return getGroupId(groupEls[groupEls.length - 1]);
     }
     function getChildGroups(groupId) {
-        var els = document.querySelectorAll('[{focusParentGroupId}="{groupId}"]'.supplant({
+        var q = supplant('[{focusParentGroupId}="{groupId}"]', {
             focusParentGroupId: focusParentGroupId,
             groupId: groupId
-        }));
+        });
+        var els = document.querySelectorAll(q);
         var returnVal = [];
         var i = 0, len = els.length;
         while (i < len) {
@@ -714,7 +705,7 @@ angular.module("ux").service("focusQuery", function() {
     function getElementsWithoutParents(el) {
         if (el) {
             var query = "A:not({focusParentId})," + "SELECT:not({focusParentId})," + "BUTTON:not({focusParentId})," + "INPUT:not({focusParentId})," + "TEXTAREA:not({focusParentId})," + "*[focus-index]:not({focusParentId})";
-            query = query.supplant({
+            query = supplant(query, {
                 focusParentId: "[" + focusParentId + "]"
             });
             return el.querySelectorAll(query);
@@ -732,12 +723,12 @@ angular.module("ux").service("focusQuery", function() {
         var q, isStrict, els, returnVal, i, len;
         isStrict = isGroupStrict(groupId);
         if (isStrict) {
-            q = '[{focusParentId}="{groupId}"][focus-index]:not([disabled]):not(.disabled)'.supplant({
+            q = supplant('[{focusParentId}="{groupId}"][focus-index]:not([disabled]):not(.disabled)', {
                 focusParentId: focusParentId,
                 groupId: groupId
             });
         } else {
-            q = '[{focusParentId}="{groupId}"]:not([disabled]):not(.disabled)'.supplant({
+            q = supplant('[{focusParentId}="{groupId}"]:not([disabled]):not(.disabled)', {
                 focusParentId: focusParentId,
                 groupId: groupId
             });
@@ -814,7 +805,7 @@ angular.module("ux").service("focusQuery", function() {
     }
     function getElement(elementId) {
         if (elementId) {
-            var q = '[{focusElementId}="{elementId}"]'.supplant({
+            var q = supplant('[{focusElementId}="{elementId}"]', {
                 focusElementId: focusElementId,
                 elementId: elementId
             });

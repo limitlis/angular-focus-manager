@@ -2,22 +2,6 @@
 angular.module('ux').service('focusQuery', function () {
 
     // http://quirksmode.org/dom/core/
-
-    var focusElementId = 'fm-el';
-    var focusGroupId = 'fm-group';
-    var focusParentId = 'fm-par';
-    var focusParentGroupId = 'fm-par-group';
-
-    var tabIndex = 'tabindex';
-    var focusGroup = 'focus-group';
-    var focusGroupIndex = 'focus-group-index';
-    var focusGroupHead = 'focus-group-head';
-    var focusGroupTail = 'focus-group-tail';
-    var focusElement = 'focus-element';
-    var focusEnabled = 'focus-enabled';
-    var focusIndex = 'focus-index';
-    var selectable = 'A,SELECT,BUTTON,INPUT,TEXTAREA,*[focus-index]';
-
     function canReceiveFocus(el) {
         if (!el) {
             return false;
@@ -44,7 +28,7 @@ angular.module('ux').service('focusQuery', function () {
     }
 
     function getFirstGroupId() {
-        var q = '[{focusGroup}]:not([{focusParentGroupId}])'.supplant({
+        var q = supplant('[{focusGroup}]:not([{focusParentGroupId}])', {
             focusGroup: focusGroup,
             focusParentGroupId: focusParentGroupId
         });
@@ -53,7 +37,7 @@ angular.module('ux').service('focusQuery', function () {
     }
 
     function getLastGroupId() {
-        var q = '[{focusGroup}]:not([{focusParentGroupId}])'.supplant({
+        var q = supplant('[{focusGroup}]:not([{focusParentGroupId}])', {
             focusGroup: focusGroup,
             focusParentGroupId: focusParentGroupId
         });
@@ -62,10 +46,12 @@ angular.module('ux').service('focusQuery', function () {
     }
 
     function getChildGroups(groupId) {
-        var els = document.querySelectorAll('[{focusParentGroupId}="{groupId}"]'.supplant({
+        var q = supplant('[{focusParentGroupId}="{groupId}"]', {
             focusParentGroupId: focusParentGroupId,
             groupId: groupId
-        }));
+        });
+
+        var els = document.querySelectorAll(q);
 
         var returnVal = [];
         var i = 0, len = els.length;
@@ -86,7 +72,7 @@ angular.module('ux').service('focusQuery', function () {
                 'INPUT:not({focusParentId}),' +
                 'TEXTAREA:not({focusParentId}),' +
                 '*[focus-index]:not({focusParentId})';
-            query = query.supplant({focusParentId: '[' + focusParentId + ']'});
+            query = supplant(query, {focusParentId: '[' + focusParentId + ']'});
             return el.querySelectorAll(query);
         }
         return [];
@@ -106,12 +92,12 @@ angular.module('ux').service('focusQuery', function () {
 
         isStrict = isGroupStrict(groupId);
         if (isStrict) {
-            q = '[{focusParentId}="{groupId}"][focus-index]:not([disabled]):not(.disabled)'.supplant({
+            q = supplant('[{focusParentId}="{groupId}"][focus-index]:not([disabled]):not(.disabled)', {
                 focusParentId: focusParentId,
                 groupId: groupId
             });
         } else {
-            q = '[{focusParentId}="{groupId}"]:not([disabled]):not(.disabled)'.supplant({
+            q = supplant('[{focusParentId}="{groupId}"]:not([disabled]):not(.disabled)', {
                 focusParentId: focusParentId,
                 groupId: groupId
             });
@@ -210,7 +196,7 @@ angular.module('ux').service('focusQuery', function () {
 
     function getElement(elementId) {
         if (elementId) {
-            var q = '[{focusElementId}="{elementId}"]'.supplant({
+            var q = supplant('[{focusElementId}="{elementId}"]', {
                 focusElementId: focusElementId,
                 elementId: elementId
             });
