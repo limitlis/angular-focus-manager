@@ -3,7 +3,7 @@
 ###Allow flexible key and mouse navigation in your web application.
 ---
 
-**[Download 0.1.3](https://raw.githubusercontent.com/webux/angular-ux-focusmanager/master/build/angular-ux-focusmanager.js)** (or **[Minified](https://raw.githubusercontent.com/webux/angular-ux-focusmanager/master/build/angular-ux-focusmanager.min.js)**) **|**
+**[Download 0.1.4](https://raw.githubusercontent.com/webux/angular-ux-focusmanager/master/build/angular-ux-focusmanager.js)** (or **[Minified](https://raw.githubusercontent.com/webux/angular-ux-focusmanager/master/build/angular-ux-focusmanager.min.js)**) **|**
 **[Guide](https://github.com/webux/angular-ux-focusmanager/wiki) |**
 **[API](http://webux.github.io/ux-focusmanager/site) |**
 **[Examples](http://webux.github.com/ux-focusmanager/examples/) ([Src](https://github.com/webux/ux-focusmanager/tree/gh-pages/sample)) |**

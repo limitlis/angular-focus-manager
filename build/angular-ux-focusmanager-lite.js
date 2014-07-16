@@ -1,5 +1,5 @@
 /*
-* angular-ux-focusmanager v.0.1.3
+* angular-ux-focusmanager v.0.1.4
 * (c) 2014, WebUX
 * https://github.com/webux/angular-ux-focusmanager
 * License: MIT.
@@ -81,10 +81,17 @@ angular.module("ux").directive("focusElement", [ "focusManager", "focusQuery", f
         link: function(scope, element, attr) {
             var el = element[0];
             if (focusQuery.isAutofocus(el)) {
-                var off = scope.$watch(utils.debounce(function() {
+                var off = scope.$watch(function() {
                     off();
                     focusManager.focus(el);
-                }, 100));
+                    var timer = setInterval(function() {
+                        if (focusManager.focus() !== el || document.activeElement === el) {
+                            clearInterval(timer);
+                        } else {
+                            el.focus();
+                        }
+                    }, 10);
+                });
             }
         }
     };
