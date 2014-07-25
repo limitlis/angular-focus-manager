@@ -7,6 +7,25 @@ body {
     outline: none !important;
 }
 
+a {
+    display: inline-block;
+    background: #3498db;
+    color: white;
+    padding: 5px 20px;
+    text-decoration: none;
+
+    -webkit-border-radius: 12px;
+    -moz-border-radius: 12px;
+    border-radius: 12px;
+    margin: 5px 0px;
+}
+
+a:focus, a:active, a:hover {
+    background: #f39c12;
+    color: white;
+    text-decoration: none;
+}
+
 .focus-highlight {
     position: absolute;
     -webkit-transition: left 100ms ease-out, top 100ms ease-out, width 100ms ease-out, height 100ms ease-out;
@@ -21,6 +40,10 @@ body {
     z-index: 1000;
 }
 
+a[disabled] {
+    background: #bdc3c7;
+}
+
 .header {
     font-size: 15px;
     margin: 10px 0;
@@ -29,8 +52,8 @@ body {
 [focus-group] {
     position: relative;
     outline: 1px dashed lightgray;
-    padding: 20px 10px;
-    margin: 5px 0;
+    padding: 20px 20px;
+    margin: 10px;
 }
 
 .group-name {
@@ -47,12 +70,12 @@ body {
 }
 
 .modal-bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    background-color: rgba(0, 0, 0, 0.15);
+    /*position: fixed;*/
+    /*top: 0;*/
+    /*left: 0;*/
+    /*bottom: 0;*/
+    /*right: 0;*/
+    /*background-color: rgba(0, 0, 0, 0.15);*/
 }
 
 .dialog {

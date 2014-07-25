@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Focus Manager - Complex Example</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body ng-controller="AppCtrl as app">
+<a href="">Link</a>
+
+<div focus-group>
+    <div focus-group>
+        <a href="">Link</a>
+    </div>
+</div>
+
+<div style="margin-top: 15px" focus-group>
+
+    <div focus-group focus-group-index="2">
+        <div focus-group>
+            <a href="" focus-index="3">Link 3</a>
+            <a href="" focus-index="2">Link 2</a>
+            <a href="" focus-index="1">Link 1</a>
+        </div>
+    </div>
+
+    <div focus-group focus-group-index="1">
+        <a href="" focus-index="1">Link 1</a>
+        <a href="" focus-index="3">Link 3</a>
+        <a href="" focus-index="2">Link 2</a>
+    </div>
+</div>
+
+<div focus-highlight=""></div>
+
+<div>
+    <a href="">Home</a>
+    <a href="">Contact</a>
+    <a href="">About</a>
+</div>
+
+<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="../bower_components/angular/angular.js"></script>
+<script src="../build/angular-ux-focusmanager.js"></script>
+<script src="js/jquery.dom-outline-1.0.js"></script>
+<script>
+    angular.module('app', ['ux'])
+            .controller('AppCtrl', function () {
+                this.showModal = false;
+                this.showView = false;
+                this.counter = 1;
+                this.toggleDialog = function () {
+                    this.showModal = !this.showModal;
+                }
+                this.toggleView = function () {
+                    this.showView = !this.showView;
+                }
+                this.changeDisplay = function () {
+                    this.counter++;
+                }
+            })
+
+    var myExampleClickHandler = function (element) {
+        console.log('Clicked element:', element);
+    }
+    var myDomOutline = DomOutline({ onClick: myExampleClickHandler });
+
+    // Start outline:
+    myDomOutline.start();
+
+    // Stop outline (also stopped on escape/backspace/delete keys):
+    myDomOutline.stop();
+</script>
+</body>
+</html>
