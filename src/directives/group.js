@@ -1,5 +1,5 @@
 /* global ux, utils */
-angular.module('ux').directive('focusGroup', function (focusManager, focusQuery, focusDispatcher) {
+angular.module('ux').directive('focusGroup', function (focusManager, focusQuery, focusDispatcher, focusKeyboard) {
 
     var groupId = 1, // unique id counter for groups
         elementId = 1, // unique id counter for selectable elements
@@ -51,21 +51,23 @@ angular.module('ux').directive('focusGroup', function (focusManager, focusQuery,
         var bound = false;
         var cacheHtml = '';
         var newCacheHtml = '';
+        var tabIndex = el.getAttribute('tabindex') || 0;
 
         function init() {
             scope.$on('focus::' + groupName, function () {
                 compile(groupName, el);
-                createBrowserEntryPoints();
             });
 
             if (!focusQuery.getParentGroupId(el)) { // this is an isolate focus group
 
                 cacheHtml = el.innerHTML;
 
-                scope.$watch(utils.debounce(function() {
+                el.setAttribute('tabindex', tabIndex);
+
+                scope.$watch(utils.debounce(function () {
                     newCacheHtml = el.innerHTML;
                     if (cacheHtml !== newCacheHtml) {
-                        var els = el.querySelectorAll('['+focusGroup+']');
+                        var els = el.querySelectorAll('[' + focusGroup + ']');
                         var i = els.length, groupId;
                         while (i) {
                             i -= 1;
@@ -75,7 +77,6 @@ angular.module('ux').directive('focusGroup', function (focusManager, focusQuery,
                         cacheHtml = newCacheHtml;
                     }
                     compile(groupName, el);
-                    createBrowserEntryPoints();
                 }, delay));
 
                 dispatcher.on('focusin', utils.debounce(function (evt) {
@@ -92,17 +93,34 @@ angular.module('ux').directive('focusGroup', function (focusManager, focusQuery,
                         }
                     }
                 }, delay));
+
+                dispatcher.on('enabled', function (evt) {
+                    var direction = focusKeyboard.direction;
+                    if (document.activeElement === el) {
+                        if (direction === 'prev') {
+                            focusManager.findPrevChildGroup(groupName);
+                        } else {
+                            focusManager.findNextElement(groupName);
+                        }
+                    }
+
+                    if (document.activeElement === el || focusQuery.contains(el, document.activeElement)) {
+                        el.removeAttribute('tabindex');
+                    } else {
+                        el.setAttribute('tabindex', tabIndex);
+                    }
+                });
+
+                dispatcher.on('disabled', function () {
+                    setTimeout(function () {
+                        if (document.activeElement === el || focusQuery.contains(el, document.activeElement)) {
+                            el.removeAttribute('tabindex');
+                        } else {
+                            el.setAttribute('tabindex', tabIndex);
+                        }
+                    })
+                })
             }
-        }
-
-        function createBrowserEntryPoints() {
-            focusManager.callback = function (el) {
-                focusQuery.setTabIndex(el, 0);
-            };
-            focusManager.findPrevChildGroup(groupName);
-            focusManager.findNextElement(groupName);
-
-            focusManager.callback = null;
         }
 
         function onFocus() {
@@ -119,7 +137,6 @@ angular.module('ux').directive('focusGroup', function (focusManager, focusQuery,
     }
 
     return {
-//        scope: true,
         link: linker
     };
 
