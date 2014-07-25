@@ -2,20 +2,25 @@
 angular.module('ux').directive('focusElement', function (focusManager, focusQuery) {
     return {
         link: function (scope, element, attr) {
-            var el = element[0];
+            var el = element[0],
+                timer;
+
             if (focusQuery.isAutofocus(el)) {
-                var off = scope.$watch(function() {
+                var off = scope.$watch(function () {
                     off();
                     focusManager.focus(el);
-                    var timer = setInterval(function(){
-                        if(focusManager.focus() !== el || document.activeElement === el) {
+                    timer = setInterval(function () {
+                        el.focus();
+                        if (document.activeElement === el) {
                             clearInterval(timer);
-                        } else {
-                            el.focus();
                         }
                     }, 10);
                 });
             }
+
+            scope.$destroy(function () {
+               clearInterval(timer);
+            });
         }
     };
 
