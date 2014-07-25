@@ -1,7 +1,8 @@
 /* global ux, utils */
 angular.module('ux').service('focusKeyboard', function (focusManager) {
 
-    var tabKeysEnabled = false,
+    var scope = this,
+        tabKeysEnabled = false,
         arrowKeysEnabled = false;
 
     function enableTabKeys() {
@@ -51,6 +52,8 @@ angular.module('ux').service('focusKeyboard', function (focusManager) {
 
     function onFocusNext(evt) {
 
+        scope.direction = 'next';
+
         if (focusManager.enabled) {
             focusManager.next();
         }
@@ -66,6 +69,8 @@ angular.module('ux').service('focusKeyboard', function (focusManager) {
     }
 
     function onFocusPrev(evt) {
+
+        scope.direction = 'prev';
 
         if (focusManager.enabled) {
             focusManager.prev();
@@ -174,6 +179,7 @@ angular.module('ux').service('focusKeyboard', function (focusManager) {
         }
     }
 
+    this.direction = null;
     this.enable = enable;
     this.disable = disable;
     this.enableTabKeys = enableTabKeys;
