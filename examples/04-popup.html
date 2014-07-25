@@ -31,9 +31,14 @@
 
 <div ng-if="app.showModal" class="modal-bg">
     <div focus-group focus-group-head="loop" focus-group-tail="loop" focus-stack class="dialog">
-        <a href="" focus-element="autofocus" ng-click="app.toggleDialog()">Close</a>
-        <a href="">Link 2</a>
-        <a href="">Link 1</a>
+        <div>
+            <input type="text" focus-element="autofocus" />
+        </div>
+        <div style="padding: 10px 0">
+            <a href="">Link 1</a>
+            <a href="">Link 2</a>
+        </div>
+        <a href="" ng-click="app.toggleDialog()" style="position: absolute;bottom: 10px;right: 10px">Close</a>
     </div>
 </div>
 
