@@ -274,15 +274,15 @@ angular.module('ux').service('focusQuery', function () {
         }
     }
 
-    function contains(ParentGroup, el) {
+    function contains(targetEl, el) {
         if (el) {
             var parent = el.parentNode;
             if (parent) {
                 while (parent) {
-                    if(parent.nodeType === 9) {
+                    if (parent.nodeType === 9) {
                         break;
                     }
-                    if (parent === ParentGroup) {
+                    if (parent === targetEl) {
                         return true;
                     }
                     parent = parent.parentNode;
@@ -292,22 +292,43 @@ angular.module('ux').service('focusQuery', function () {
         return false;
     }
 
+//    function sort(list, compareFn) {
+//        var i = 0,
+//            len = list.length - 1,
+//            holder;
+//        if (!compareFn) { // default compare function.
+//            compareFn = function (a, b) {
+//                return a > b ? 1 : (a < b ? -1 : 0);
+//            };
+//        }
+//        while (i < len) {
+//            if (compareFn(list[i], list[i + 1]) > 0) {
+//                holder = list[i + 1];
+//                list[i + 1] = list[i];
+//                list[i] = holder;
+//            }
+//            i = i + 1;
+//        }
+//        return list;
+//    }
+
     function sort(list, compareFn) {
-        var i = 0,
-            len = list.length - 1,
-            holder;
+        var c, len, v, rlen, holder;
         if (!compareFn) { // default compare function.
             compareFn = function (a, b) {
                 return a > b ? 1 : (a < b ? -1 : 0);
             };
         }
-        while (i < len) {
-            if (compareFn(list[i], list[i + 1]) > 0) {
-                holder = list[i + 1];
-                list[i + 1] = list[i];
-                list[i] = holder;
+        len = list.length;
+        rlen = len - 1;
+        for (c = 0; c < len; c += 1) {
+            for (v = 0; v < rlen; v += 1) {
+                if (compareFn(list[v], list[v + 1]) > 0) {
+                    holder = list[v + 1];
+                    list[v + 1] = list[v];
+                    list[v] = holder;
+                }
             }
-            i = i + 1;
         }
         return list;
     }
