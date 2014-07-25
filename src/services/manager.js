@@ -170,28 +170,28 @@ angular.module('ux').service('focusManager', function (focusQuery, focusDispatch
      * If no group is found, it will go up the parent groups to find another group. If no groupId is
      * passed in it will find the first isolate group encountered.
      *
-     * @param ParentGroupId
+     * @param parentGroupId
      * @param groupId
      */
-    function findNextGroup(ParentGroupId, groupId) {
-        var group, groups, nextGroup, nextGroupId, parentParentGroup, parentParentGroupId, hasTail;
+    function findNextGroup(parentGroupId, groupId) {
+        var group, groups, nextGroup, nextGroupId, parentGroup, grandparentGroupId, hasTail;
         group = focusQuery.getGroup(groupId);
         hasTail = focusQuery.hasGroupTail(group);
 
-        if (hasTail || !ParentGroupId) {
+        if (hasTail || !parentGroupId) {
             findNextStep(groupId);
         } else {
-            ParentGroupId = focusQuery.getParentGroupId(group);
-            groups = focusQuery.getChildGroups(ParentGroupId);
+            parentGroupId = focusQuery.getParentGroupId(group);
+            groups = focusQuery.getChildGroups(parentGroupId);
             nextGroup = getNextGroup(groups, groupId);
             if (nextGroup) {
                 nextGroupId = focusQuery.getGroupId(nextGroup);
                 return findNextElement(nextGroupId);
             } else {
-                // no next group go up, if there is not a ParentGroup, we are at the top of the isolate group
-                parentParentGroup = focusQuery.getGroup(ParentGroupId);
-                parentParentGroupId = focusQuery.getParentGroupId(parentParentGroup);
-                return findNextGroup(parentParentGroupId, ParentGroupId);
+                // no next group go up, if there is not a parentGroup, we are at the top of the isolate group
+                parentGroup = focusQuery.getGroup(parentGroupId);
+                grandparentGroupId = focusQuery.getParentGroupId(parentGroup);
+                return findNextGroup(grandparentGroupId, parentGroupId);
             }
         }
     }
@@ -227,7 +227,7 @@ angular.module('ux').service('focusManager', function (focusQuery, focusDispatch
      * @param groupId
      */
     function findNextChildGroup(groupId) {
-        var groups, group, nextGroupId, ParentGroupId;
+        var groups, group, nextGroupId, parentGroupId;
 
         groups = focusQuery.getChildGroups(groupId);
         if (groups.length) {
@@ -236,8 +236,8 @@ angular.module('ux').service('focusManager', function (focusQuery, focusDispatch
         } else {
             // there are no child groups, go back up parent chain
             group = focusQuery.getGroup(groupId);
-            ParentGroupId = focusQuery.getParentGroupId(group);
-            findNextGroup(ParentGroupId, groupId);
+            parentGroupId = focusQuery.getParentGroupId(group);
+            findNextGroup(parentGroupId, groupId);
         }
     }
 
