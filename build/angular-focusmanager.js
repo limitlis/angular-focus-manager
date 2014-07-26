@@ -1,16 +1,14 @@
 /*
-* angular-ux-focusmanager v.0.1.5
-* (c) 2014, WebUX
-* https://github.com/webux/angular-ux-focusmanager
+* Angular FocusManager 0.2.0
+* Obogo (c) 2014
+* https://github.com/webux/angular-focusmanager
 * License: MIT.
 */
 (function(){
-var ux;
-
 try {
-    ux = angular.module("ux");
+    angular.module("go");
 } catch (e) {
-    ux = angular.module("ux", []);
+    angular.module("go", []);
 }
 
 var focusElementId = "fm-id";
@@ -39,65 +37,13 @@ var focusIndex = "focus-index";
 
 var selectable = "A,SELECT,BUTTON,INPUT,TEXTAREA,*[focus-index]";
 
-var utils = {};
-
-utils.addEvent = function(object, type, callback) {
-    if (object.addEventListener) {
-        object.addEventListener(type, callback, false);
-        return;
-    }
-    object.attachEvent("on" + type, callback);
-};
-
-utils.removeEvent = function(object, type, callback) {
-    if (object.removeEventListener) {
-        object.removeEventListener(type, callback, false);
-        return;
-    }
-    object.detachEvent("on" + type, callback);
-};
-
-utils.debounce = function(func, wait, immediate) {
-    var timeout;
-    return function() {
-        var context = this, args = arguments;
-        clearTimeout(timeout);
-        timeout = setTimeout(function() {
-            timeout = null;
-            if (!immediate) func.apply(context, args);
-        }, wait);
-        if (immediate && !timeout) {
-            func.apply(context, args);
-        }
-    };
-};
-
-utils.throttle = function(func, threshhold, scope) {
-    threshhold = threshhold || 250;
-    var last, deferTimer;
-    return function() {
-        var context = scope || this;
-        var now = +new Date(), args = arguments;
-        if (last && now < last + threshhold) {
-            clearTimeout(deferTimer);
-            deferTimer = setTimeout(function() {
-                last = now;
-                func.apply(context, args);
-            }, threshhold);
-        } else {
-            last = now;
-            func.apply(context, args);
-        }
-    };
-};
-
-angular.module("ux").directive("focusElement", [ "focusManager", "focusQuery", function(focusManager, focusQuery) {
+angular.module("go").directive("focusElement", [ "focusManager", "focusQuery", function(focusManager, focusQuery) {
     return {
         scope: true,
         link: function(scope, element, attr) {
-            var el = element[0], timer;
+            var el = element[0], timer, off;
             if (focusQuery.isAutofocus(el)) {
-                var off = scope.$watch(function() {
+                off = scope.$watch(function() {
                     off();
                     timer = setInterval(function() {
                         focusManager.focus(el);
@@ -115,7 +61,7 @@ angular.module("ux").directive("focusElement", [ "focusManager", "focusQuery", f
     };
 } ]);
 
-angular.module("ux").directive("focusGroup", [ "focusManager", "focusQuery", "focusDispatcher", "focusKeyboard", function(focusManager, focusQuery, focusDispatcher, focusKeyboard) {
+angular.module("go").directive("focusGroup", [ "focusManager", "focusQuery", "focusDispatcher", "focusKeyboard", function(focusManager, focusQuery, focusDispatcher, focusKeyboard) {
     var groupId = 1, elementId = 1, dispatcher = focusDispatcher(), delay = 100;
     function compile(groupName, el) {
         var els, i, len, elementName;
@@ -221,7 +167,7 @@ angular.module("ux").directive("focusGroup", [ "focusManager", "focusQuery", "fo
     };
 } ]);
 
-angular.module("ux").directive("focusHighlight", [ "focusManager", function(focusManager) {
+angular.module("go").directive("focusHighlight", [ "focusManager", function(focusManager) {
     function getOffsetRect(elem) {
         var box = elem.getBoundingClientRect();
         var body = document.body;
@@ -261,7 +207,7 @@ angular.module("ux").directive("focusHighlight", [ "focusManager", function(focu
     };
 } ]);
 
-angular.module("ux").directive("focusShortcut", [ "focusManager", function(focusManager) {
+angular.module("go").directive("focusShortcut", [ "focusManager", function(focusManager) {
     return {
         link: function(scope, element, attrs) {
             var bound = false;
@@ -290,7 +236,7 @@ angular.module("ux").directive("focusShortcut", [ "focusManager", function(focus
     };
 } ]);
 
-angular.module("ux").directive("focusStack", [ "focusManager", "focusQuery", function(focusManager, focusQuery) {
+angular.module("go").directive("focusStack", [ "focusManager", "focusQuery", function(focusManager, focusQuery) {
     var stack = [];
     return {
         link: function(scope, element, attrs) {
@@ -308,18 +254,7 @@ angular.module("ux").directive("focusStack", [ "focusManager", "focusQuery", fun
     };
 } ]);
 
-function supplant(str, o) {
-    "use strict";
-    if (!str.replace) {
-        return o;
-    }
-    return str.replace(/{([^{}]*)}/g, function(a, b) {
-        var r = o[b];
-        return typeof r === "string" || typeof r === "number" ? r : a;
-    });
-}
-
-angular.module("ux").factory("focusDispatcher", function() {
+angular.module("go").factory("focusDispatcher", function() {
     var dispatchers = {};
     function EventDispatcher() {
         this.events = {};
@@ -344,8 +279,11 @@ angular.module("ux").factory("focusDispatcher", function() {
         if (this.events.hasOwnProperty(key)) {
             dataObj = dataObj || {};
             dataObj.currentTarget = this;
-            for (var i in this.events[key]) {
-                this.events[key][i](dataObj);
+            var evtItem = this.events[key];
+            for (var i in evtItem) {
+                if (evtItem.hasOwnProperty(i)) {
+                    evtItem[i](dataObj);
+                }
             }
         }
     };
@@ -359,7 +297,7 @@ angular.module("ux").factory("focusDispatcher", function() {
     return dispatcher;
 });
 
-angular.module("ux").service("focusKeyboard", [ "focusManager", function(focusManager) {
+angular.module("go").service("focusKeyboard", [ "focusManager", function(focusManager) {
     var scope = this, tabKeysEnabled = false, arrowKeysEnabled = false;
     function enableTabKeys() {
         if (!tabKeysEnabled) {
@@ -498,7 +436,7 @@ angular.module("ux").service("focusKeyboard", [ "focusManager", function(focusMa
     focusKeyboard.enableTabKeys();
 } ]);
 
-angular.module("ux").service("focusManager", [ "focusQuery", "focusDispatcher", function(focusQuery, focusDispatcher) {
+angular.module("go").service("focusManager", [ "focusQuery", "focusDispatcher", function(focusQuery, focusDispatcher) {
     var scope = this, dispatcher = focusDispatcher();
     function focus(el) {
         if (typeof el === "undefined") {
@@ -765,7 +703,7 @@ angular.module("ux").service("focusManager", [ "focusQuery", "focusDispatcher", 
     this.disable = disable;
 } ]);
 
-angular.module("ux").service("focusMouse", [ "focusManager", "focusQuery", function(focusManager, focusQuery) {
+angular.module("go").service("focusMouse", [ "focusManager", "focusQuery", function(focusManager, focusQuery) {
     var scope = this;
     function enable() {
         scope.enabled = false;
@@ -786,14 +724,14 @@ angular.module("ux").service("focusMouse", [ "focusManager", "focusQuery", funct
             }
         }
     }
-    this.enabled = false;
-    this.enable = enable;
-    this.disable = disable;
+    scope.enabled = false;
+    scope.enable = enable;
+    scope.disable = disable;
 } ]).run([ "focusMouse", function(focusMouse) {
     focusMouse.enable();
 } ]);
 
-angular.module("ux").service("focusQuery", function() {
+angular.module("go").service("focusQuery", function() {
     function canReceiveFocus(el) {
         if (!el) {
             return false;
@@ -814,7 +752,7 @@ angular.module("ux").service("focusQuery", function() {
         return isSelectable;
     }
     function getFirstGroupId() {
-        var q = supplant("[{focusGroup}]:not([{focusParentGroupId}])", {
+        var q = utils.supplant("[{focusGroup}]:not([{focusParentGroupId}])", {
             focusGroup: focusGroup,
             focusParentGroupId: focusParentGroupId
         });
@@ -822,7 +760,7 @@ angular.module("ux").service("focusQuery", function() {
         return getGroupId(groupEl);
     }
     function getLastGroupId() {
-        var q = supplant("[{focusGroup}]:not([{focusParentGroupId}])", {
+        var q = utils.supplant("[{focusGroup}]:not([{focusParentGroupId}])", {
             focusGroup: focusGroup,
             focusParentGroupId: focusParentGroupId
         });
@@ -830,7 +768,7 @@ angular.module("ux").service("focusQuery", function() {
         return getGroupId(groupEls[groupEls.length - 1]);
     }
     function getChildGroups(groupId) {
-        var q = supplant('[{focusParentGroupId}="{groupId}"]', {
+        var q = utils.supplant('[{focusParentGroupId}="{groupId}"]', {
             focusParentGroupId: focusParentGroupId,
             groupId: groupId
         });
@@ -847,7 +785,7 @@ angular.module("ux").service("focusQuery", function() {
     function getElementsWithoutParents(el) {
         if (el) {
             var query = "A:not({focusParentId})," + "SELECT:not({focusParentId})," + "BUTTON:not({focusParentId})," + "INPUT:not({focusParentId})," + "TEXTAREA:not({focusParentId})," + "*[focus-index]:not({focusParentId})";
-            query = supplant(query, {
+            query = utils.supplant(query, {
                 focusParentId: "[" + focusParentId + "]"
             });
             return el.querySelectorAll(query);
@@ -865,12 +803,12 @@ angular.module("ux").service("focusQuery", function() {
         var q, isStrict, els, returnVal, i, len;
         isStrict = isGroupStrict(groupId);
         if (isStrict) {
-            q = supplant('[{focusParentId}="{groupId}"][focus-index]:not([disabled]):not(.disabled)', {
+            q = utils.supplant('[{focusParentId}="{groupId}"][focus-index]:not([disabled]):not(.disabled)', {
                 focusParentId: focusParentId,
                 groupId: groupId
             });
         } else {
-            q = supplant('[{focusParentId}="{groupId}"]:not([disabled]):not(.disabled)', {
+            q = utils.supplant('[{focusParentId}="{groupId}"]:not([disabled]):not(.disabled)', {
                 focusParentId: focusParentId,
                 groupId: groupId
             });
@@ -947,7 +885,7 @@ angular.module("ux").service("focusQuery", function() {
     }
     function getElement(elementId) {
         if (elementId) {
-            var q = supplant('[{focusElementId}="{elementId}"]', {
+            var q = utils.supplant('[{focusElementId}="{elementId}"]', {
                 focusElementId: focusElementId,
                 elementId: elementId
             });
@@ -1012,15 +950,15 @@ angular.module("ux").service("focusQuery", function() {
             }
         }
     }
-    function contains(targetEl, el) {
-        if (el) {
-            var parent = el.parentNode;
+    function contains(containerEl, targetEl) {
+        if (targetEl) {
+            var parent = targetEl.parentNode;
             if (parent) {
                 while (parent) {
                     if (parent.nodeType === 9) {
                         break;
                     }
-                    if (parent === targetEl) {
+                    if (parent === containerEl) {
                         return true;
                     }
                     parent = parent.parentNode;
@@ -1098,6 +1036,71 @@ angular.module("ux").service("focusQuery", function() {
     this.contains = contains;
     this.canReceiveFocus = canReceiveFocus;
 });
+
+var utils = {};
+
+utils.addEvent = function(object, type, callback) {
+    if (object.addEventListener) {
+        object.addEventListener(type, callback, false);
+        return;
+    }
+    object.attachEvent("on" + type, callback);
+};
+
+utils.removeEvent = function(object, type, callback) {
+    if (object.removeEventListener) {
+        object.removeEventListener(type, callback, false);
+        return;
+    }
+    object.detachEvent("on" + type, callback);
+};
+
+utils.debounce = function(func, wait, immediate) {
+    var timeout;
+    return function() {
+        var context = this, args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(function() {
+            timeout = null;
+            if (!immediate) {
+                func.apply(context, args);
+            }
+        }, wait);
+        if (immediate && !timeout) {
+            func.apply(context, args);
+        }
+    };
+};
+
+utils.throttle = function(func, threshhold, scope) {
+    threshhold = threshhold || 250;
+    var last, deferTimer;
+    return function() {
+        var context = scope || this;
+        var now = +new Date(), args = arguments;
+        if (last && now < last + threshhold) {
+            clearTimeout(deferTimer);
+            deferTimer = setTimeout(function() {
+                last = now;
+                func.apply(context, args);
+            }, threshhold);
+        } else {
+            last = now;
+            func.apply(context, args);
+        }
+    };
+};
+
+utils.supplant = function(str, o) {
+    "use strict";
+    if (!str.replace) {
+        return o;
+    }
+    return str.replace(/{([^{}]*)}/g, function(a, b) {
+        var r = o[b];
+        return typeof r === "string" || typeof r === "number" ? r : a;
+    });
+};
 
 (function(J, r, f) {
     function s(a, b, d) {

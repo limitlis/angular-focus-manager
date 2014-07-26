@@ -9,8 +9,8 @@ module.exports = function (grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         banner: '/*\n' +
-            '* <%= pkg.name %> v.<%= pkg.version %>\n' +
-            '* (c) ' + new Date().getFullYear() + ', WebUX\n' +
+            '* <%= pkg.name %> <%= pkg.version %>\n' +
+            '* Obogo (c) ' + new Date().getFullYear() + '\n' +
             '* https://github.com/webux/<%= pkg.filename %>\n' +
             '* License: MIT.\n' +
             '*/\n',
@@ -18,7 +18,7 @@ module.exports = function (grunt) {
         wrapEnd: '\n}());\n',
         jshint: {
             // define the files to lint
-            files: ['js/**/*.js'],
+            files: ['src/**/*.js'],
             // configure JSHint (documented at http://www.jshint.com/docs/)
             options: {
                 // more options here if you want to override JSHint defaults
@@ -41,24 +41,21 @@ module.exports = function (grunt) {
         ngmin: {
             all: {
                 src: [
-                    'src/ux.js',
-                    'src/consts.js',
-                    'src/utils.js',
                     'src/**/*.js'
                 ],
                 dest: './build/<%= pkg.filename %>.js'
             },
-            lite: {
-                src: [
-                    'src/ux.js',
-                    'src/utils.js',
-                    'src/prototypes/*.js',
-                    'src/directives/element.js',
-                    'src/directives/group.js',
-                    'src/services/*.js'
-                ],
-                dest: './build/<%= pkg.filename %>-lite.js'
-            }
+//            lite: {
+//                src: [
+//                    'src/ux.js',
+//                    'src/utils.js',
+//                    'src/helpers/*.js',
+//                    'src/directives/element.js',
+//                    'src/directives/group.js',
+//                    'src/services/*.js'
+//                ],
+//                dest: './build/<%= pkg.filename %>-lite.js'
+//            }
         },
         uglify: {
             build: {
@@ -73,7 +70,7 @@ module.exports = function (grunt) {
                 },
                 files: {
                     './build/<%= pkg.filename %>.js': ['./build/<%= pkg.filename %>.js'],
-                    './build/<%= pkg.filename %>-lite.js': ['./build/<%= pkg.filename %>-lite.js']
+//                    './build/<%= pkg.filename %>-lite.js': ['./build/<%= pkg.filename %>-lite.js']
                 }
             },
             build_min: {
@@ -84,7 +81,7 @@ module.exports = function (grunt) {
                 },
                 files: {
                     './build/<%= pkg.filename %>.min.js': ['./build/<%= pkg.filename %>.js'],
-                    './build/<%= pkg.filename %>-lite.min.js': ['./build/<%= pkg.filename %>-lite.js']
+//                    './build/<%= pkg.filename %>-lite.min.js': ['./build/<%= pkg.filename %>-lite.js']
                 }
             }
         }

@@ -1,14 +1,14 @@
 {
-    "name": "ux-angularjs-focusmanager",
-    "version": "0.0.1",
-    "homepage": "https://github.com/webux/ux-angularjs-focusmanager",
+    "name": "angular-focusmanager",
+    "version": "0.2.0",
+    "homepage": "https://github.com/obogo/angular-focusmanager",
     "authors": [
         "Rob Taylor <roboncode@gmail.com>"
     ],
     "description": "Manages the activeElement using focus groups and elements",
     "keywords": [
-        "ux",
-        "angularjs",
+        "obogo",
+        "angular",
         "focus",
         "focusmanager"
     ],

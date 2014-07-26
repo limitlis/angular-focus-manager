@@ -1,7 +1,7 @@
 {
-  "name": "angular-ux-focusmanager",
-  "version": "0.1.5",
-  "filename": "angular-ux-focusmanager",
+  "name": "Angular FocusManager",
+  "version": "0.2.0",
+  "filename": "angular-focusmanager",
   "dependencies": {},
   "devDependencies": {
     "grunt": "~0.4.1",
