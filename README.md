@@ -1,22 +1,22 @@
-#Angular UX Focus Manager
+#Angular Focus Manager
 
-###Allow flexible key and mouse navigation in your web application.
+###Control key and mouse navigation in your web application.
 ---
 
-**[Download 0.1.4](https://raw.githubusercontent.com/webux/angular-ux-focusmanager/master/build/angular-ux-focusmanager.js)** (or **[Minified](https://raw.githubusercontent.com/webux/angular-ux-focusmanager/master/build/angular-ux-focusmanager.min.js)**) **|**
-**[Guide](https://github.com/webux/angular-ux-focusmanager/wiki) |**
-**[API](http://webux.github.io/ux-focusmanager/site) |**
-**[Examples](http://webux.github.com/ux-focusmanager/examples/) ([Src](https://github.com/webux/ux-focusmanager/tree/gh-pages/sample)) |**
-**[FAQ](https://github.com/webux/ux-focusmanager/wiki/faq) |**
+**[Download](https://raw.githubusercontent.com/webux/angular-focusmanager/master/build/angular-focusmanager.js)** (or **[Minified](https://raw.githubusercontent.com/webux/angular-focusmanager/master/build/angular-focusmanager.min.js)**) **|**
+**[Guide](https://github.com/webux/angular-focusmanager/wiki) |**
+**[API](http://webux.github.io/focusmanager/site) |**
+**[Examples](http://webux.github.com/focusmanager/examples/) ([Src](https://github.com/webux/focusmanager/tree/gh-pages/sample)) |**
+**[FAQ](https://github.com/webux/focusmanager/wiki/faq) |**
 **[Resources](#resources) |**
 **[Report an Issue](#report-an-issue) |**
 **[Contribute](#contribute) |**
-**[Help!](http://stackoverflow.com/questions/ask?tags=angularjs,ux-focusmanager) |**
+**[Help!](http://stackoverflow.com/questions/ask?tags=angularjs,focusmanager) |**
 **[Discuss](https://groups.google.com/forum/#!categories/webux/focusmanager)**
 
 ---
 
-**Angular UX Focus Manager** allows you to organize your interface to into ***groups*** to have better control over the order in which elements receive focus. Focus Manager is built for web applications that have complex UI such as panels, popups, sections, and custom widgets. Here are some of the benefits to using Focus Manager:
+**Angular Focus Manager** allows you to organize your interface to into ***groups*** to have better control over the order in which elements receive focus. Focus Manager is built for web applications that have complex UI such as panels, popups, sections, and custom widgets. Here are some of the benefits to using Focus Manager:
 
 * Simple integration
 * ARIA compatible
@@ -26,25 +26,25 @@
 * Service-based plugin architecture
 * Mobile support
 * Custom focus highlighter
-* Shortcut key support (uses Mousetrap.js)
+* Shortcut key support (uses [Mousetrap.js](http://craig.is/killing/mice))
 
 ####What's wrong with the browser's focus manager?
 ---
 
-Have you ever tried navigating through a web application using the TAB key? You have probably found the results to be less than desirable. The browser treats all elements as if it were a single web page, including your application. Angular Focus manager fixes this limitation by allowing you to organize your application into ***focus groups***. Groups organize elements into sections maintaining the focus index on a more granular level.
+Have you ever tried navigating through a web application using the TAB key? You have probably found the results to be less than desirable. The browser treats all elements as if it were a single web page, including your application. Angular Focus Manager fixes this limitation of the browser by allowing you to organize your application into ***focus groups***. Focus groups organize elements into sections maintaining the focus index on a more granular level.
 
 
 ##Getting Started
 ---
-**(1)** Get Angular FocusManager in one of 3 ways:
+**(1)** Get Angular Focus Manager in one of 3 ways:
 
 * Clone this repository
 * Download the release (or minified)
-* Install via Bower: by running $ bower install angular-ux-focusmanager from your console
+* Install via Bower: by running $ bower install angular-focusmanager from your console
 
-**(2)** Include angular-ux-focusmanager.js (or angular-ux-focusmanager.min.js) in your index.html, after including Angular itself
+**(2)** Include angular-focusmanager.js (or angular-focusmanager.min.js) in your index.html, after including Angular itself
 
-**(3)** Add "ux" to your main module's list of dependencies
+**(3)** Add "go" to your main module's list of dependencies
 
 When you're done, your setup should look similar to the following:
 
@@ -54,9 +54,9 @@ When you're done, your setup should look similar to the following:
 <html ng-app="myApp">
 <head>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
-    <script src="js/angular-ux-focusmanager.min.js"></script>
+    <script src="js/angular-focusmanager.min.js"></script>
     <script>
-        var myApp = angular.module('myApp', ['ux']);
+        var myApp = angular.module('myApp', ['go']);
     </script>
     ...
 </head>

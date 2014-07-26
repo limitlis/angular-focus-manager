@@ -49,12 +49,12 @@ a[disabled] {
     margin: 10px 0;
 }
 
-[focus-group] {
-    position: relative;
-    outline: 1px dashed lightgray;
-    padding: 20px 20px;
-    margin: 10px;
-}
+/*[focus-group] {*/
+    /*position: relative;*/
+    /*outline: 1px dashed lightgray;*/
+    /*padding: 20px 20px;*/
+    /*margin: 10px;*/
+/*}*/
 
 .group-name {
     position: absolute;

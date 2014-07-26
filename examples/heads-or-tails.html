@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Focus Manager - Simple Example</title>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body>
+<div class="jumbotron">
+    <h1>Heads or Tails</h1>
+    <p>Use <strong>focus-group-head</strong> and <strong>focus-group-tail</strong> to manage the
+        behavior of the focus when it reaches the first or last element in a group. The "loop" value will set focus to
+        the start of the group once it has reached the end. The "stop" value will prevent any further actions from
+        occurring once it reaches the end of the head or tail.</p>
+
+    <p><span class="label label-primary">CLICK</span> on buttons and then <span class="label label-primary">TAB</span> or <span class="label label-primary">SHIFT + TAB</span> to
+        navigate</strong></p>
+</div>
+
+
+
+
+
+<div class="panel panel-default" focus-group="" focus-group-head="stop" focus-group-tail="stop">
+    <div class="panel-heading">Example of using "stop" in head and tail</div>
+    <div class="panel-body">
+        <button type="button" class="btn btn-primary" focus-element="autofocus">Button 1</button>
+        <button type="button" class="btn btn-primary">Button 2</button>
+        <button type="button" class="btn btn-primary">Button 3</button>
+    </div>
+</div>
+
+<div class="panel panel-default" focus-group="" focus-group-head="loop" focus-group-tail="loop">
+    <div class="panel-heading">Example of using "loop" in head and tail</div>
+    <div class="panel-body">
+        <button type="button" class="btn btn-primary">Button 1</button>
+        <button type="button" class="btn btn-primary">Button 2</button>
+        <button type="button" class="btn btn-primary">Button 3</button>
+    </div>
+</div>
+<div focus-highlight=""></div>
+
+<script src="../bower_components/angular/angular.js"></script>
+<script src="../build/angular-focusmanager.js"></script>
+<script>
+    angular.module('app', ['go'])
+</script>
+</body>
+</html>
