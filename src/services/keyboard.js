@@ -1,5 +1,5 @@
-/* global ux, utils */
-angular.module('ux').service('focusKeyboard', function (focusManager) {
+/* global angular, utils */
+angular.module('go').service('focusKeyboard', function (focusManager) {
 
     var scope = this,
         tabKeysEnabled = false,
@@ -122,7 +122,6 @@ angular.module('ux').service('focusKeyboard', function (focusManager) {
 
 //                default:
 //                    throw "fireEvent: Couldn't find an event class for event '" + eventName + "'.";
-//                    break;
             }
             event = doc.createEvent(eventClass);
 

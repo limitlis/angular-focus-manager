@@ -1,5 +1,5 @@
-/* global ux, utils */
-angular.module('ux').factory('focusDispatcher', function () {
+/* global angular, utils */
+angular.module('go').factory('focusDispatcher', function () {
 
     var dispatchers = {};
 
@@ -27,8 +27,11 @@ angular.module('ux').factory('focusDispatcher', function () {
         if (this.events.hasOwnProperty(key)) {
             dataObj = dataObj || {};
             dataObj.currentTarget = this;
-            for (var i in this.events[key]) {
-                this.events[key][i](dataObj);
+            var evtItem = this.events[key];
+            for (var i in evtItem) {
+                if (evtItem.hasOwnProperty(i)) {
+                    evtItem[i](dataObj);
+                }
             }
         }
     };

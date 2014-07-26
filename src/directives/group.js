@@ -1,5 +1,5 @@
-/* global ux, utils */
-angular.module('ux').directive('focusGroup', function (focusManager, focusQuery, focusDispatcher, focusKeyboard) {
+/* global angular, utils, focusElementId, focusGroupId, focusParentId, focusParentGroupId, tabIndex, focusGroup, focusGroupIndex, focusGroupHead, focusGroupTail, focusElement, focusEnabled, focusIndex, selectable */
+angular.module('go').directive('focusGroup', function (focusManager, focusQuery, focusDispatcher, focusKeyboard) {
 
     var groupId = 1, // unique id counter for groups
         elementId = 1, // unique id counter for selectable elements
@@ -118,8 +118,8 @@ angular.module('ux').directive('focusGroup', function (focusManager, focusQuery,
                         } else {
                             el.setAttribute('tabindex', tabIndex);
                         }
-                    })
-                })
+                    });
+                });
             }
         }
 
@@ -140,4 +140,4 @@ angular.module('ux').directive('focusGroup', function (focusManager, focusQuery,
         link: linker
     };
 
-})
+});

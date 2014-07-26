@@ -1,5 +1,5 @@
-/* global ux, utils */
-angular.module('ux').service('focusManager', function (focusQuery, focusDispatcher) {
+/* global angular, utils */
+angular.module('go').service('focusManager', function (focusQuery, focusDispatcher) {
 
     var scope = this,
         dispatcher = focusDispatcher();
@@ -201,7 +201,7 @@ angular.module('ux').service('focusManager', function (focusQuery, focusDispatch
      * @param groupId
      */
     function findNextStep(groupId) {
-        var group, tail
+        var group, tail;
         group = focusQuery.getGroup(groupId);
         tail = focusQuery.getGroupTail(group);
         if (groupId) {

@@ -1,5 +1,5 @@
-/* global ux, utils */
-angular.module('ux').directive('focusHighlight', function (focusManager) {
+/* global angular, utils */
+angular.module('go').directive('focusHighlight', function (focusManager) {
 
     function getOffsetRect(elem) {
         // (1) get bounding rect
@@ -47,4 +47,4 @@ angular.module('ux').directive('focusHighlight', function (focusManager) {
         },
         template: '<div class="focus-highlight"></div>'
     };
-})
+});

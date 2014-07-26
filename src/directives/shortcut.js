@@ -1,5 +1,5 @@
-/* global ux, utils, Mousetrap */
-angular.module('ux').directive('focusShortcut', function (focusManager) {
+/* global angular, utils, Mousetrap */
+angular.module('go').directive('focusShortcut', function (focusManager) {
     return {
         link: function (scope, element, attrs) {
 
@@ -32,4 +32,4 @@ angular.module('ux').directive('focusShortcut', function (focusManager) {
             }
         }
     };
-})
+});

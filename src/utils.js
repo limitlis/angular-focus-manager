@@ -26,7 +26,9 @@ utils.debounce = function (func, wait, immediate) {
         clearTimeout(timeout);
         timeout = setTimeout(function () {
             timeout = null;
-            if (!immediate) func.apply(context, args);
+            if (!immediate) {
+                func.apply(context, args);
+            }
         }, wait);
         if (immediate && !timeout) {
             func.apply(context, args);
@@ -55,4 +57,18 @@ utils.throttle = function (func, threshhold, scope) {
             func.apply(context, args);
         }
     };
+};
+
+utils.supplant = function (str, o) {
+    'use strict';
+    if (!str.replace) {
+        return o;
+    }
+    return str.replace(
+        /{([^{}]*)}/g,
+        function (a, b) {
+            var r = o[b];
+            return typeof r === 'string' || typeof r === 'number' ? r : a;
+        }
+    );
 };

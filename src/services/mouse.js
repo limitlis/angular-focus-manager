@@ -1,18 +1,28 @@
-/* global ux, utils */
-angular.module('ux').service('focusMouse', function (focusManager, focusQuery) {
+/* global angular, utils */
+angular.module('go').service('focusMouse', function (focusManager, focusQuery) {
 
     var scope = this;
 
+    /**
+     * Enable mouse functionality for focus manager
+     */
     function enable() {
         scope.enabled = false;
         utils.addEvent(document, 'mousedown', onMouseDown);
     }
 
+    /**
+     * Disable mouse functionality for focus manager
+     */
     function disable() {
         scope.enabled = false;
         utils.removeEvent(document, 'mousedown', onMouseDown);
     }
 
+    /**
+     * Listen to mousedown event. If there is FocusManager ID, enable FM otherwise disable FM.
+     * @param evt
+     */
     function onMouseDown(evt) {
         if (focusManager.canReceiveFocus(evt.target)) {
             focusManager.focus(evt.target);
@@ -26,11 +36,12 @@ angular.module('ux').service('focusMouse', function (focusManager, focusQuery) {
         }
     }
 
-    this.enabled = false;
-    this.enable = enable;
-    this.disable = disable;
+    scope.enabled = false;
+    scope.enable = enable;
+    scope.disable = disable;
 
 }).run(function (focusMouse) {
+    // enable FM by default
     focusMouse.enable();
 });
 

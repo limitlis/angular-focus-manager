@@ -1,5 +1,5 @@
-/* global ux, utils */
-angular.module('ux').service('focusQuery', function () {
+/* global angular, utils, focusElementId, focusGroupId, focusParentId, focusParentGroupId, tabIndex, focusGroup, focusGroupIndex, focusGroupHead, focusGroupTail, focusElement, focusEnabled, focusIndex, selectable */
+angular.module('go').service('focusQuery', function () {
 
     // http://quirksmode.org/dom/core/
     function canReceiveFocus(el) {
@@ -28,7 +28,7 @@ angular.module('ux').service('focusQuery', function () {
     }
 
     function getFirstGroupId() {
-        var q = supplant('[{focusGroup}]:not([{focusParentGroupId}])', {
+        var q = utils.supplant('[{focusGroup}]:not([{focusParentGroupId}])', {
             focusGroup: focusGroup,
             focusParentGroupId: focusParentGroupId
         });
@@ -37,7 +37,7 @@ angular.module('ux').service('focusQuery', function () {
     }
 
     function getLastGroupId() {
-        var q = supplant('[{focusGroup}]:not([{focusParentGroupId}])', {
+        var q = utils.supplant('[{focusGroup}]:not([{focusParentGroupId}])', {
             focusGroup: focusGroup,
             focusParentGroupId: focusParentGroupId
         });
@@ -46,7 +46,7 @@ angular.module('ux').service('focusQuery', function () {
     }
 
     function getChildGroups(groupId) {
-        var q = supplant('[{focusParentGroupId}="{groupId}"]', {
+        var q = utils.supplant('[{focusParentGroupId}="{groupId}"]', {
             focusParentGroupId: focusParentGroupId,
             groupId: groupId
         });
@@ -72,7 +72,7 @@ angular.module('ux').service('focusQuery', function () {
                 'INPUT:not({focusParentId}),' +
                 'TEXTAREA:not({focusParentId}),' +
                 '*[focus-index]:not({focusParentId})';
-            query = supplant(query, {focusParentId: '[' + focusParentId + ']'});
+            query = utils.supplant(query, {focusParentId: '[' + focusParentId + ']'});
             return el.querySelectorAll(query);
         }
         return [];
@@ -92,12 +92,12 @@ angular.module('ux').service('focusQuery', function () {
 
         isStrict = isGroupStrict(groupId);
         if (isStrict) {
-            q = supplant('[{focusParentId}="{groupId}"][focus-index]:not([disabled]):not(.disabled)', {
+            q = utils.supplant('[{focusParentId}="{groupId}"][focus-index]:not([disabled]):not(.disabled)', {
                 focusParentId: focusParentId,
                 groupId: groupId
             });
         } else {
-            q = supplant('[{focusParentId}="{groupId}"]:not([disabled]):not(.disabled)', {
+            q = utils.supplant('[{focusParentId}="{groupId}"]:not([disabled]):not(.disabled)', {
                 focusParentId: focusParentId,
                 groupId: groupId
             });
@@ -196,7 +196,7 @@ angular.module('ux').service('focusQuery', function () {
 
     function getElement(elementId) {
         if (elementId) {
-            var q = supplant('[{focusElementId}="{elementId}"]', {
+            var q = utils.supplant('[{focusElementId}="{elementId}"]', {
                 focusElementId: focusElementId,
                 elementId: elementId
             });
@@ -238,32 +238,62 @@ angular.module('ux').service('focusQuery', function () {
         el.setAttribute(focusGroupId, id);
     }
 
+    /**
+     * Gets the parent id
+     * @param el
+     * @returns {string}
+     */
     function getParentId(el) {
         if (el) {
             return el.getAttribute(focusParentId);
         }
     }
 
+    /**
+     * Sets the parent id onto an element
+     * @param el
+     * @param id
+     */
     function setParentId(el, id) {
         el.setAttribute(focusParentId, id);
     }
 
+    /**
+     * Gets the target focus group's focus group so there is a hierarchy
+     * @param el
+     * @returns {string}
+     */
     function getParentGroupId(el) {
         if (el) {
             return el.getAttribute(focusParentGroupId);
         }
     }
 
+    /**
+     *
+     * @param el
+     * @param id
+     */
     function setParentGroupId(el, id) {
         el.setAttribute(focusParentGroupId, id);
     }
 
+    /**
+     * Gets the tabindex of a DOM element
+     * @param el
+     * @returns {string}
+     */
     function getTabIndex(el) {
         if (el) {
             return el.getAttribute(tabIndex);
         }
     }
 
+    /**
+     * Sets the tabindex of a DOM element
+     * @param el
+     * @param index
+     */
     function setTabIndex(el, index) {
         if (el) {
             if (index === null) {
@@ -274,15 +304,21 @@ angular.module('ux').service('focusQuery', function () {
         }
     }
 
-    function contains(targetEl, el) {
-        if (el) {
-            var parent = el.parentNode;
+    /**
+     * Checks of the container element contains the target element
+     * @param containerEl
+     * @param targetEl
+     * @returns {boolean}
+     */
+    function contains(containerEl, targetEl) {
+        if (targetEl) {
+            var parent = targetEl.parentNode;
             if (parent) {
                 while (parent) {
                     if (parent.nodeType === 9) {
                         break;
                     }
-                    if (parent === targetEl) {
+                    if (parent === containerEl) {
                         return true;
                     }
                     parent = parent.parentNode;
@@ -292,26 +328,12 @@ angular.module('ux').service('focusQuery', function () {
         return false;
     }
 
-//    function sort(list, compareFn) {
-//        var i = 0,
-//            len = list.length - 1,
-//            holder;
-//        if (!compareFn) { // default compare function.
-//            compareFn = function (a, b) {
-//                return a > b ? 1 : (a < b ? -1 : 0);
-//            };
-//        }
-//        while (i < len) {
-//            if (compareFn(list[i], list[i + 1]) > 0) {
-//                holder = list[i + 1];
-//                list[i + 1] = list[i];
-//                list[i] = holder;
-//            }
-//            i = i + 1;
-//        }
-//        return list;
-//    }
-
+    /**
+     * Bubble sort determines the proper order of selectable elements.
+     * @param list
+     * @param compareFn
+     * @returns {*}
+     */
     function sort(list, compareFn) {
         var c, len, v, rlen, holder;
         if (!compareFn) { // default compare function.
@@ -359,18 +381,6 @@ angular.module('ux').service('focusQuery', function () {
         return 0;
     }
 
-//    function sortByTabIndex(a, b) {
-//        var compA = a.attributes[focusIndex] ? Number(a.attributes[focusIndex].value) : Number.POSITIVE_INFINITY,
-//            compB = b.attributes[focusIndex] ? Number(b.attributes[focusIndex].value) : Number.POSITIVE_INFINITY;
-//        return compA - compB;
-//    }
-//
-//    function sortByGroupIndex(a, b) {
-//        var compA = a.attributes[focusGroupIndex] ? Number(a.attributes[focusGroupIndex].value) : Number.POSITIVE_INFINITY,
-//            compB = b.attributes[focusGroupIndex] ? Number(b.attributes[focusGroupIndex].value) : Number.POSITIVE_INFINITY;
-//        return compA - compB;
-//    }
-
     this.getElement = getElement;
     this.getElementId = getElementId;
     this.setElementId = setElementId;
@@ -399,4 +409,4 @@ angular.module('ux').service('focusQuery', function () {
     this.contains = contains;
     this.canReceiveFocus = canReceiveFocus;
 
-})
+});

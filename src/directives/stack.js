@@ -1,5 +1,5 @@
-/* global ux, utils */
-angular.module('ux').directive('focusStack', function (focusManager, focusQuery) {
+/* global angular, utils */
+angular.module('go').directive('focusStack', function (focusManager, focusQuery) {
     var stack = [];
     return {
         link: function (scope, element, attrs) {
