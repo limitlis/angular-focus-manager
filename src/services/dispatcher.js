@@ -1,5 +1,5 @@
-/* global angular, utils */
-angular.module('go').factory('focusDispatcher', function () {
+/* global angular, utils, moduleName */
+angular.module(moduleName).factory('focusDispatcher', function () {
 
     var dispatchers = {};
 

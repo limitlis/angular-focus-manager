@@ -1,6 +1,6 @@
 #Angular Focus Manager
 
-###Control key and mouse navigation in your web application.
+###Control key and mouse navigation in your Angular JS application.
 ---
 
 **[Download](https://raw.githubusercontent.com/webux/angular-focusmanager/master/build/angular-focusmanager.js)** (or **[Minified](https://raw.githubusercontent.com/webux/angular-focusmanager/master/build/angular-focusmanager.min.js)**) **|**

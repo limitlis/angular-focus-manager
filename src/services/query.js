@@ -1,5 +1,7 @@
-/* global angular, utils, focusElementId, focusGroupId, focusParentId, focusParentGroupId, tabIndex, focusGroup, focusGroupIndex, focusGroupHead, focusGroupTail, focusElement, focusEnabled, focusIndex, selectable */
-angular.module('go').service('focusQuery', function () {
+/* global angular, utils, moduleName, focusElementId, focusGroupId, focusParentId, focusParentGroupId, tabIndex, focusGroup, focusGroupIndex, focusGroupHead, focusGroupTail, focusElement, focusEnabled, focusIndex, selectable */
+angular.module(moduleName).service('focusQuery', function () {
+
+    var scope = this;
 
     // http://quirksmode.org/dom/core/
     function canReceiveFocus(el) {
@@ -381,32 +383,32 @@ angular.module('go').service('focusQuery', function () {
         return 0;
     }
 
-    this.getElement = getElement;
-    this.getElementId = getElementId;
-    this.setElementId = setElementId;
-    this.getGroupId = getGroupId;
-    this.setGroupId = setGroupId;
-    this.getParentId = getParentId;
-    this.setParentId = setParentId;
-    this.getParentGroupId = getParentGroupId;
-    this.setParentGroupId = setParentGroupId;
-    this.getGroup = getGroup;
-    this.getFirstGroupId = getFirstGroupId;
-    this.getLastGroupId = getLastGroupId;
-    this.getTabIndex = getTabIndex;
-    this.setTabIndex = setTabIndex;
+    scope.getElement = getElement;
+    scope.getElementId = getElementId;
+    scope.setElementId = setElementId;
+    scope.getGroupId = getGroupId;
+    scope.setGroupId = setGroupId;
+    scope.getParentId = getParentId;
+    scope.setParentId = setParentId;
+    scope.getParentGroupId = getParentGroupId;
+    scope.setParentGroupId = setParentGroupId;
+    scope.getGroup = getGroup;
+    scope.getFirstGroupId = getFirstGroupId;
+    scope.getLastGroupId = getLastGroupId;
+    scope.getTabIndex = getTabIndex;
+    scope.setTabIndex = setTabIndex;
 
-    this.getElementsWithoutParents = getElementsWithoutParents;
-    this.getGroupsWithoutParentGroup = getGroupsWithoutParentGroup;
-    this.isAutofocus = isAutofocus;
-    this.hasGroupHead = hasGroupHead;
-    this.hasGroupTail = hasGroupTail;
-    this.getGroupHead = getGroupHead;
-    this.getGroupTail = getGroupTail;
-    this.isEnabled = isEnabled;
-    this.getGroupElements = getGroupElements;
-    this.getChildGroups = getChildGroups;
-    this.contains = contains;
-    this.canReceiveFocus = canReceiveFocus;
+    scope.getElementsWithoutParents = getElementsWithoutParents;
+    scope.getGroupsWithoutParentGroup = getGroupsWithoutParentGroup;
+    scope.isAutofocus = isAutofocus;
+    scope.hasGroupHead = hasGroupHead;
+    scope.hasGroupTail = hasGroupTail;
+    scope.getGroupHead = getGroupHead;
+    scope.getGroupTail = getGroupTail;
+    scope.isEnabled = isEnabled;
+    scope.getGroupElements = getGroupElements;
+    scope.getChildGroups = getChildGroups;
+    scope.contains = contains;
+    scope.canReceiveFocus = canReceiveFocus;
 
 });

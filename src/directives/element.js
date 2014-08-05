@@ -1,5 +1,9 @@
-/* global angular, go, utils */
-angular.module('go').directive('focusElement', function (focusManager, focusQuery) {
+/**
+ * The "focusElement" directive adds additional functionality onto a DOM element. Currently, the only thing it does is
+ * initially added focus when it is added to the DOM.
+ */
+/* global angular, moduleName, utils */
+angular.module(moduleName).directive('focusElement', function (focusManager, focusQuery) {
     return {
         scope: true,
         link: function (scope, element, attr) {

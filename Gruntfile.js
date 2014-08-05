@@ -41,6 +41,7 @@ module.exports = function (grunt) {
         ngmin: {
             all: {
                 src: [
+                    'src/consts.js',
                     'src/**/*.js'
                 ],
                 dest: './build/<%= pkg.filename %>.js'

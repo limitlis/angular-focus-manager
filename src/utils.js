@@ -1,6 +1,12 @@
 /* global angular, fm */
 var utils = {};
 
+/**
+ * Simple cross-browser compliant addEvent listener
+ * @param object
+ * @param type
+ * @param callback
+ */
 utils.addEvent = function (object, type, callback) {
     if (object.addEventListener) {
         object.addEventListener(type, callback, false);
@@ -10,6 +16,12 @@ utils.addEvent = function (object, type, callback) {
     object.attachEvent('on' + type, callback);
 };
 
+/**
+ * Simple cross-browser compliant removeEvent listener
+ * @param object
+ * @param type
+ * @param callback
+ */
 utils.removeEvent = function (object, type, callback) {
     if (object.removeEventListener) {
         object.removeEventListener(type, callback, false);
@@ -19,6 +31,14 @@ utils.removeEvent = function (object, type, callback) {
     object.detachEvent('on' + type, callback);
 };
 
+/**
+ * Creates and returns a new debounced version of the passed function which will postpone its execution until after
+ * wait milliseconds have elapsed since the last time it was invoked.
+ * @param func
+ * @param wait
+ * @param immediate
+ * @returns {Function}
+ */
 utils.debounce = function (func, wait, immediate) {
     var timeout;
     return function () {
@@ -36,6 +56,15 @@ utils.debounce = function (func, wait, immediate) {
     };
 };
 
+/**
+ * Creates and returns a new, throttled version of the passed function, that, when invoked repeatedly,
+ * will only actually call the original function at most once per every wait milliseconds. Useful for
+ * rate-limiting events that occur faster than you can keep up with.
+ * @param func
+ * @param threshhold
+ * @param scope
+ * @returns {Function}
+ */
 utils.throttle = function (func, threshhold, scope) {
     threshhold = threshhold || 250;
     var last,
@@ -59,8 +88,16 @@ utils.throttle = function (func, threshhold, scope) {
     };
 };
 
+/**
+ * Performs variable substitution on the string. It scans through the string looking for expressions enclosed in { }
+ * braces. If an expression is found, use it as a key on the object, and if the key has a string value or number
+ * value, it is substituted for the bracket expression and it repeats.
+ * @param str
+ * @param o
+ * @returns {*}
+ */
 utils.supplant = function (str, o) {
-    'use strict';
+    str = str + '';
     if (!str.replace) {
         return o;
     }

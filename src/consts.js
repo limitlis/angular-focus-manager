@@ -1,3 +1,6 @@
+// Angular JS module name
+var moduleName = 'go';
+
 // These vars are auto-generated on the DOM
 var focusElementId = "fm-id";
 var focusGroupId = "fm-group";

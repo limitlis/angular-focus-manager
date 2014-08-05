@@ -1,5 +1,5 @@
-/* global angular, utils */
-angular.module('go').service('focusKeyboard', function (focusManager) {
+/* global angular, utils, moduleName */
+angular.module(moduleName).service('focusKeyboard', function (focusManager) {
 
     var scope = this,
         tabKeysEnabled = false,
@@ -178,18 +178,18 @@ angular.module('go').service('focusKeyboard', function (focusManager) {
         }
     }
 
-    this.direction = null;
-    this.enable = enable;
-    this.disable = disable;
-    this.enableTabKeys = enableTabKeys;
-    this.disableTabKeys = disableTabKeys;
-    this.enableArrowKeys = enableArrowKeys;
-    this.disableArrowKeys = disableArrowKeys;
-    this.toggleTabArrowKeys = toggleTabArrowKeys;
-    this.triggerClick = triggerClick;
-})
-    .run(function (focusKeyboard) {
-        focusKeyboard.enable();
-        focusKeyboard.enableTabKeys();
-    });
+    scope.direction = null;
+    scope.enable = enable;
+    scope.disable = disable;
+    scope.enableTabKeys = enableTabKeys;
+    scope.disableTabKeys = disableTabKeys;
+    scope.enableArrowKeys = enableArrowKeys;
+    scope.disableArrowKeys = disableArrowKeys;
+    scope.toggleTabArrowKeys = toggleTabArrowKeys;
+    scope.triggerClick = triggerClick;
+
+}).run(function (focusKeyboard) {
+    focusKeyboard.enable();
+    focusKeyboard.enableTabKeys();
+});
 

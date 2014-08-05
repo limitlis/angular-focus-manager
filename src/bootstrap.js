@@ -3,9 +3,9 @@
  * http://obogo.io
  * License: MIT
  */
-/*global angular */
+/*global angular, moduleName */
 try {
-    angular.module('go');
+    angular.module(moduleName);
 } catch (e) {
-    angular.module('go', []);
+    angular.module(moduleName, []);
 }

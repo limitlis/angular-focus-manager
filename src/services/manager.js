@@ -1,5 +1,5 @@
-/* global angular, utils */
-angular.module('go').service('focusManager', function (focusQuery, focusDispatcher) {
+/* global angular, utils, moduleName */
+angular.module(moduleName).service('focusManager', function (focusQuery, focusDispatcher) {
 
     var scope = this,
         dispatcher = focusDispatcher();
@@ -391,22 +391,22 @@ angular.module('go').service('focusManager', function (focusQuery, focusDispatch
         }
     }
 
-    this.active = true;
-    this.enabled = false;
-    this.activeElement = null;
+    // :: Public API :: //
+    scope.active = true;
+    scope.enabled = false;
+    scope.activeElement = null;
 
-    this.focus = focus;
-    this.prev = prev;
-    this.next = next;
+    scope.focus = focus;
+    scope.prev = prev;
+    scope.next = next;
+    scope.on = on;
+    scope.off = off;
 
-    this.findPrevChildGroup = findPrevChildGroup;
-    this.findNextElement = findNextElement;
-
-    this.canReceiveFocus = canReceiveFocus;
-
-    this.on = on;
-    this.off = off;
-    this.enable = enable;
-    this.disable = disable;
+    // :: Protected API :: //
+    scope.findPrevChildGroup = findPrevChildGroup;
+    scope.findNextElement = findNextElement;
+    scope.canReceiveFocus = canReceiveFocus;
+    scope.enable = enable;
+    scope.disable = disable;
 
 });

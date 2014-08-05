@@ -5,11 +5,7 @@
 * License: MIT.
 */
 (function(){
-try {
-    angular.module("go");
-} catch (e) {
-    angular.module("go", []);
-}
+var moduleName = "go";
 
 var focusElementId = "fm-id";
 
@@ -37,7 +33,13 @@ var focusIndex = "focus-index";
 
 var selectable = "A,SELECT,BUTTON,INPUT,TEXTAREA,*[focus-index]";
 
-angular.module("go").directive("focusElement", [ "focusManager", "focusQuery", function(focusManager, focusQuery) {
+try {
+    angular.module(moduleName);
+} catch (e) {
+    angular.module(moduleName, []);
+}
+
+angular.module(moduleName).directive("focusElement", [ "focusManager", "focusQuery", function(focusManager, focusQuery) {
     return {
         scope: true,
         link: function(scope, element, attr) {
@@ -61,7 +63,7 @@ angular.module("go").directive("focusElement", [ "focusManager", "focusQuery", f
     };
 } ]);
 
-angular.module("go").directive("focusGroup", [ "focusManager", "focusQuery", "focusDispatcher", "focusKeyboard", function(focusManager, focusQuery, focusDispatcher, focusKeyboard) {
+angular.module(moduleName).directive("focusGroup", [ "focusManager", "focusQuery", "focusDispatcher", "focusKeyboard", function(focusManager, focusQuery, focusDispatcher, focusKeyboard) {
     var groupId = 1, elementId = 1, dispatcher = focusDispatcher(), delay = 100;
     function compile(groupName, el) {
         var els, i, len, elementName;
@@ -167,7 +169,7 @@ angular.module("go").directive("focusGroup", [ "focusManager", "focusQuery", "fo
     };
 } ]);
 
-angular.module("go").directive("focusHighlight", [ "focusManager", function(focusManager) {
+angular.module(moduleName).directive("focusHighlight", [ "focusManager", function(focusManager) {
     function getOffsetRect(elem) {
         var box = elem.getBoundingClientRect();
         var body = document.body;
@@ -207,7 +209,7 @@ angular.module("go").directive("focusHighlight", [ "focusManager", function(focu
     };
 } ]);
 
-angular.module("go").directive("focusShortcut", [ "focusManager", function(focusManager) {
+angular.module(moduleName).directive("focusShortcut", [ "focusManager", function(focusManager) {
     return {
         link: function(scope, element, attrs) {
             var bound = false;
@@ -236,7 +238,7 @@ angular.module("go").directive("focusShortcut", [ "focusManager", function(focus
     };
 } ]);
 
-angular.module("go").directive("focusStack", [ "focusManager", "focusQuery", function(focusManager, focusQuery) {
+angular.module(moduleName).directive("focusStack", [ "focusManager", "focusQuery", function(focusManager, focusQuery) {
     var stack = [];
     return {
         link: function(scope, element, attrs) {
@@ -254,7 +256,7 @@ angular.module("go").directive("focusStack", [ "focusManager", "focusQuery", fun
     };
 } ]);
 
-angular.module("go").factory("focusDispatcher", function() {
+angular.module(moduleName).factory("focusDispatcher", function() {
     var dispatchers = {};
     function EventDispatcher() {
         this.events = {};
@@ -297,7 +299,7 @@ angular.module("go").factory("focusDispatcher", function() {
     return dispatcher;
 });
 
-angular.module("go").service("focusKeyboard", [ "focusManager", function(focusManager) {
+angular.module(moduleName).service("focusKeyboard", [ "focusManager", function(focusManager) {
     var scope = this, tabKeysEnabled = false, arrowKeysEnabled = false;
     function enableTabKeys() {
         if (!tabKeysEnabled) {
@@ -422,21 +424,21 @@ angular.module("go").service("focusKeyboard", [ "focusManager", function(focusMa
             }
         }
     }
-    this.direction = null;
-    this.enable = enable;
-    this.disable = disable;
-    this.enableTabKeys = enableTabKeys;
-    this.disableTabKeys = disableTabKeys;
-    this.enableArrowKeys = enableArrowKeys;
-    this.disableArrowKeys = disableArrowKeys;
-    this.toggleTabArrowKeys = toggleTabArrowKeys;
-    this.triggerClick = triggerClick;
+    scope.direction = null;
+    scope.enable = enable;
+    scope.disable = disable;
+    scope.enableTabKeys = enableTabKeys;
+    scope.disableTabKeys = disableTabKeys;
+    scope.enableArrowKeys = enableArrowKeys;
+    scope.disableArrowKeys = disableArrowKeys;
+    scope.toggleTabArrowKeys = toggleTabArrowKeys;
+    scope.triggerClick = triggerClick;
 } ]).run([ "focusKeyboard", function(focusKeyboard) {
     focusKeyboard.enable();
     focusKeyboard.enableTabKeys();
 } ]);
 
-angular.module("go").service("focusManager", [ "focusQuery", "focusDispatcher", function(focusQuery, focusDispatcher) {
+angular.module(moduleName).service("focusManager", [ "focusQuery", "focusDispatcher", function(focusQuery, focusDispatcher) {
     var scope = this, dispatcher = focusDispatcher();
     function focus(el) {
         if (typeof el === "undefined") {
@@ -688,22 +690,22 @@ angular.module("go").service("focusManager", [ "focusQuery", "focusDispatcher", 
             dispatcher.trigger("disabled");
         }
     }
-    this.active = true;
-    this.enabled = false;
-    this.activeElement = null;
-    this.focus = focus;
-    this.prev = prev;
-    this.next = next;
-    this.findPrevChildGroup = findPrevChildGroup;
-    this.findNextElement = findNextElement;
-    this.canReceiveFocus = canReceiveFocus;
-    this.on = on;
-    this.off = off;
-    this.enable = enable;
-    this.disable = disable;
+    scope.active = true;
+    scope.enabled = false;
+    scope.activeElement = null;
+    scope.focus = focus;
+    scope.prev = prev;
+    scope.next = next;
+    scope.on = on;
+    scope.off = off;
+    scope.findPrevChildGroup = findPrevChildGroup;
+    scope.findNextElement = findNextElement;
+    scope.canReceiveFocus = canReceiveFocus;
+    scope.enable = enable;
+    scope.disable = disable;
 } ]);
 
-angular.module("go").service("focusMouse", [ "focusManager", "focusQuery", function(focusManager, focusQuery) {
+angular.module(moduleName).service("focusMouse", [ "focusManager", "focusQuery", function(focusManager, focusQuery) {
     var scope = this;
     function enable() {
         scope.enabled = false;
@@ -731,7 +733,8 @@ angular.module("go").service("focusMouse", [ "focusManager", "focusQuery", funct
     focusMouse.enable();
 } ]);
 
-angular.module("go").service("focusQuery", function() {
+angular.module(moduleName).service("focusQuery", function() {
+    var scope = this;
     function canReceiveFocus(el) {
         if (!el) {
             return false;
@@ -1009,32 +1012,32 @@ angular.module("go").service("focusQuery", function() {
         }
         return 0;
     }
-    this.getElement = getElement;
-    this.getElementId = getElementId;
-    this.setElementId = setElementId;
-    this.getGroupId = getGroupId;
-    this.setGroupId = setGroupId;
-    this.getParentId = getParentId;
-    this.setParentId = setParentId;
-    this.getParentGroupId = getParentGroupId;
-    this.setParentGroupId = setParentGroupId;
-    this.getGroup = getGroup;
-    this.getFirstGroupId = getFirstGroupId;
-    this.getLastGroupId = getLastGroupId;
-    this.getTabIndex = getTabIndex;
-    this.setTabIndex = setTabIndex;
-    this.getElementsWithoutParents = getElementsWithoutParents;
-    this.getGroupsWithoutParentGroup = getGroupsWithoutParentGroup;
-    this.isAutofocus = isAutofocus;
-    this.hasGroupHead = hasGroupHead;
-    this.hasGroupTail = hasGroupTail;
-    this.getGroupHead = getGroupHead;
-    this.getGroupTail = getGroupTail;
-    this.isEnabled = isEnabled;
-    this.getGroupElements = getGroupElements;
-    this.getChildGroups = getChildGroups;
-    this.contains = contains;
-    this.canReceiveFocus = canReceiveFocus;
+    scope.getElement = getElement;
+    scope.getElementId = getElementId;
+    scope.setElementId = setElementId;
+    scope.getGroupId = getGroupId;
+    scope.setGroupId = setGroupId;
+    scope.getParentId = getParentId;
+    scope.setParentId = setParentId;
+    scope.getParentGroupId = getParentGroupId;
+    scope.setParentGroupId = setParentGroupId;
+    scope.getGroup = getGroup;
+    scope.getFirstGroupId = getFirstGroupId;
+    scope.getLastGroupId = getLastGroupId;
+    scope.getTabIndex = getTabIndex;
+    scope.setTabIndex = setTabIndex;
+    scope.getElementsWithoutParents = getElementsWithoutParents;
+    scope.getGroupsWithoutParentGroup = getGroupsWithoutParentGroup;
+    scope.isAutofocus = isAutofocus;
+    scope.hasGroupHead = hasGroupHead;
+    scope.hasGroupTail = hasGroupTail;
+    scope.getGroupHead = getGroupHead;
+    scope.getGroupTail = getGroupTail;
+    scope.isEnabled = isEnabled;
+    scope.getGroupElements = getGroupElements;
+    scope.getChildGroups = getChildGroups;
+    scope.contains = contains;
+    scope.canReceiveFocus = canReceiveFocus;
 });
 
 var utils = {};
@@ -1092,7 +1095,7 @@ utils.throttle = function(func, threshhold, scope) {
 };
 
 utils.supplant = function(str, o) {
-    "use strict";
+    str = str + "";
     if (!str.replace) {
         return o;
     }
