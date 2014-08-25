@@ -172,7 +172,7 @@ angular.module(moduleName).service('focusQuery', function () {
 
     function hasGroupHead(el) {
         if (el) {
-            return el.hasAttribute(focusGroupHead);
+            return !!el.getAttribute(focusGroupHead);
         }
         return false;
     }
@@ -185,7 +185,7 @@ angular.module(moduleName).service('focusQuery', function () {
 
     function hasGroupTail(el) {
         if (el) {
-            return el.hasAttribute(focusGroupTail);
+            return !!el.getAttribute(focusGroupTail);
         }
         return false;
     }
