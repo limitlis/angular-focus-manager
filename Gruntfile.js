@@ -2,7 +2,8 @@ module.exports = function (grunt) {
 
     var tasks = [
         'jshint',
-        'ngmin',
+        'ngAnnotate',
+        'replace',
         'uglify'
     ];
 
@@ -14,8 +15,6 @@ module.exports = function (grunt) {
             '* https://github.com/webux/<%= pkg.filename %>\n' +
             '* License: MIT.\n' +
             '*/\n',
-        wrapStart: '(function(){\n',
-        wrapEnd: '\n}());\n',
         jshint: {
             // define the files to lint
             files: ['src/**/*.js'],
@@ -38,25 +37,37 @@ module.exports = function (grunt) {
                 }
             }
         },
-        ngmin: {
-            all: {
-                src: [
-                    'src/consts.js',
-                    'src/**/*.js'
-                ],
-                dest: './build/<%= pkg.filename %>.js'
-            },
-//            lite: {
-//                src: [
-//                    'src/ux.js',
-//                    'src/utils.js',
-//                    'src/helpers/*.js',
-//                    'src/directives/element.js',
-//                    'src/directives/group.js',
-//                    'src/services/*.js'
-//                ],
-//                dest: './build/<%= pkg.filename %>-lite.js'
-//            }
+        ngAnnotate: {
+            build: {
+                files: {
+                    './build/<%= pkg.filename %>.js': [
+                        'src/consts.js',
+                        'src/**/*.js'
+                    ]
+                }
+            }
+        },
+        replace: {
+            "build": {
+                options: {
+                    patterns: [
+                        {
+                            match: 'moduleName',
+                            replacement: '<%= pkg.packageName %>'
+                        }
+                    ]
+                },
+                files: [
+                    {
+                        src: ['./build/<%= pkg.filename %>.js'],
+                        dest: './build/<%= pkg.filename %>.js'
+                    },
+                    {
+                        src: ['./build/<%= pkg.filename %>.min.js'],
+                        dest: './build/<%= pkg.filename %>.min.js'
+                    }
+                ]
+            }
         },
         uglify: {
             build: {
@@ -66,8 +77,8 @@ module.exports = function (grunt) {
                     preserveComments: 'some',
                     beautify: true,
                     exportAll: true,
-                    banner: '<%= banner %><%= wrapStart %>',
-                    footer: '<%= wrapEnd %>'
+                    banner: '<%= banner %>',
+                    wrap: '<%= pkg.packageName %>'
                 },
                 files: {
                     './build/<%= pkg.filename %>.js': ['./build/<%= pkg.filename %>.js'],
@@ -94,7 +105,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-wrap');
-    grunt.loadNpmTasks('grunt-ngmin');
+    grunt.loadNpmTasks('grunt-ng-annotate');
+    grunt.loadNpmTasks('grunt-replace');
 
     grunt.registerTask('default', tasks);
 
