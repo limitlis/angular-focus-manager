@@ -1,5 +1,5 @@
-/* global angular, utils, moduleName */
-angular.module(moduleName).service('focusManager', function (focusQuery, focusDispatcher) {
+/* global angular, module, utils, moduleName */
+module.service('focusManager', function (focusQuery, focusDispatcher) {
 
     var scope = this,
         dispatcher = focusDispatcher();

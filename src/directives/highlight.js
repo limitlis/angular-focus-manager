@@ -1,5 +1,5 @@
-/* global angular, utils, moduleName */
-angular.module(moduleName).directive('focusHighlight', function (focusManager) {
+/* global angular, module, utils, moduleName */
+module.directive('focusHighlight', function (focusManager) {
 
     function getOffsetRect(elem) {
         // (1) get bounding rect

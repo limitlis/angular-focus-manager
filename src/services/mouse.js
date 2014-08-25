@@ -1,5 +1,5 @@
-/* global angular, utils, moduleName */
-angular.module(moduleName).service('focusMouse', function (focusManager, focusQuery) {
+/* global angular, module, utils, moduleName */
+module.service('focusMouse', function (focusManager, focusQuery) {
 
     var scope = this;
 

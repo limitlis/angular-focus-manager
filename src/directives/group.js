@@ -1,5 +1,5 @@
-/* global angular, utils, moduleName, focusElementId, focusGroupId, focusParentId, focusParentGroupId, tabIndex, focusGroup, focusGroupIndex, focusGroupHead, focusGroupTail, focusElement, focusEnabled, focusIndex, selectable */
-angular.module(moduleName).directive('focusGroup', function (focusManager, focusQuery, focusDispatcher, focusKeyboard) {
+/* global angular, module, utils, moduleName, focusElementId, focusGroupId, focusParentId, focusParentGroupId, tabIndex, focusGroup, focusGroupIndex, focusGroupHead, focusGroupTail, focusElement, focusEnabled, focusIndex, selectable */
+module.directive('focusGroup', function (focusManager, focusQuery, focusDispatcher, focusKeyboard) {
 
     var groupId = 1, // unique id counter for groups
         elementId = 1, // unique id counter for selectable elements

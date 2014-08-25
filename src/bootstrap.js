@@ -4,8 +4,11 @@
  * License: MIT
  */
 /*global angular, moduleName */
-try {
-    angular.module(moduleName);
-} catch (e) {
-    angular.module(moduleName, []);
-}
+var module;
+(function () {
+    try {
+        module = angular.module(moduleName);
+    } catch (e) {
+        module = angular.module(moduleName, []);
+    }
+})();

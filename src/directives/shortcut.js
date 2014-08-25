@@ -1,5 +1,5 @@
-/* global angular, utils, moduleName, Mousetrap */
-angular.module(moduleName).directive('focusShortcut', function (focusManager) {
+/* global angular, module, utils, moduleName, Mousetrap */
+module.directive('focusShortcut', function (focusManager) {
     return {
         link: function (scope, element, attrs) {
 

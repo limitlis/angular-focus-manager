@@ -1,5 +1,5 @@
-/* global angular, utils, moduleName */
-angular.module(moduleName).factory('focusDispatcher', function () {
+/* global angular, module, utils, moduleName */
+module.factory('focusDispatcher', function () {
 
     var dispatchers = {};
 

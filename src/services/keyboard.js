@@ -1,5 +1,5 @@
-/* global angular, utils, moduleName */
-angular.module(moduleName).service('focusKeyboard', function (focusManager) {
+/* global angular, module, utils, moduleName */
+module.service('focusKeyboard', function (focusManager) {
 
     var scope = this,
         tabKeysEnabled = false,
