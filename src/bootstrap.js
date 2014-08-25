@@ -7,8 +7,8 @@
 var module;
 (function () {
     try {
-        module = angular.module(moduleName);
+        module = angular.module('@@moduleName');
     } catch (e) {
-        module = angular.module(moduleName, []);
+        module = angular.module('@@moduleName', []);
     }
 })();

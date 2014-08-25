@@ -1,4 +1,4 @@
-/* global angular, module, utils, moduleName, focusElementId, focusGroupId, focusParentId, focusParentGroupId, tabIndex, focusGroup, focusGroupIndex, focusGroupHead, focusGroupTail, focusElement, focusEnabled, focusIndex, selectable */
+/* global angular, module, utils, moduleName, consts */
 module.directive('focusGroup', function (focusManager, focusQuery, focusDispatcher, focusKeyboard) {
 
     var groupId = 1, // unique id counter for groups
@@ -67,11 +67,11 @@ module.directive('focusGroup', function (focusManager, focusQuery, focusDispatch
                 scope.$watch(utils.debounce(function () {
                     newCacheHtml = el.innerHTML;
                     if (cacheHtml !== newCacheHtml) {
-                        var els = el.querySelectorAll('[' + focusGroup + ']');
+                        var els = el.querySelectorAll('[' + consts.FOCUS_GROUP + ']');
                         var i = els.length, groupId;
                         while (i) {
                             i -= 1;
-                            groupId = els[i].getAttribute(focusGroupId);
+                            groupId = els[i].getAttribute(consts.FOCUS_GROUP_ID);
                             scope.$broadcast("focus::" + groupId);
                         }
                         cacheHtml = newCacheHtml;

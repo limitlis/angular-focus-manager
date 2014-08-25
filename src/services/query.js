@@ -1,4 +1,4 @@
-/* global angular, module, utils, moduleName, focusElementId, focusGroupId, focusParentId, focusParentGroupId, tabIndex, focusGroup, focusGroupIndex, focusGroupHead, focusGroupTail, focusElement, focusEnabled, focusIndex, selectable */
+/* global angular, module, utils, moduleName, consts */
 module.service('focusQuery', function () {
 
     var scope = this;
@@ -9,14 +9,14 @@ module.service('focusQuery', function () {
             return false;
         }
 
-        var isSelectable = new RegExp(el.nodeName.toUpperCase()).test(selectable);
+        var isSelectable = new RegExp(el.nodeName.toUpperCase()).test(consts.SELECTABLE);
 
         if (!isSelectable) {
-            isSelectable = el.hasAttribute(focusIndex);
+            isSelectable = el.hasAttribute(consts.FOCUS_INDEX);
         }
 
         if (!isSelectable) {
-            isSelectable = el.hasAttribute(tabIndex) && el.getAttribute(tabIndex) > -1;
+            isSelectable = el.hasAttribute(consts.TAB_INDEX) && el.getAttribute(consts.TAB_INDEX) > -1;
         }
 
         if (isSelectable) {
@@ -31,8 +31,8 @@ module.service('focusQuery', function () {
 
     function getFirstGroupId() {
         var q = utils.supplant('[{focusGroup}]:not([{focusParentGroupId}])', {
-            focusGroup: focusGroup,
-            focusParentGroupId: focusParentGroupId
+            focusGroup: consts.FOCUS_GROUP,
+            focusParentGroupId: consts.FOCUS_PARENT_GROUP_ID
         });
         var groupEl = document.querySelector(q);
         return getGroupId(groupEl);
@@ -40,8 +40,8 @@ module.service('focusQuery', function () {
 
     function getLastGroupId() {
         var q = utils.supplant('[{focusGroup}]:not([{focusParentGroupId}])', {
-            focusGroup: focusGroup,
-            focusParentGroupId: focusParentGroupId
+            focusGroup: consts.FOCUS_GROUP,
+            focusParentGroupId: consts.FOCUS_PARENT_GROUP_ID
         });
         var groupEls = document.querySelectorAll(q);
         return getGroupId(groupEls[groupEls.length - 1]);
@@ -49,7 +49,7 @@ module.service('focusQuery', function () {
 
     function getChildGroups(groupId) {
         var q = utils.supplant('[{focusParentGroupId}="{groupId}"]', {
-            focusParentGroupId: focusParentGroupId,
+            focusParentGroupId: consts.FOCUS_PARENT_GROUP_ID,
             groupId: groupId
         });
 
@@ -74,7 +74,7 @@ module.service('focusQuery', function () {
                 'INPUT:not({focusParentId}),' +
                 'TEXTAREA:not({focusParentId}),' +
                 '*[focus-index]:not({focusParentId})';
-            query = utils.supplant(query, {focusParentId: '[' + focusParentId + ']'});
+            query = utils.supplant(query, {focusParentId: '[' + consts.FOCUS_PARENT_ID + ']'});
             return el.querySelectorAll(query);
         }
         return [];
@@ -85,7 +85,7 @@ module.service('focusQuery', function () {
             return [];
         }
 
-        var q = '[' + focusGroupId + ']:not([' + focusParentGroupId + '])';
+        var q = '[' + consts.FOCUS_GROUP_ID + ']:not([' + consts.FOCUS_PARENT_GROUP_ID + '])';
         return el.querySelectorAll(q);
     }
 
@@ -95,12 +95,12 @@ module.service('focusQuery', function () {
         isStrict = isGroupStrict(groupId);
         if (isStrict) {
             q = utils.supplant('[{focusParentId}="{groupId}"][focus-index]:not([disabled]):not(.disabled)', {
-                focusParentId: focusParentId,
+                focusParentId: consts.FOCUS_PARENT_ID,
                 groupId: groupId
             });
         } else {
             q = utils.supplant('[{focusParentId}="{groupId}"]:not([disabled]):not(.disabled)', {
-                focusParentId: focusParentId,
+                focusParentId: consts.FOCUS_PARENT_ID,
                 groupId: groupId
             });
         }
@@ -158,48 +158,48 @@ module.service('focusQuery', function () {
 
     function isAutofocus(el) {
         if (el) {
-            return el.getAttribute(focusElement) === 'autofocus';
+            return el.getAttribute(consts.FOCUS_ELEMENT) === 'autofocus';
         }
         return false;
     }
 
     function isEnabled(el) {
         if (el) {
-            return el.getAttribute(focusEnabled) !== 'false';
+            return el.getAttribute(consts.FOCUS_ENABLED) !== 'false';
         }
         return false;
     }
 
     function hasGroupHead(el) {
         if (el) {
-            return !!el.getAttribute(focusGroupHead);
+            return !!el.getAttribute(consts.FOCUS_GROUP_HEAD);
         }
         return false;
     }
 
     function getGroupHead(el) {
         if (el) {
-            return el.getAttribute(focusGroupHead);
+            return el.getAttribute(consts.FOCUS_GROUP_HEAD);
         }
     }
 
     function hasGroupTail(el) {
         if (el) {
-            return !!el.getAttribute(focusGroupTail);
+            return !!el.getAttribute(consts.FOCUS_GROUP_TAIL);
         }
         return false;
     }
 
     function getGroupTail(el) {
         if (el) {
-            return el.getAttribute(focusGroupTail);
+            return el.getAttribute(consts.FOCUS_GROUP_TAIL);
         }
     }
 
     function getElement(elementId) {
         if (elementId) {
             var q = utils.supplant('[{focusElementId}="{elementId}"]', {
-                focusElementId: focusElementId,
+                focusElementId: consts.FOCUS_ELEMENT_ID,
                 elementId: elementId
             });
             return document.querySelector(q);
@@ -208,36 +208,36 @@ module.service('focusQuery', function () {
 
     function getGroup(groupId) {
         if (groupId) {
-            return document.querySelector('[' + focusGroupId + '="' + groupId + '"]');
+            return document.querySelector('[' + consts.FOCUS_GROUP_ID + '="' + groupId + '"]');
         }
     }
 
     function isGroupStrict(groupId) {
         var group = getGroup(groupId);
         if (group) {
-            return group.getAttribute(focusGroup) === 'strict';
+            return group.getAttribute(consts.FOCUS_GROUP) === 'strict';
         }
         return false;
     }
 
     function getElementId(el) {
         if (el) {
-            return el.getAttribute(focusElementId);
+            return el.getAttribute(consts.FOCUS_ELEMENT_ID);
         }
     }
 
     function setElementId(el, id) {
-        el.setAttribute(focusElementId, id);
+        el.setAttribute(consts.FOCUS_ELEMENT_ID, id);
     }
 
     function getGroupId(el) {
         if (el) {
-            return el.getAttribute(focusGroupId);
+            return el.getAttribute(consts.FOCUS_GROUP_ID);
         }
     }
 
     function setGroupId(el, id) {
-        el.setAttribute(focusGroupId, id);
+        el.setAttribute(consts.FOCUS_GROUP_ID, id);
     }
 
     /**
@@ -247,7 +247,7 @@ module.service('focusQuery', function () {
      */
     function getParentId(el) {
         if (el) {
-            return el.getAttribute(focusParentId);
+            return el.getAttribute(consts.FOCUS_PARENT_ID);
         }
     }
 
@@ -257,7 +257,7 @@ module.service('focusQuery', function () {
      * @param id
      */
     function setParentId(el, id) {
-        el.setAttribute(focusParentId, id);
+        el.setAttribute(consts.FOCUS_PARENT_ID, id);
     }
 
     /**
@@ -267,7 +267,7 @@ module.service('focusQuery', function () {
      */
     function getParentGroupId(el) {
         if (el) {
-            return el.getAttribute(focusParentGroupId);
+            return el.getAttribute(consts.FOCUS_PARENT_GROUP_ID);
         }
     }
 
@@ -277,7 +277,7 @@ module.service('focusQuery', function () {
      * @param id
      */
     function setParentGroupId(el, id) {
-        el.setAttribute(focusParentGroupId, id);
+        el.setAttribute(consts.FOCUS_PARENT_GROUP_ID, id);
     }
 
     /**
@@ -287,7 +287,7 @@ module.service('focusQuery', function () {
      */
     function getTabIndex(el) {
         if (el) {
-            return el.getAttribute(tabIndex);
+            return el.getAttribute(consts.TAB_INDEX);
         }
     }
 
@@ -299,9 +299,9 @@ module.service('focusQuery', function () {
     function setTabIndex(el, index) {
         if (el) {
             if (index === null) {
-                el.removeAttribute(tabIndex);
+                el.removeAttribute(consts.TAB_INDEX);
             } else {
-                el.setAttribute(tabIndex, index);
+                el.setAttribute(consts.TAB_INDEX, index);
             }
         }
     }
@@ -358,8 +358,8 @@ module.service('focusQuery', function () {
     }
 
     function sortByTabIndex(a, b) {
-        var aTabIndex = a.getAttribute(focusIndex) || Number.POSITIVE_INFINITY;
-        var bTabIndex = b.getAttribute(focusIndex) || Number.POSITIVE_INFINITY;
+        var aTabIndex = a.getAttribute(consts.FOCUS_INDEX) || Number.POSITIVE_INFINITY;
+        var bTabIndex = b.getAttribute(consts.FOCUS_INDEX) || Number.POSITIVE_INFINITY;
 
         if (aTabIndex < bTabIndex) {
             return -1;
@@ -371,8 +371,8 @@ module.service('focusQuery', function () {
     }
 
     function sortByGroupIndex(a, b) {
-        var aGroupIndex = a.getAttribute(focusGroupIndex) || Number.POSITIVE_INFINITY;
-        var bGroupIndex = b.getAttribute(focusGroupIndex) || Number.POSITIVE_INFINITY;
+        var aGroupIndex = a.getAttribute(consts.FOCUS_GROUP_INDEX) || Number.POSITIVE_INFINITY;
+        var bGroupIndex = b.getAttribute(consts.FOCUS_GROUP_INDEX) || Number.POSITIVE_INFINITY;
 
         if (aGroupIndex < bGroupIndex) {
             return -1;
