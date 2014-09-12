@@ -8,12 +8,7 @@ var utils = {};
  * @param callback
  */
 utils.addEvent = function (object, type, callback) {
-    if (object.addEventListener) {
-        object.addEventListener(type, callback, false);
-        return;
-    }
-
-    object.attachEvent('on' + type, callback);
+    angular.element(object).on(type, callback);
 };
 
 /**
@@ -23,12 +18,7 @@ utils.addEvent = function (object, type, callback) {
  * @param callback
  */
 utils.removeEvent = function (object, type, callback) {
-    if (object.removeEventListener) {
-        object.removeEventListener(type, callback, false);
-        return;
-    }
-
-    object.detachEvent('on' + type, callback);
+    angular.element(object).off(type, callback);
 };
 
 /**
