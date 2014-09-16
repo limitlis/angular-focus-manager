@@ -26,6 +26,10 @@ module.service('focusQuery', function () {
         if (isSelectable) {
             isSelectable = isVisible(el);
         }
+
+        if(isSelectable) {
+            isSelectable = !el.hasAttribute(consts.FOCUS_GROUP);
+        }
         return isSelectable;
     }
 
