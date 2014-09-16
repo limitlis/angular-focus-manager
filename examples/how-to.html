@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Focus Manager - Simple Example</title>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/styles/googlecode.min.css">
+    <link rel="stylesheet" href="//code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css"/>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body main>
+
+<div class="bs-callout bs-callout-info">
+    <h4>Instructions</h4>
+
+    <p>For each section, Click on a button then use <span class="label">TAB</span> or <span
+            class="label">SHIFT+TAB</span> to navigate, unless otherwise indicated.</p>
+</div>
+
+<!-- Declare a "focus-group" -->
+<div class="panel-ex">
+    <div class="panel-ex-head">Declare a "focus-group"</div>
+
+    <div class="panel-ex-body">
+        <p>Start by declaring a <span class="label">focus-group</span> on a DOM container element. (Typically this will be a DIV).
+            The focus manager will immediately control elements within
+            the scope of this focus-group. By default it will not look too much different than what you might expect to
+            see from
+            the browser's native focus manager.</p>
+<pre><code class="html railscasts">
+&lt;div <i>focus-group=""</i>>
+    &lt;button>A&lt;/button>
+    &lt;button>B&lt;/button>
+    &lt;button>C&lt;/button>
+&lt;/div>
+</code></pre>
+
+        <div class="well well-sm" focus-group="" focus-group-head="loop" focus-group-tail="loop">
+
+            <div class="panel-body">
+                <button class="btn btn-primary btn-icon"><span class="ion-beaker"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-planet"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-paper-airplane"></span></button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Define the tab order -->
+<div class="panel-ex">
+    <div class="panel-ex-head">Define the tab order</div>
+
+    <div class="panel-ex-body">
+        <p>Tab order is declared by using <span class="label">focus-index</span>. Try avoid using tabindex when
+            possible. The focus manager uses them behind the scenes, and mixing the two can sometimes cause
+            unexpected results.</p>
+<pre><code class="html railscasts">
+&lt;div focus-group="">
+    &lt;button <i>focus-index="4"</i>>A&lt;/button>
+    &lt;button <i>focus-index="1"</i>>B&lt;/button>
+    &lt;button <i>focus-index="3"</i>>C&lt;/button>
+    &lt;button <i>focus-index="2"</i>>D&lt;/button>
+&lt;/div>
+</code></pre>
+
+        <div class="well well-sm" focus-group="" focus-group-head="loop" focus-group-tail="loop">
+
+            <div class="panel-body">
+                <button class="btn btn-primary btn-icon" focus-index="4"><span class="ion-beer"></span></button>
+                <button class="btn btn-success" focus-index="1">Start Here</button>
+                <button class="btn btn-primary btn-icon" focus-index="3"><span class="ion-pizza"></span></button>
+                <button class="btn btn-primary btn-icon" focus-index="2"><span class="ion-happy"></span></button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Controlling the loopback -->
+<div class="panel-ex">
+    <div class="panel-ex-head">Control the loopback</div>
+
+    <div class="panel-ex-body">
+        <p>Use <strong>focus-group-head</strong> and <strong>focus-group-tail</strong> to manage the
+            behavior of the focus when it reaches the first or last element in a group. The "loop" value will set focus to
+            the start of the group once it has reached the end. The "stop" value will prevent any further actions from
+            occurring once it reaches the end of the head or tail.</p>
+<pre><code class="html railscasts">
+&lt;div focus-group="" <i>focus-group-head="stop" focus-group-tail="loop"</i>>
+    &lt;button focus-index="4">Button 4&lt;/button>
+    &lt;button focus-index="1">Button 1&lt;/button>
+    &lt;button focus-index="3">Button 3&lt;/button>
+    &lt;button focus-index="2">Button 2&lt;/button>
+&lt;/div>
+</code></pre>
+
+        <div class="well well-sm" focus-group="" focus-group-head="stop" focus-group-tail="loop">
+
+            <div class="panel-body">
+                <button class="btn btn-success">Start Here</button>
+                <button class="btn btn-primary btn-icon"><span class="ion-images"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-wand"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-contrast"></span></button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Groups within groups -->
+<div class="panel-ex">
+    <div class="panel-ex-head">Groups within groups</div>
+
+    <div class="panel-ex-body">
+        <p>You can gain finer control of focus by placing focus-groups within other focus-groups. Like focus elements,
+        You can control the order of focus groups by using <span class="label">focus-group-index</span>.</p>
+
+        <p>Focus elements will receive focus based on the following priority: First, child elements; second, child groups.
+            The focus will continue to go deeper into other child groups until there are no more elements before it moves on to
+            another group.</p>
+<pre><code class="html railscasts">
+&lt;div <i>focus-group=""</i> focus-group-head="loop" focus-group-tail="loop">
+
+    &lt;div>
+        &lt;button>Start Here&lt;/button>
+        ...
+    &lt;/div>
+
+    &lt;div <i>focus-group="" focus-group-index="2"</i>>
+        &lt;div>
+            &lt;button>...&lt;/button>
+            ...
+        &lt;/div>
+    &lt;/div>
+
+    &lt;div <i>focus-group="" focus-group-index="1"</i>>
+        &lt;div>
+            &lt;button>...&lt;/button>
+            ...
+        &lt;/div>
+
+        &lt;div <i>focus-group="" focus-group-index="3"</i>>
+            &lt;div>
+                &lt;button>...&lt;/button>
+                ...
+            &lt;/div>
+        &lt;/div>
+    &lt;/div>
+
+    &lt;div>
+        &lt;button>D&lt;/button>
+        ...
+    &lt;/div>
+&lt;/div>
+</code></pre>
+
+        <div focus-group="" focus-group-head="loop" focus-group-tail="loop">
+
+            <strong>Group A</strong>
+            <div style="padding: 10px 0">
+                <button class="btn btn-success">Start Here</button>
+                <button class="btn btn-primary btn-icon"><span class="ion-beer"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-pizza"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-happy"></span></button>
+            </div>
+
+            <div class="well well-sm" focus-group="" focus-group-index="2">
+                <strong>Group C</strong>
+                <div class="panel-body">
+                    <button class="btn btn-primary btn-icon"><span class="ion-pie-graph"></span></button>
+                    <button class="btn btn-primary btn-icon"><span class="ion-stats-bars"></span></button>
+                    <button class="btn btn-primary btn-icon"><span class="ion-arrow-graph-up-right"></span></button>
+                </div>
+            </div>
+
+            <div class="well well-sm" focus-group="" focus-group-index="1">
+                <strong>Group B</strong>
+                <div class="panel-body">
+                    <button class="btn btn-primary btn-icon"><span class="ion-images"></span></button>
+                    <button class="btn btn-primary btn-icon"><span class="ion-wand"></span></button>
+                    <button class="btn btn-primary btn-icon"><span class="ion-contrast"></span></button>
+                </div>
+
+                <div class="well well-sm" focus-group="" focus-group-index="3">
+                    <strong>Child Group in Group B</strong>
+                    <div class="panel-body">
+                        <button class="btn btn-primary btn-icon"><span class="ion-videocamera"></span></button>
+                        <button class="btn btn-primary btn-icon"><span class="ion-film-marker"></span></button>
+                        <button class="btn btn-primary btn-icon"><span class="ion-headphone"></span></button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div style="padding: 10px 0">
+                <button class="btn btn-primary btn-icon"><span class="ion-beaker"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-planet"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-paper-airplane"></span></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Autofocus -->
+<div class="panel-ex">
+    <div class="panel-ex-head">Autofocus</div>
+
+    <div class="panel-ex-body">
+        <p>You can have the focus manager set the focus on an element automatically when it comes into view by using
+            <span class="label">focus-element="autofocus"</span>. This is very
+        useful when there are delays when loading or displaying. The autofocus will only run
+        once for <strong>ng-show / ng-hide</strong>. For <strong>ng-if</strong>, it will run multiple times. Best
+        practices would have you use <strong>ng-if</strong> over <strong>ng-show</strong> because <strong>ng-show</strong>
+        has to use a timer to check visibility.</p>
+<pre><code class="html railscasts">
+&lt;div focus-group="">
+    &lt;button>Button 1&lt;/button>
+    &lt;button focus-element="autofocus">Button 2&lt;/button>
+    &lt;button>Button 3&lt;/button>
+&lt;/div>
+</code></pre>
+
+
+        <div class="well well-sm" focus-group="" focus-group-head="stop" focus-group-tail="loop">
+            <button class="btn btn-success" ng-click="showAutofocusShowHide = !showAutofocusShowHide">Toggle Show Statement</button>
+
+            <div class="panel-body" ng-show="showAutofocusShowHide">
+                <button class="btn btn-primary btn-icon" focus-element="autofocus"><span class="ion-images"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-wand"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-contrast"></span></button>
+            </div>
+        </div>
+
+        <div class="well well-sm" focus-group="" focus-group-head="stop" focus-group-tail="loop">
+            <button class="btn btn-success" ng-click="showAutofocusIf = !showAutofocusIf">Toggle If Statement</button>
+
+            <div class="panel-body" ng-if="showAutofocusIf">
+                <button class="btn btn-primary btn-icon" focus-element="autofocus"><span class="ion-beaker"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-planet"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-paper-airplane"></span></button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Stacking focus groups-->
+<div class="panel-ex bs-example-modal">
+    <div class="panel-ex-head">Using focus stack</div>
+
+    <div class="panel-ex-body">
+        <p>You can have the focus manager set the focus on an element automatically when it comes into view by using
+            <span class="label">focus-element="autofocus"</span>. This is very
+            useful when there are delays when loading or displaying. The autofocus will only run
+            once for <strong>ng-show / ng-hide</strong>. For <strong>ng-if</strong>, it will run multiple times.</p>
+<pre><code class="html railscasts">
+&lt;div focus-group="">
+    &lt;button>Button 1&lt;/button>
+    &lt;button focus-element="autofocus">Button 2&lt;/button>
+    &lt;button>Button 3&lt;/button>
+&lt;/div>
+</code></pre>
+<div focus-group="" focus-group-head="loop" focus-group-tail="loop">
+    <button class="btn btn-success" style="margin-bottom: 10px" ng-click="dialog.show = !dialog.show">Toggle Dialog</button>
+    <div class="modal" ng-if="dialog.show" focus-group="" focus-stack="" focus-group-head="loop" focus-group-tail="loop">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button ng-click="dialog.show = false" type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Dialog title</h4>
+                </div>
+                <div class="modal-body">
+                    <p>One fine body&hellip;</p>
+                    <input type="text" class="form-control" placeholder="Type here..." focus-element="autofocus">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal" ng-click="dialog.show = false">Close</button>
+                    <button class="btn btn-primary" ng-click="dialog.show = false">Save changes</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+</div>
+
+
+<!-- :: Disabled :: -->
+
+<!-- optional highlighter to easily show focus -->
+<div focus-highlight=""></div>
+
+<script src="../bower_components/angular/angular.js"></script>
+<script src="../build/angular-focusmanager.js"></script>
+<script src="js/example.js"></script>
+</body>
+</html>

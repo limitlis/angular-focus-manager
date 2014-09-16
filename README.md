@@ -1,18 +1,18 @@
 #Angular Focus Manager
 
-###Control key and mouse navigation in your Angular JS application.
+###Easily control key and mouse navigation in your Angular JS application.
 ---
 
-**[Download](https://raw.githubusercontent.com/webux/angular-focusmanager/master/build/angular-focusmanager.js)** (or **[Minified](https://raw.githubusercontent.com/webux/angular-focusmanager/master/build/angular-focusmanager.min.js)**) **|**
-**[Guide](https://github.com/webux/angular-focusmanager/wiki) |**
-**[API](http://webux.github.io/focusmanager/site) |**
-**[Examples](http://webux.github.com/focusmanager/examples/) ([Src](https://github.com/webux/focusmanager/tree/gh-pages/sample)) |**
-**[FAQ](https://github.com/webux/focusmanager/wiki/faq) |**
+**[Download](https://raw.githubusercontent.com/obogo/angular-focus-manager/master/build/angular-focusmanager.js)** (or **[Minified](https://raw.githubusercontent.com/obogo/angular-focusmanager/master/build/angular-focusmanager.min.js)**) **|**
+**[Guide](https://github.com/obogo/angular-focus-manager/wiki) |**
+**[API](http://obogo.github.io/focusmanager/site) |**
+**[Examples](http://obogo.github.com/focusmanager/examples/) ([Src](https://github.com/obogo/focusmanager/tree/gh-pages/sample)) |**
+**[FAQ](https://github.com/obogo/focusmanager/wiki/faq) |**
 **[Resources](#resources) |**
 **[Report an Issue](#report-an-issue) |**
 **[Contribute](#contribute) |**
 **[Help!](http://stackoverflow.com/questions/ask?tags=angularjs,focusmanager) |**
-**[Discuss](https://groups.google.com/forum/#!categories/webux/focusmanager)**
+**[Discuss](https://groups.google.com/forum/#!categories/obogo/focusmanager)**
 
 ---
 
@@ -40,11 +40,11 @@ Have you ever tried navigating through a web application using the TAB key? You 
 
 * Clone this repository
 * Download the release (or minified)
-* Install via Bower: by running $ bower install angular-focusmanager from your console
+* Install via Bower: by running $ bower install angular-focus-manager from your console
 
-**(2)** Include angular-focusmanager.js (or angular-focusmanager.min.js) in your index.html, after including Angular itself
+**(2)** Include angular-focus-manager.js (or angular-focus-manager.min.js) in your index.html, after including Angular itself
 
-**(3)** Add "go" to your main module's list of dependencies
+**(3)** Add "fm" to your main module's list of dependencies
 
 When you're done, your setup should look similar to the following:
 
@@ -54,9 +54,9 @@ When you're done, your setup should look similar to the following:
 <html ng-app="myApp">
 <head>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
-    <script src="js/angular-focusmanager.min.js"></script>
+    <script src="js/angular-focus-manager.min.js"></script>
     <script>
-        var myApp = angular.module('myApp', ['go']);
+        var myApp = angular.module('myApp', ['fm']);
     </script>
     ...
 </head>
@@ -65,3 +65,8 @@ When you're done, your setup should look similar to the following:
 </body>
 </html>
 ```
+
+####Article: "Steps on how the focus manager was created"
+---
+
+[Click here to read the article](https://github.com/obogo/angular-focus-manager/wiki/How-the-focus-manager-was-created)

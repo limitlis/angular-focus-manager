@@ -1,0 +1,109 @@
+body {
+    padding: 15px;
+}
+
+pre {
+    padding: 0 !important;
+    border: 1px solid #ecf0f1;
+    background: none;
+}
+
+code {
+    padding: 0 20px !important;
+    padding-bottom: 20px !important;
+}
+
+code i {
+    text-decoration: none;
+    font-style: normal;
+    background: #e67e22;
+    padding: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+
+code i * {
+    color: #ffffff !important;
+}
+
+.panel-ex {
+    margin-bottom: 25px;
+    -webkit-box-shadow: 0px 3px 3px 0px rgba(50, 50, 50, 0.28);
+    -moz-box-shadow: 0px 3px 3px 0px rgba(50, 50, 50, 0.28);
+    box-shadow: 0px 3px 3px 0px rgba(50, 50, 50, 0.28);
+}
+
+.panel-ex-head {
+    padding: 8px 15px;
+    background: #ecf0f1;
+    /*color: #ffffff;*/
+    margin-bottom: 0;
+    font-size: 18px;
+}
+
+.panel-ex-body {
+    padding: 10px;
+    border: 1px solid #ecf0f1;
+}
+
+.btn-icon {
+    padding: 3px 8px
+}
+
+.btn-icon span {
+    font-size: 24px;
+    line-height: 0;
+}
+
+.bs-callout {
+    padding: 20px;
+    margin: 20px 0;
+    border: 1px solid #eee;
+    border-left-width: 5px;
+    border-radius: 3px;
+}
+
+.bs-callout-info {
+    border-left-color: #5bc0de;
+}
+
+
+.bs-example-modal .modal {
+    position: relative;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    left: auto;
+    z-index: 1;
+    display: block;
+}
+
+.label {
+    font-size: 90%;
+    font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;;
+    font-weight: normal;
+    background: #e67e22;
+}
+
+.well {
+    background: none;
+}
+
+*:focus {
+    outline: none !important;
+}
+
+.focus-highlight {
+    position: absolute;
+    -webkit-transition: left 100ms ease-out, top 100ms ease-out, width 100ms ease-out, height 100ms ease-out;
+    transition: left 100ms ease-out, top 100ms ease-out, width 100ms ease-out, height 100ms ease-out;
+    outline: 2px solid #FF0000;
+    outline-offset: 4px;
+    /*border: 2px solid #fff;*/
+    pointer-events: none;
+    margin-left: 0px;
+    margin-top: 0px;
+    pointer-events: none;
+    z-index: 1000;
+}
