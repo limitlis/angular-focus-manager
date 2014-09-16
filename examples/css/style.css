@@ -28,6 +28,9 @@ code i * {
 }
 
 .panel-ex {
+    float: left;
+    max-width: 480px;
+    margin: 0 10px;
     margin-bottom: 25px;
     -webkit-box-shadow: 0px 3px 3px 0px rgba(50, 50, 50, 0.28);
     -moz-box-shadow: 0px 3px 3px 0px rgba(50, 50, 50, 0.28);
@@ -45,7 +48,14 @@ code i * {
 .panel-ex-body {
     padding: 10px;
     border: 1px solid #ecf0f1;
+    height: 400px;
+    overflow-y: auto;
 }
+
+/*.panel-ex-body p {*/
+    /*height: 120px;*/
+    /*overflow-y: auto;*/
+/*}*/
 
 .btn-icon {
     padding: 3px 8px
@@ -62,6 +72,7 @@ code i * {
     border: 1px solid #eee;
     border-left-width: 5px;
     border-radius: 3px;
+    min-height: 130px;
 }
 
 .bs-callout-info {
