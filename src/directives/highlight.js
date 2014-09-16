@@ -23,7 +23,7 @@ module.directive('focusHighlight', function (focusManager) {
         return { top: Math.round(top), left: Math.round(left), width: box.width, height: box.height };
     }
 
-    function updateDisplay(el, activeElement) {
+    var updateDisplay = utils.debounce(function (el, activeElement) {
         var style = el.style;
         if (activeElement && focusManager.canReceiveFocus(activeElement)) {
             var rect = getOffsetRect(activeElement);
@@ -35,7 +35,7 @@ module.directive('focusHighlight', function (focusManager) {
         } else {
             style.display = 'none';
         }
-    }
+    }, 10);
 
     return {
         scope: true,
@@ -50,8 +50,8 @@ module.directive('focusHighlight', function (focusManager) {
             }, true);
 
             document.addEventListener('blur', function (evt) {
-                timer = setTimeout(function(){
-                   updateDisplay(el);
+                timer = setTimeout(function () {
+                    updateDisplay(el);
                 });
             }, true);
         },
