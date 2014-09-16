@@ -5,6 +5,8 @@ module.service('focusKeyboard', function (focusManager) {
         tabKeysEnabled = false,
         arrowKeysEnabled = false;
 
+    var _groupName;
+
     function enableTabKeys() {
         if (!tabKeysEnabled) {
             tabKeysEnabled = true;
@@ -178,6 +180,35 @@ module.service('focusKeyboard', function (focusManager) {
         }
     }
 
+    function onNextKeyUp(evt) {
+        unwatchNextTabKey();
+
+        if (tabKeysEnabled) {
+            // if the focus manager has not been enabled (via mouse click)
+            // enable the FM and then check for SHIFT KEY to determine DIRECTION
+            if (!focusManager.enabled) {
+                focusManager.enable();
+                if (evt.shiftKey) {
+                    focusManager.findPrevChildGroup(_groupName);
+                } else {
+                    focusManager.findNextElement(_groupName);
+                }
+            }
+        }
+    }
+
+    function watchNextTabKey(groupName) {
+        if(tabKeysEnabled) {
+            _groupName = groupName;
+            // remove the key event regardless
+            utils.addEvent(document, 'keyup', onNextKeyUp);
+        }
+    }
+
+    function unwatchNextTabKey() {
+        utils.removeEvent(document, 'keyup', onNextKeyUp);
+    }
+
     scope.direction = null;
     scope.enable = enable;
     scope.disable = disable;
@@ -187,6 +218,8 @@ module.service('focusKeyboard', function (focusManager) {
     scope.disableArrowKeys = disableArrowKeys;
     scope.toggleTabArrowKeys = toggleTabArrowKeys;
     scope.triggerClick = triggerClick;
+    scope.watchNextTabKey = watchNextTabKey;
+    scope.unwatchNextTabKey = unwatchNextTabKey;
 
 }).run(function (focusKeyboard) {
     focusKeyboard.enable();
