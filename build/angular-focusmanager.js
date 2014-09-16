@@ -1,5 +1,5 @@
 /*
-* angular-focus-manager 0.2.1
+* angular-focus-manager 0.2.2
 * Obogo (c) 2014
 * https://github.com/webux/angular-focusmanager
 * License: MIT.
@@ -192,7 +192,7 @@
                 height: box.height
             };
         }
-        function updateDisplay(el, activeElement) {
+        var updateDisplay = utils.debounce(function(el, activeElement) {
             var style = el.style;
             if (activeElement && focusManager.canReceiveFocus(activeElement)) {
                 var rect = getOffsetRect(activeElement);
@@ -204,7 +204,7 @@
             } else {
                 style.display = "none";
             }
-        }
+        }, 10);
         return {
             scope: true,
             replace: true,
