@@ -6,6 +6,8 @@ module.directive('focusGroup', function (focusManager, focusQuery, focusDispatch
         dispatcher = focusDispatcher(), // general reference to dispatcher
         delay = 100; // amount of time to delay before performing an action
 
+    var body = document.body;
+
     /**
      * Compile finds elements within a focus group and assigns them a unique element id
      * and a parent id (which references the group they belong to). If no tab index is
@@ -52,6 +54,7 @@ module.directive('focusGroup', function (focusManager, focusQuery, focusDispatch
         var cacheHtml = '';
         var newCacheHtml = '';
         var tabIndex = el.getAttribute('tabindex') || 0;
+        var outOfBody = false;
 
         function init() {
             scope.$on('focus::' + groupName, function () {
@@ -109,6 +112,7 @@ module.directive('focusGroup', function (focusManager, focusQuery, focusDispatch
                     } else {
                         el.setAttribute('tabindex', tabIndex);
                     }
+
                 });
 
                 dispatcher.on('disabled', function () {
@@ -123,11 +127,27 @@ module.directive('focusGroup', function (focusManager, focusQuery, focusDispatch
             }
         }
 
-        function onFocus() {
-            focusManager.enable();
+        function onFocus(evt) {
+            if (outOfBody) {
+                focusKeyboard.watchNextTabKey(groupName);
+                outOfBody = false;
+            } else {
+                focusManager.enable();
+            }
+        }
+
+        // needed when the focus leaves the document area
+        function onDocumentBlur(evt) {
+            // we have to wait on the blur to see if the active element is
+            setTimeout(function () {
+                if (document.activeElement === body) {
+                    outOfBody = true;
+                }
+            });
         }
 
         el.addEventListener('focus', onFocus, true);
+        document.addEventListener('blur', onDocumentBlur, true);
 
         // using timeout to allow all groups to digest before performing ParentGroup check
         setTimeout(init, delay);
