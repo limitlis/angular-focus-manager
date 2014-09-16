@@ -2,7 +2,7 @@
 <html ng-app="app">
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Focus Manager - Simple Example</title>
+    <title>Angular Focus Manager</title>
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/styles/googlecode.min.css">
     <link rel="stylesheet" href="//code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css"/>
@@ -11,15 +11,19 @@
     <link rel="stylesheet" href="css/style.css"/>
 </head>
 <body main>
-<div class="pull-left" style="margin: 0 10px;width: 480px;min-height: 150px;font-size: 48px;">
-    <!--<div class="bs-callout bs-callout-info" style="padding: 30px">-->
-    <div>
-        <span class="ion-qr-scanner" style="line-height: 160px;padding-left: 30px;color:#3498db"></span> <strong>Focus Manager</strong>
+<div class="pull-left" style="position: relative;margin: 0 10px;width: 480px;min-height: 150px;">
+    <div style="padding-left: 30px;padding-top: 15px">
+        <div style="font-size: 48px;">
+            <span class="ion-qr-scanner" style="color:#3498db"></span> <strong>Focus Manager</strong>
+        </div>
+        <div style="color:#c0392b;font-weight: bold;margin-left: 54px;margin-top: -15px">for AngularJS</div>
     </div>
-    <!--</div>-->
+    <div style="margin-top: 10px;text-align: center;font-size: 24px;font-weight: normal;text-decoration: none">
+        <a href="https://github.com/obogo/angular-focus-manager" class="btn btn-primary"><span class="ion-social-github" style="font-size: 24px;vertical-align: middle"></span> <strong>View on GitHub</strong></a>
+    </div>
 </div>
 
-<div class="pull-left" style="margin-left: 10px;max-width: 480px">
+<div class="pull-left" style="margin-left: 10px;margin-right:10px;max-width: 480px">
     <div class="bs-callout bs-callout-info">
         <h4>Instructions</h4>
 
@@ -307,8 +311,8 @@
 <!-- optional highlighter to easily show focus -->
 <div focus-highlight=""></div>
 
-<script src="../bower_components/angular/angular.js"></script>
-<script src="../build/angular-focusmanager.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.24/angular.min.js"></script>
+<script src="https://rawgit.com/obogo/angular-focus-manager/master/build/angular-focusmanager.js"></script>
 <script src="js/example.js"></script>
 </body>
 </html>

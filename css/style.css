@@ -90,6 +90,10 @@ code i * {
     display: block;
 }
 
+.bs-example-modal .modal-dialog {
+    width: inherit;
+}
+
 .label {
     font-size: 90%;
     font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;;
