@@ -23,9 +23,11 @@ module.service('focusManager', function (focusQuery, focusDispatcher) {
             dispatcher.trigger('focusout', eventObj);
 
             scope.activeElement = el;
-            el.focus();
 
-            dispatcher.trigger('focusin', eventObj);
+            if (el) {
+                el.focus();
+                dispatcher.trigger('focusin', eventObj);
+            }
         }
     }
 
