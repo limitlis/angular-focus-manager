@@ -64,10 +64,11 @@ When you're done, your setup should look similar to the following:
 
 The guide is the best way to help you get started using the Focus Manager for AngularJS.
 
-[Click here to view the guide](https://github.com/obogo/angular-focus-manager/wiki/How-the-focus-manager-was-created)
+[Click here to view the guide](http://obogo.github.io/angular-focus-manager/)
 
 ####Article on "Creating the Focus Manager"
 ---
 
 Goes over some of the architecture on how the Focus Manager was designed and then implemented.
-[Click to read](http://obogo.github.io/angular-focus-manager/)
+
+[Click to read](https://github.com/obogo/angular-focus-manager/wiki/How-the-focus-manager-was-created)
