@@ -38,10 +38,12 @@
                     off = scope.$watch(function() {
                         off();
                         timer = setInterval(function() {
-                            focusManager.focus(el);
-                            el.focus();
-                            if (document.activeElement === el) {
-                                clearInterval(timer);
+                            if (focusQuery.isVisible(el)) {
+                                focusManager.focus(el);
+                                el.focus();
+                                if (document.activeElement === el) {
+                                    clearInterval(timer);
+                                }
                             }
                         }, 10);
                     });
@@ -54,6 +56,7 @@
     } ]);
     module.directive("focusGroup", [ "focusManager", "focusQuery", "focusDispatcher", "focusKeyboard", function(focusManager, focusQuery, focusDispatcher, focusKeyboard) {
         var groupId = 1, elementId = 1, dispatcher = focusDispatcher(), delay = 100;
+        var body = document.body;
         function compile(groupName, el) {
             var els, i, len, elementName;
             els = focusQuery.getElementsWithoutParents(el);
@@ -85,6 +88,7 @@
             var cacheHtml = "";
             var newCacheHtml = "";
             var tabIndex = el.getAttribute("tabindex") || 0;
+            var outOfBody = false;
             function init() {
                 scope.$on("focus::" + groupName, function() {
                     compile(groupName, el);
@@ -145,10 +149,23 @@
                     });
                 }
             }
-            function onFocus() {
-                focusManager.enable();
+            function onFocus(evt) {
+                if (outOfBody) {
+                    focusKeyboard.watchNextTabKey(groupName);
+                    outOfBody = false;
+                } else {
+                    focusManager.enable();
+                }
+            }
+            function onDocumentBlur(evt) {
+                setTimeout(function() {
+                    if (document.activeElement === body) {
+                        outOfBody = true;
+                    }
+                });
             }
             el.addEventListener("focus", onFocus, true);
+            document.addEventListener("blur", onDocumentBlur, true);
             setTimeout(init, delay);
             focusQuery.setGroupId(el, groupName);
             compile(groupName, el);
@@ -176,21 +193,33 @@
             };
         }
         function updateDisplay(el, activeElement) {
-            if (focusManager.canReceiveFocus(activeElement)) {
+            var style = el.style;
+            if (activeElement && focusManager.canReceiveFocus(activeElement)) {
                 var rect = getOffsetRect(activeElement);
-                el.style.left = rect.left + "px";
-                el.style.top = rect.top + "px";
-                el.style.width = rect.width + "px";
-                el.style.height = rect.height + "px";
+                style.display = null;
+                style.left = rect.left + "px";
+                style.top = rect.top + "px";
+                style.width = rect.width + "px";
+                style.height = rect.height + "px";
+            } else {
+                style.display = "none";
             }
         }
         return {
             scope: true,
             replace: true,
             link: function(scope, element, attrs) {
+                var timer;
                 var el = element[0];
+                el.style.display = "none";
                 document.addEventListener("focus", function(evt) {
+                    clearTimeout(timer);
                     updateDisplay(el, evt.target);
+                }, true);
+                document.addEventListener("blur", function(evt) {
+                    timer = setTimeout(function() {
+                        updateDisplay(el);
+                    });
                 }, true);
             },
             template: '<div class="focus-highlight"></div>'
@@ -285,6 +314,7 @@
     });
     module.service("focusKeyboard", [ "focusManager", function(focusManager) {
         var scope = this, tabKeysEnabled = false, arrowKeysEnabled = false;
+        var _groupName;
         function enableTabKeys() {
             if (!tabKeysEnabled) {
                 tabKeysEnabled = true;
@@ -408,6 +438,28 @@
                 }
             }
         }
+        function onNextKeyUp(evt) {
+            unwatchNextTabKey();
+            if (tabKeysEnabled) {
+                if (!focusManager.enabled) {
+                    focusManager.enable();
+                    if (evt.shiftKey) {
+                        focusManager.findPrevChildGroup(_groupName);
+                    } else {
+                        focusManager.findNextElement(_groupName);
+                    }
+                }
+            }
+        }
+        function watchNextTabKey(groupName) {
+            if (tabKeysEnabled) {
+                _groupName = groupName;
+                utils.addEvent(document, "keyup", onNextKeyUp);
+            }
+        }
+        function unwatchNextTabKey() {
+            utils.removeEvent(document, "keyup", onNextKeyUp);
+        }
         scope.direction = null;
         scope.enable = enable;
         scope.disable = disable;
@@ -417,6 +469,8 @@
         scope.disableArrowKeys = disableArrowKeys;
         scope.toggleTabArrowKeys = toggleTabArrowKeys;
         scope.triggerClick = triggerClick;
+        scope.watchNextTabKey = watchNextTabKey;
+        scope.unwatchNextTabKey = unwatchNextTabKey;
     } ]).run([ "focusKeyboard", function(focusKeyboard) {
         focusKeyboard.enable();
         focusKeyboard.enableTabKeys();
@@ -434,7 +488,9 @@
                 };
                 dispatcher.trigger("focusout", eventObj);
                 scope.activeElement = el;
-                el.focus();
+                if (el) {
+                    el.focus();
+                }
                 dispatcher.trigger("focusin", eventObj);
             }
         }
@@ -733,6 +789,9 @@
             if (isSelectable) {
                 isSelectable = isVisible(el);
             }
+            if (isSelectable) {
+                isSelectable = !el.hasAttribute(consts.FOCUS_GROUP);
+            }
             return isSelectable;
         }
         function getFirstGroupId() {
@@ -1010,6 +1069,7 @@
         scope.getElementsWithoutParents = getElementsWithoutParents;
         scope.getGroupsWithoutParentGroup = getGroupsWithoutParentGroup;
         scope.isAutofocus = isAutofocus;
+        scope.isVisible = isVisible;
         scope.hasGroupHead = hasGroupHead;
         scope.hasGroupTail = hasGroupTail;
         scope.getGroupHead = getGroupHead;
@@ -1022,18 +1082,10 @@
     });
     var utils = {};
     utils.addEvent = function(object, type, callback) {
-        if (object.addEventListener) {
-            object.addEventListener(type, callback, false);
-            return;
-        }
-        object.attachEvent("on" + type, callback);
+        angular.element(object).on(type, callback);
     };
     utils.removeEvent = function(object, type, callback) {
-        if (object.removeEventListener) {
-            object.removeEventListener(type, callback, false);
-            return;
-        }
-        object.detachEvent("on" + type, callback);
+        angular.element(object).off(type, callback);
     };
     utils.debounce = function(func, wait, immediate) {
         var timeout;
