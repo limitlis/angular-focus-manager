@@ -1,18 +1,11 @@
 #Angular Focus Manager
 
-###Easily control key and mouse navigation in your Angular JS application.
+###Simple key and mouse navigation in your Angular JS application.
 ---
 
 **[Download](https://raw.githubusercontent.com/obogo/angular-focus-manager/master/build/angular-focusmanager.js)** (or **[Minified](https://raw.githubusercontent.com/obogo/angular-focusmanager/master/build/angular-focusmanager.min.js)**) **|**
-**[Guide](https://github.com/obogo/angular-focus-manager/wiki) |**
-**[API](http://obogo.github.io/focusmanager/site) |**
-**[Examples](http://obogo.github.com/focusmanager/examples/) ([Src](https://github.com/obogo/focusmanager/tree/gh-pages/sample)) |**
-**[FAQ](https://github.com/obogo/focusmanager/wiki/faq) |**
-**[Resources](#resources) |**
-**[Report an Issue](#report-an-issue) |**
-**[Contribute](#contribute) |**
-**[Help!](http://stackoverflow.com/questions/ask?tags=angularjs,focusmanager) |**
-**[Discuss](https://groups.google.com/forum/#!categories/obogo/focusmanager)**
+**[Guide](http://obogo.github.io/angular-focus-manager/) |**
+**[Help!](http://stackoverflow.com/questions/ask?tags=angularjs,focusmanager)**
 
 ---
 
@@ -53,7 +46,7 @@ When you're done, your setup should look similar to the following:
 <!doctype html>
 <html ng-app="myApp">
 <head>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular.min.js"></script>
     <script src="js/angular-focus-manager.min.js"></script>
     <script>
         var myApp = angular.module('myApp', ['fm']);
@@ -66,7 +59,14 @@ When you're done, your setup should look similar to the following:
 </html>
 ```
 
-####Article: "Steps on how the focus manager was created"
+####Guide
 ---
 
+The guide is the best way to help you get started using the Focus Manager for AngularJS
 [Click here to read the article](https://github.com/obogo/angular-focus-manager/wiki/How-the-focus-manager-was-created)
+
+####Article: "Creating the Focus Manager"
+---
+
+Goes over some of the architecture on how the Focus Manager was designed and then implemented.
+[Click here to view the guide](http://obogo.github.io/angular-focus-manager/)
