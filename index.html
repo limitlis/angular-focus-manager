@@ -1,79 +1,314 @@
 <!DOCTYPE html>
-<html>
-
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="description" content="angular-focus-manager : Manages the focus and accessibility in web applications.">
-
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>angular-focus-manager</title>
-  </head>
-
-  <body>
-
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/obogo/angular-focus-manager">View on GitHub</a>
-
-          <h1 id="project_title">angular-focus-manager</h1>
-          <h2 id="project_tagline">Manages the focus and accessibility in web applications.</h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/obogo/angular-focus-manager/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/obogo/angular-focus-manager/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
+<html ng-app="app">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Focus Manager - Simple Example</title>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/styles/googlecode.min.css">
+    <link rel="stylesheet" href="//code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css"/>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body main>
+<div class="pull-left" style="margin: 0 10px;width: 480px;min-height: 150px;font-size: 48px;">
+    <!--<div class="bs-callout bs-callout-info" style="padding: 30px">-->
+    <div>
+        <span class="ion-qr-scanner" style="line-height: 160px;padding-left: 30px;color:#3498db"></span> <strong>Focus Manager</strong>
     </div>
+    <!--</div>-->
+</div>
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+<div class="pull-left" style="margin-left: 10px;max-width: 480px">
+    <div class="bs-callout bs-callout-info">
+        <h4>Instructions</h4>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+        <p>For each section, Click on a button then use <span class="label">TAB</span> or <span
+                class="label">SHIFT+TAB</span> to navigate, unless otherwise indicated.</p>
+    </div>
+</div>
+<div style="max-width: 1280px">
+<!-- Declare a "focus-group" -->
+<div class="panel-ex">
+    <div class="panel-ex-head">Declare a "focus-group"</div>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
+    <div class="panel-ex-body">
+        <p>Start by declaring a <span class="label">focus-group</span> on a DOM container element. (Typically this will be a DIV).
+            The focus manager will immediately control elements within
+            the scope of this focus-group. By default it will not look too much different than what you might expect to
+            see from
+            the browser's native focus manager.</p>
+<pre><code class="html railscasts">
+&lt;div <i>focus-group=""</i>>
+    &lt;button>A&lt;/button>
+    &lt;button>B&lt;/button>
+    &lt;button>C&lt;/button>
+&lt;/div>
 </code></pre>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+        <div class="well well-sm" focus-group="" focus-group-head="loop" focus-group-tail="loop">
 
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+            <div class="panel-body">
+                <button class="btn btn-primary btn-icon"><span class="ion-beaker"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-planet"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-paper-airplane"></span></button>
+            </div>
+        </div>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+    </div>
+</div>
 
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
+<!-- Define the tab order -->
+<div class="panel-ex">
+    <div class="panel-ex-head">Define the tab order</div>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+    <div class="panel-ex-body">
+        <p>Tab order is declared by using <span class="label">focus-index</span>. Try avoid using tabindex when
+            possible. The focus manager uses them behind the scenes, and mixing the two can sometimes cause
+            unexpected results.</p>
+<pre><code class="html railscasts">
+&lt;div focus-group="">
+    &lt;button <i>focus-index="4"</i>>A&lt;/button>
+    &lt;button <i>focus-index="1"</i>>B&lt;/button>
+    &lt;button <i>focus-index="3"</i>>C&lt;/button>
+    &lt;button <i>focus-index="2"</i>>D&lt;/button>
+&lt;/div>
+</code></pre>
 
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+        <div class="well well-sm" focus-group="" focus-group-head="loop" focus-group-tail="loop">
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+            <div class="panel-body">
+                <button class="btn btn-primary btn-icon" focus-index="4"><span class="ion-beer"></span></button>
+                <button class="btn btn-success" focus-index="1">Start Here</button>
+                <button class="btn btn-primary btn-icon" focus-index="3"><span class="ion-pizza"></span></button>
+                <button class="btn btn-primary btn-icon" focus-index="2"><span class="ion-happy"></span></button>
+            </div>
+        </div>
 
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+    </div>
+</div>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-      </section>
+<!-- Controlling the loopback -->
+<div class="panel-ex">
+    <div class="panel-ex-head">Control the loopback</div>
+
+    <div class="panel-ex-body">
+        <p>Use <strong>focus-group-head</strong> and <strong>focus-group-tail</strong> to manage the
+            behavior of the focus when it reaches the first or last element in a group. The "loop" value will set focus to
+            the start of the group once it has reached the end. The "stop" value will prevent any further actions from
+            occurring once it reaches the end of the head or tail.</p>
+<pre><code class="html railscasts">
+&lt;div focus-group=""
+    <i>focus-group-head="stop" focus-group-tail="loop"</i>>
+    &lt;button>A&lt;/button>
+    &lt;button>B&lt;/button>
+    &lt;button>C&lt;/button>
+&lt;/div>
+</code></pre>
+
+        <div class="well well-sm" focus-group="" focus-group-head="stop" focus-group-tail="loop">
+
+            <div class="panel-body">
+                <button class="btn btn-success">Start Here</button>
+                <button class="btn btn-primary btn-icon"><span class="ion-images"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-wand"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-contrast"></span></button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Groups within groups -->
+<div class="panel-ex">
+    <div class="panel-ex-head">Groups within groups</div>
+
+    <div class="panel-ex-body">
+        <p>You can gain finer control of focus by placing focus-groups within other focus-groups. Like focus elements,
+            You can control the order of focus groups by using <span class="label">focus-group-index</span>.</p>
+
+        <p>Focus elements will receive focus based on the following priority: First, child elements; second, child groups.
+            The focus will continue to go deeper into other child groups until there are no more elements before it moves on to
+            another group.</p>
+<pre><code class="html railscasts">
+&lt;div <i>focus-group=""</i> focus-group-head="loop"
+    focus-group-tail="loop">
+
+    &lt;div>
+    &lt;button>Start Here&lt;/button>
+    ...
+    &lt;/div>
+
+    &lt;div <i>focus-group="" focus-group-index="2"</i>>
+    &lt;div>
+    &lt;button>...&lt;/button>
+    ...
+    &lt;/div>
+    &lt;/div>
+
+    &lt;div <i>focus-group="" focus-group-index="1"</i>>
+    &lt;div>
+    &lt;button>...&lt;/button>
+    ...
+    &lt;/div>
+
+    &lt;div <i>focus-group="" focus-group-index="3"</i>>
+    &lt;div>
+    &lt;button>...&lt;/button>
+    ...
+    &lt;/div>
+    &lt;/div>
+    &lt;/div>
+
+    &lt;div>
+    &lt;button>D&lt;/button>
+    ...
+    &lt;/div>
+&lt;/div>
+</code></pre>
+
+        <div focus-group="" focus-group-head="loop" focus-group-tail="loop">
+
+            <strong>Group A</strong>
+            <div style="padding: 10px 0">
+                <button class="btn btn-success">Start Here</button>
+                <button class="btn btn-primary btn-icon"><span class="ion-beer"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-pizza"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-happy"></span></button>
+            </div>
+
+            <div class="well well-sm" focus-group="" focus-group-index="2">
+                <strong>Group C</strong>
+                <div class="panel-body">
+                    <button class="btn btn-primary btn-icon"><span class="ion-pie-graph"></span></button>
+                    <button class="btn btn-primary btn-icon"><span class="ion-stats-bars"></span></button>
+                    <button class="btn btn-primary btn-icon"><span class="ion-arrow-graph-up-right"></span></button>
+                </div>
+            </div>
+
+            <div class="well well-sm" focus-group="" focus-group-index="1">
+                <strong>Group B</strong>
+                <div class="panel-body">
+                    <button class="btn btn-primary btn-icon"><span class="ion-images"></span></button>
+                    <button class="btn btn-primary btn-icon"><span class="ion-wand"></span></button>
+                    <button class="btn btn-primary btn-icon"><span class="ion-contrast"></span></button>
+                </div>
+
+                <div class="well well-sm" focus-group="" focus-group-index="3">
+                    <strong>Child Group in Group B</strong>
+                    <div class="panel-body">
+                        <button class="btn btn-primary btn-icon"><span class="ion-videocamera"></span></button>
+                        <button class="btn btn-primary btn-icon"><span class="ion-film-marker"></span></button>
+                        <button class="btn btn-primary btn-icon"><span class="ion-headphone"></span></button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div style="padding: 10px 0">
+                <button class="btn btn-primary btn-icon"><span class="ion-beaker"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-planet"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-paper-airplane"></span></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Autofocus -->
+<div class="panel-ex">
+    <div class="panel-ex-head">Autofocus</div>
+
+    <div class="panel-ex-body">
+        <p>You can have the focus manager set the focus on an element automatically when it comes into view by using
+            <span class="label">focus-element="autofocus"</span>. This is very
+            useful when there are delays when loading or displaying. The autofocus will only run
+            once for <strong>ng-show / ng-hide</strong>. For <strong>ng-if</strong>, it will run multiple times. Best
+            practices would have you use <strong>ng-if</strong> over <strong>ng-show</strong> because <strong>ng-show</strong>
+            has to use a timer to check visibility.</p>
+<pre><code class="html railscasts">
+&lt;div focus-group="">
+    &lt;button>A&lt;/button>
+    &lt;button <i>focus-element="autofocus"</i>>B&lt;/button>
+    &lt;button>C&lt;/button>
+&lt;/div>
+</code></pre>
+
+        <div class="well well-sm" focus-group="" focus-group-head="stop" focus-group-tail="loop">
+            <button class="btn btn-success" ng-click="showAutofocusShowHide = !showAutofocusShowHide">Toggle Show Statement</button>
+
+            <div class="panel-body" ng-show="showAutofocusShowHide">
+                <button class="btn btn-primary btn-icon" focus-element="autofocus"><span class="ion-images"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-wand"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-contrast"></span></button>
+            </div>
+        </div>
+
+        <div class="well well-sm" focus-group="" focus-group-head="stop" focus-group-tail="loop">
+            <button class="btn btn-success" ng-click="showAutofocusIf = !showAutofocusIf">Toggle If Statement</button>
+
+            <div class="panel-body" ng-if="showAutofocusIf">
+                <button class="btn btn-primary btn-icon" focus-element="autofocus"><span class="ion-beaker"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-planet"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-paper-airplane"></span></button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Stacking focus groups-->
+<div class="panel-ex bs-example-modal">
+    <div class="panel-ex-head">Using focus stack</div>
+
+    <div class="panel-ex-body">
+        <p>When working with popups and dialogs, you will most likely want the focus to return to the origin from which
+            the popup was initialized. The <span class="label">focus-stack=""</span> directive keeps track of these elements.
+            You can stack as many layers deep as you would like. So if you have an application where dialogs open other dialogs,
+            <span class="label">focus-stack=""</span> will help you keep the origins easily organized.</p>
+<pre><code class="html railscasts">
+&lt;div class="modal" ng-if="dialog.show" focus-group="" <i>focus-stack=""</i>
+    focus-group-head="loop" focus-group-tail="loop">
+    &lt;div class="modal-dialog">
+    ...
+    &lt;div class="panel-body">
+    &lt;button <i>focus-element="autofocus"</i>>...&lt;/button>
+    &lt;/div>
+    ...
+    &lt;/div>
+&lt;/div>
+</code></pre>
+        <div focus-group="" focus-group-head="loop" focus-group-tail="loop">
+            <button class="btn btn-success" style="margin-bottom: 10px" ng-click="dialog.show = !dialog.show">Toggle Dialog</button>
+            <div class="modal" ng-if="dialog.show" focus-group="" focus-stack="" focus-group-head="loop" focus-group-tail="loop">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button ng-click="dialog.show = false" type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                            <h4 class="modal-title">Dialog title</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p>One fine body&hellip;</p>
+                            <input type="text" class="form-control" placeholder="Type here..." focus-element="autofocus">
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-default" data-dismiss="modal" ng-click="dialog.show = false">Close</button>
+                            <button class="btn btn-primary" ng-click="dialog.show = false">Save changes</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+        </div>
     </div>
 
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">angular-focus-manager maintained by <a href="https://github.com/obogo">obogo</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
+</div>
 
-    
+<!-- :: Disabled :: -->
 
-  </body>
+<!-- optional highlighter to easily show focus -->
+<div focus-highlight=""></div>
+
+<script src="../bower_components/angular/angular.js"></script>
+<script src="../build/angular-focusmanager.js"></script>
+<script src="js/example.js"></script>
+</body>
 </html>
