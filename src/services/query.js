@@ -405,6 +405,7 @@ module.service('focusQuery', function () {
     scope.getElementsWithoutParents = getElementsWithoutParents;
     scope.getGroupsWithoutParentGroup = getGroupsWithoutParentGroup;
     scope.isAutofocus = isAutofocus;
+    scope.isVisible = isVisible;
     scope.hasGroupHead = hasGroupHead;
     scope.hasGroupTail = hasGroupTail;
     scope.getGroupHead = getGroupHead;
