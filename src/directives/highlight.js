@@ -24,12 +24,16 @@ module.directive('focusHighlight', function (focusManager) {
     }
 
     function updateDisplay(el, activeElement) {
-        if (focusManager.canReceiveFocus(activeElement)) {
+        var style = el.style;
+        if (activeElement && focusManager.canReceiveFocus(activeElement)) {
             var rect = getOffsetRect(activeElement);
-            el.style.left = rect.left + "px";
-            el.style.top = rect.top + "px";
-            el.style.width = rect.width + "px";
-            el.style.height = rect.height + "px";
+            style.display = null;
+            style.left = rect.left + 'px';
+            style.top = rect.top + 'px';
+            style.width = rect.width + 'px';
+            style.height = rect.height + 'px';
+        } else {
+            style.display = 'none';
         }
     }
 
@@ -37,12 +41,18 @@ module.directive('focusHighlight', function (focusManager) {
         scope: true,
         replace: true,
         link: function (scope, element, attrs) {
+            var timer;
             var el = element[0];
-//                dispatcher.on("focusin", utils.throttle(function(evt) {
-//                    updateDisplay(el, evt.newTarget);
-//                }), 100);
-            document.addEventListener("focus", function (evt) {
+            el.style.display = 'none';
+            document.addEventListener('focus', function (evt) {
+                clearTimeout(timer);
                 updateDisplay(el, evt.target);
+            }, true);
+
+            document.addEventListener('blur', function (evt) {
+                timer = setTimeout(function(){
+                   updateDisplay(el);
+                });
             }, true);
         },
         template: '<div class="focus-highlight"></div>'
