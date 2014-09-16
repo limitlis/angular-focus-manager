@@ -12,10 +12,12 @@ module.directive('focusElement', function (focusManager, focusQuery) {
                 off = scope.$watch(function () {
                     off();
                     timer = setInterval(function () {
-                        focusManager.focus(el);
-                        el.focus();
-                        if (document.activeElement === el) {
-                            clearInterval(timer);
+                        if(focusQuery.isVisible(el)) {
+                            focusManager.focus(el);
+                            el.focus();
+                            if (document.activeElement === el) {
+                                clearInterval(timer);
+                            }
                         }
                     }, 10);
                 });
