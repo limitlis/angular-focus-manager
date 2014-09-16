@@ -26,8 +26,9 @@ module.service('focusManager', function (focusQuery, focusDispatcher) {
 
             if (el) {
                 el.focus();
-                dispatcher.trigger('focusin', eventObj);
             }
+
+            dispatcher.trigger('focusin', eventObj);
         }
     }
 
