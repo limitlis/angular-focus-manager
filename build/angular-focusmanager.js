@@ -1,5 +1,5 @@
 /*
-* angular-focus-manager 0.2.3
+* angular-focus-manager 0.2.4
 * Obogo (c) 2014
 * https://github.com/webux/angular-focusmanager
 * License: MIT.
@@ -43,6 +43,7 @@
                                 el.focus();
                                 if (document.activeElement === el) {
                                     clearInterval(timer);
+                                    off();
                                 }
                             }
                         }, 10);
