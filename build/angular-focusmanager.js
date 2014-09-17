@@ -1,5 +1,5 @@
 /*
-* angular-focus-manager 0.2.2
+* angular-focus-manager 0.2.3
 * Obogo (c) 2014
 * https://github.com/webux/angular-focusmanager
 * License: MIT.
@@ -754,9 +754,13 @@
             utils.removeEvent(document, "mousedown", onMouseDown);
         }
         function onMouseDown(evt) {
-            if (focusManager.canReceiveFocus(evt.target)) {
-                focusManager.focus(evt.target);
-                var parentId = focusQuery.getParentId(evt.target);
+            var el = evt.target;
+            while (el.nodeName.toUpperCase() === "SPAN") {
+                el = el.parentNode;
+            }
+            if (focusManager.canReceiveFocus(el)) {
+                focusManager.focus(el);
+                var parentId = focusQuery.getParentId(el);
                 if (parentId) {
                     focusManager.enable();
                 } else {
