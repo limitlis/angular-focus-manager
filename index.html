@@ -11,7 +11,7 @@
     <script>hljs.initHighlightingOnLoad();</script>
     <link rel="stylesheet" href="css/style.css"/>
 </head>
-<body main>
+<body main ng-cloak focus-group="" focus-group-head="loop" focus-group-tail="loop">
 <div style="position: relative;max-width: 980px">
     <div style="font-size: 36px;padding-left: 20px">
         <!--<div class="bs-callout bs-callout-info" style="padding: 30px">-->
@@ -161,20 +161,21 @@
 &lt;/div>
 </code></pre>
 
-        <div class="well well-sm" focus-group="" focus-group-head="stop" focus-group-tail="loop">
-            <button class="btn btn-success" ng-click="showAutofocusShowHide = !showAutofocusShowHide">Toggle Show Statement</button>
 
-            <div class="panel-body" ng-show="showAutofocusShowHide">
+
+        <div class="well well-sm clearfix" focus-group="" focus-group-head="stop" focus-group-tail="loop">
+            <div>
+                <button class="btn btn-success" ng-click="showAutofocusShowHide = !showAutofocusShowHide">Toggle ng-show</button>
+                <button class="btn btn-success" ng-click="showAutofocusIf = !showAutofocusIf">Toggle ng-if</button>
+            </div>
+
+            <div class="panel-body pull-left" ng-show="showAutofocusShowHide">
                 <button class="btn btn-primary btn-icon" focus-element="autofocus"><span class="ion-images"></span></button>
                 <button class="btn btn-primary btn-icon"><span class="ion-wand"></span></button>
                 <button class="btn btn-primary btn-icon"><span class="ion-contrast"></span></button>
             </div>
-        </div>
 
-        <div class="well well-sm" focus-group="" focus-group-head="stop" focus-group-tail="loop">
-            <button class="btn btn-success" ng-click="showAutofocusIf = !showAutofocusIf">Toggle If Statement</button>
-
-            <div class="panel-body" ng-if="showAutofocusIf">
+            <div class="panel-body pull-left" ng-if="showAutofocusIf">
                 <button class="btn btn-primary btn-icon" focus-element="autofocus"><span class="ion-beaker"></span></button>
                 <button class="btn btn-primary btn-icon"><span class="ion-planet"></span></button>
                 <button class="btn btn-primary btn-icon"><span class="ion-paper-airplane"></span></button>
