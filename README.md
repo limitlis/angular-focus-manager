@@ -1,4 +1,4 @@
-#Angular Focus Manager
+#Focus Manager for AngularJS
 
 ###Simple key and mouse navigation in your Angular JS application.
 ---
@@ -9,7 +9,8 @@
 
 ---
 
-**Angular Focus Manager** allows you to organize your interface to into ***groups*** to have better control over the order in which elements receive focus. Focus Manager is built for web applications that have complex UI such as panels, popups, sections, and custom widgets. Here are some of the benefits to using Focus Manager:
+**Focus Manager for AngularJS** allows you to have complete control over the order in which elements receive focus. Focus Manager provides you with a simple interface and can easily be added to both new and existing projects. Focus Manger is designed to handle the fully constructed UIs in modern web applications (panels, popups, widgets, etc.) Here are some additional benefits to using Focus Manager:
+
 
 * Simple integration
 * ARIA compatible
@@ -29,7 +30,7 @@ Have you ever tried navigating through a web application using the TAB key? You 
 
 ##Getting Started
 ---
-**(1)** Get Angular Focus Manager in one of 3 ways:
+**(1)** Get Focus Manager for AngularJS in one of 3 ways:
 
 * Clone this repository
 * Download the release (or minified)
