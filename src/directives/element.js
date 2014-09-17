@@ -17,6 +17,7 @@ module.directive('focusElement', function (focusManager, focusQuery) {
                             el.focus();
                             if (document.activeElement === el) {
                                 clearInterval(timer);
+                                off();
                             }
                         }
                     }, 10);
