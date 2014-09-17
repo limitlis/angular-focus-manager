@@ -5,19 +5,41 @@
     <title>Focus Manager - Simple Example</title>
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/styles/googlecode.min.css">
+    <link rel="stylesheet" href="bower_components/github-fork-ribbon-css/gh-fork-ribbon.css"/>
     <link rel="stylesheet" href="//code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css"/>
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/highlight.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     <link rel="stylesheet" href="css/style.css"/>
 </head>
 <body main>
-<div style="position: relative">
+<div style="position: relative;max-width: 980px">
     <div style="font-size: 36px;padding-left: 20px">
         <!--<div class="bs-callout bs-callout-info" style="padding: 30px">-->
         <span class="ion-qr-scanner" style="line-height: 0px;color:#3498db"></span> <strong>Focus Manager</strong>
         <!--</div>-->
     </div>
     <div style="color:#c0392b;font-weight: bold;margin-left: 62px;margin-top: -12px">for AngularJS</div>
+
+    <div style="padding-top:20px;padding-left: 20px">
+        <h4>Simple key and mouse navigation in your Angular JS application.</h4>
+
+        <p><strong>Angular Focus Manager</strong> allows you to organize your interface to into <strong><em>groups</em></strong>
+            to have better control over the order in which elements receive focus. Focus Manager is built for web
+            applications that have complex UI such as panels, popups, sections, and custom widgets. Here are some of the
+            benefits to using Focus Manager:</p>
+
+        <ul class="task-list">
+            <li>Simple integration</li>
+            <li>ARIA compatible</li>
+            <li>Cross-browser support</li>
+            <li>No jQuery dependencies</li>
+            <li>Small footprint</li>
+            <li>Service-based plugin architecture</li>
+            <li>Mobile support</li>
+            <li>Custom focus highlighter</li>
+            <li>Shortcut key support (uses <a href="http://craig.is/killing/mice">Mousetrap.js</a>)</li>
+        </ul>
+    </div>
 </div>
 
 <div>
@@ -302,13 +324,25 @@
     </div>
 </div>
 
+<div class="panel-ex no-shadow bs-example-modal" style="max-width: 980px">
+    <a href="https://github.com/obogo/angular-focus-manager">Angular Focus Manager</a>
+    released under the MIT license by Obogo (c) 2014.
+</div>
+
+
+<div class="github-fork-ribbon-wrapper right">
+    <div class="github-fork-ribbon">
+        <a href="https://github.com/obogo/angular-focus-manager">Fork me on GitHub</a>
+    </div>
+</div>
+
 <!-- :: Disabled :: -->
 
 <!-- optional highlighter to easily show focus -->
 <div focus-highlight=""></div>
 
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.24/angular.min.js"></script>
-<script src="../build/angular-focusmanager.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.24/angular.min.js"></script>
+<script src="https://rawgit.com/obogo/angular-focus-manager/master/build/angular-focusmanager.js"></script>
 <script src="js/example.js"></script>
 </body>
 </html>
