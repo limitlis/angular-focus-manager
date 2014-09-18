@@ -333,22 +333,22 @@
     <div class="panel-ex-head">Declaring shortcuts</div>
 
     <div class="panel-ex-body">
-        <p>Focus Manager supports shortcuts by using <a href="http://craig.is/killing/mice">Mousetrap.js</a></p>
+        <p>Focus Manager supports shortcuts by using <a href="http://craig.is/killing/mice">Mousetrap.js</a>. Simply</p>
 <pre><code class="html railscasts">
 &lt;div focus-group=""
-    &lt;button <i>focus-shortcut="command+k"</i>>A&lt;/button>
-    &lt;button>B&lt;/button>
-    &lt;button>C&lt;/button>
+&lt;button <i>focus-shortcut="shift+k,ctrl+o"</i>>A&lt;/button>
+&lt;button>B&lt;/button>
+&lt;button>C&lt;/button>
 &lt;/div>
 </code></pre>
 
         <div class="well well-sm" focus-group="" focus-group-head="loop" focus-group-tail="loop">
 
             <div class="panel-body">
-                <button class="btn btn-success" focus-shortcut="command+k">Press CTRL+K</button>
-                <button class="btn btn-primary btn-icon"><span class="ion-beer"></span></button>
-                <button class="btn btn-primary btn-icon"><span class="ion-pizza"></span></button>
-                <button class="btn btn-primary btn-icon"><span class="ion-happy"></span></button>
+                <button class="btn btn-success" focus-shortcut="shift+k,ctrl+o">Press SHIFT+K or CTRL+O</button>
+                <button class="btn btn-primary btn-icon"><span class="ion-videocamera"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-film-marker"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-headphone"></span></button>
             </div>
         </div>
 
@@ -415,6 +415,37 @@ angular.module('app', ['fm'])
     </div>
 </div>
 
+
+<!-- Handle arrow keys -->
+<div class="panel-ex fill">
+    <div class="panel-ex-head">Turn DIVs into selectable elements</div>
+
+    <div class="panel-ex-body">
+        <p>Its easy to convert non-selectable elements (such as DIVs) into selectable elements. Just add
+        <span class="label">focus-index</span> on the element. If you leave the attribute empty
+        <span class="label">focus-index</span>, it will naturally receive focus in the order in which
+        it is displayed. You can optionally add an order value as well, <span class="label">focus-index="1"</span>.
+        Items with a focus-index defined with an order value will receive focus before those that do not.</p>
+<pre><code class="html railscasts">
+&lt;div focus-group>
+    &lt;button>A&lt;/button>
+    &lt;div <i>focus-index</i>>B&lt;/div>
+    &lt;button>C&lt;/button>
+&lt;/div>
+</code></pre>
+
+        <div class="well well-sm" focus-group="" focus-group-head="loop" focus-group-tail="loop">
+
+            <div class="panel-body">
+                <button class="btn btn-success">Start Here</button>
+                <button class="btn btn-primary btn-icon"><span class="ion-beer"></span></button>
+                <div class="btn btn-info btn-icon" focus-index><span class="ion-pizza"></span></div>
+                <button class="btn btn-primary btn-icon"><span class="ion-happy"></span></button>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 <div class="clearfix"></div>
 

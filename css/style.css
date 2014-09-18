@@ -52,6 +52,8 @@ code i * {
 
 @media all and (max-width: 1030px) {
     .panel-ex {
+        width: 100%;
+        min-width: inherit;
         max-width: 960px;
     }
 
