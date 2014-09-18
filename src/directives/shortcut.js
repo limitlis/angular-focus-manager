@@ -8,7 +8,7 @@ module.directive('focusShortcut', function (focusManager) {
             function onBindKeys() {
                 if (!bound) {
                     bound = true;
-                    Mousetrap.bind(attrs.focusKeyboard.split(','), function (evt) {
+                    Mousetrap.bind(attrs.focusShortcut.split(','), function (evt) {
                         evt.preventDefault();
                         evt.stopPropagation();
 
@@ -26,9 +26,10 @@ module.directive('focusShortcut', function (focusManager) {
                 }
             }
 
-            if (attrs.focusKeyboard) {
+            if (attrs.focusShortcut) {
                 scope.$on('bindKeys', onBindKeys);
                 scope.$on('unbindKeys', onUnbindKeys);
+                scope.$on('$destroy', onUnbindKeys);
             }
         }
     };
