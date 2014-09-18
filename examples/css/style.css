@@ -37,6 +37,24 @@ code i * {
     box-shadow: 0px 3px 3px 0px rgba(50, 50, 50, 0.28);
 }
 
+.instructions {
+    height: 160px;
+}
+
+.instructions .panel-ex-body{
+    height: inherit;
+}
+
+@media all and (max-width: 1030px) {
+    .panel-ex {
+        max-width: 960px;
+    }
+
+    .instructions {
+        height: 100px;
+    }
+}
+
 .panel-ex-head {
     padding: 8px 15px;
     background: #ecf0f1;
@@ -51,6 +69,17 @@ code i * {
     height: 400px;
     overflow-y: auto;
 }
+
+.panel-ex.no-shadow {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
+.panel-ex.no-shadow .panel-ex-body {
+    border: none;
+}
+
 
 /*.panel-ex-body p {*/
     /*height: 120px;*/
@@ -95,6 +124,10 @@ code i * {
     font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;;
     font-weight: normal;
     background: #e67e22;
+}
+
+.label.black {
+    background: #000;
 }
 
 .well {

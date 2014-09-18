@@ -10,22 +10,25 @@
     <script>hljs.initHighlightingOnLoad();</script>
     <link rel="stylesheet" href="css/style.css"/>
 </head>
-<body main>
-<div class="pull-left" style="margin: 0 10px;width: 480px;min-height: 150px;font-size: 48px;">
-    <!--<div class="bs-callout bs-callout-info" style="padding: 30px">-->
-    <div>
-        <span class="ion-qr-scanner" style="line-height: 160px;padding-left: 30px;color:#3498db"></span> <strong>Focus Manager</strong>
+<body main focus-group="" focus-group-head="loop" focus-group-tail="loop">
+<div style="position: relative">
+    <div style="font-size: 36px;padding-left: 20px">
+        <!--<div class="bs-callout bs-callout-info" style="padding: 30px">-->
+        <span class="ion-qr-scanner" style="line-height: 0px;color:#3498db"></span> <strong>Focus Manager</strong>
+        <!--</div>-->
     </div>
-    <!--</div>-->
+    <div style="color:#c0392b;font-weight: bold;margin-left: 62px;margin-top: -12px">for AngularJS</div>
 </div>
 
-<div class="pull-left" style="margin-left: 10px;max-width: 480px">
-    <div class="bs-callout bs-callout-info">
-        <h4>Instructions</h4>
+<div>
+    <!--<div class="bs-callout bs-callout-info">-->
+        <div style="padding: 20px">
+            <h4>Instructions</h4>
 
-        <p>For each section, Click on a button then use <span class="label">TAB</span> or <span
-                class="label">SHIFT+TAB</span> to navigate, unless otherwise indicated.</p>
-    </div>
+            <p>For each section, Click on a button then use <span class="label black">TAB</span> or <span
+                    class="label black">SHIFT+TAB</span> to navigate, unless otherwise indicated.</p>
+        </div>
+    <!--</div>-->
 </div>
 <div style="max-width: 1280px">
 <!-- Declare a "focus-group" -->
@@ -49,6 +52,7 @@
         <div class="well well-sm" focus-group="" focus-group-head="loop" focus-group-tail="loop">
 
             <div class="panel-body">
+                <button class="btn btn-success">Start Here</button>
                 <button class="btn btn-primary btn-icon"><span class="ion-beaker"></span></button>
                 <button class="btn btn-primary btn-icon"><span class="ion-planet"></span></button>
                 <button class="btn btn-primary btn-icon"><span class="ion-paper-airplane"></span></button>
@@ -119,11 +123,50 @@
     </div>
 </div>
 
-<!-- Groups within groups -->
+<!-- Autofocus -->
 <div class="panel-ex">
-    <div class="panel-ex-head">Groups within groups</div>
+    <div class="panel-ex-head">Autofocus</div>
 
     <div class="panel-ex-body">
+        <p>You can have the focus manager set the focus on an element automatically when it comes into view by using
+            <span class="label">focus-element="autofocus"</span>. To run autofocus, once use <strong>ng-show</strong>.
+        To run multiple times, use <strong>ng-if</strong>.
+<pre><code class="html railscasts">
+&lt;div focus-group="">
+    &lt;button>A&lt;/button>
+    &lt;button <i>focus-element="autofocus"</i>>B&lt;/button>
+    &lt;button>C&lt;/button>
+&lt;/div>
+</code></pre>
+
+        <div class="well well-sm" focus-group="" focus-group-head="stop" focus-group-tail="loop">
+            <button class="btn btn-success" ng-click="showAutofocusShowHide = !showAutofocusShowHide">Toggle Show Statement</button>
+
+            <div class="panel-body" ng-show="showAutofocusShowHide">
+                <button class="btn btn-primary btn-icon" focus-element="autofocus"><span class="ion-images"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-wand"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-contrast"></span></button>
+            </div>
+        </div>
+
+        <div class="well well-sm" focus-group="" focus-group-head="stop" focus-group-tail="loop">
+            <button class="btn btn-success" ng-click="showAutofocusIf = !showAutofocusIf">Toggle If Statement</button>
+
+            <div class="panel-body" ng-if="showAutofocusIf">
+                <button class="btn btn-primary btn-icon" focus-element="autofocus"><span class="ion-beaker"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-planet"></span></button>
+                <button class="btn btn-primary btn-icon"><span class="ion-paper-airplane"></span></button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Groups within groups -->
+<div class="panel-ex" style="max-width: 980px">
+    <div class="panel-ex-head">Groups within groups</div>
+
+    <div class="panel-ex-body" style="height: inherit">
         <p>You can gain finer control of focus by placing focus-groups within other focus-groups. Like focus elements,
             You can control the order of focus groups by using <span class="label">focus-group-index</span>.</p>
 
@@ -135,34 +178,34 @@
     focus-group-tail="loop">
 
     &lt;div>
-    &lt;button>Start Here&lt;/button>
-    ...
+        &lt;button>Start Here&lt;/button>
+        ...
     &lt;/div>
 
     &lt;div <i>focus-group="" focus-group-index="2"</i>>
-    &lt;div>
-    &lt;button>...&lt;/button>
-    ...
-    &lt;/div>
+        &lt;div>
+            &lt;button>...&lt;/button>
+            ...
+        &lt;/div>
     &lt;/div>
 
     &lt;div <i>focus-group="" focus-group-index="1"</i>>
-    &lt;div>
-    &lt;button>...&lt;/button>
-    ...
+        &lt;div>
+            &lt;button>...&lt;/button>
+            ...
+        &lt;/div>
+
+        &lt;div <i>focus-group="" focus-group-index="3"</i>>
+            &lt;div>
+                &lt;button>...&lt;/button>
+                ...
+            &lt;/div>
+        &lt;/div>
     &lt;/div>
 
-    &lt;div <i>focus-group="" focus-group-index="3"</i>>
     &lt;div>
-    &lt;button>...&lt;/button>
-    ...
-    &lt;/div>
-    &lt;/div>
-    &lt;/div>
-
-    &lt;div>
-    &lt;button>D&lt;/button>
-    ...
+        &lt;button>D&lt;/button>
+        ...
     &lt;/div>
 &lt;/div>
 </code></pre>
@@ -214,53 +257,11 @@
     </div>
 </div>
 
-<!-- Autofocus -->
-<div class="panel-ex">
-    <div class="panel-ex-head">Autofocus</div>
-
-    <div class="panel-ex-body">
-        <p>You can have the focus manager set the focus on an element automatically when it comes into view by using
-            <span class="label">focus-element="autofocus"</span>. This is very
-            useful when there are delays when loading or displaying. The autofocus will only run
-            once for <strong>ng-show / ng-hide</strong>. For <strong>ng-if</strong>, it will run multiple times. Best
-            practices would have you use <strong>ng-if</strong> over <strong>ng-show</strong> because <strong>ng-show</strong>
-            has to use a timer to check visibility.</p>
-<pre><code class="html railscasts">
-&lt;div focus-group="">
-    &lt;button>A&lt;/button>
-    &lt;button <i>focus-element="autofocus"</i>>B&lt;/button>
-    &lt;button>C&lt;/button>
-&lt;/div>
-</code></pre>
-
-        <div class="well well-sm" focus-group="" focus-group-head="stop" focus-group-tail="loop">
-            <button class="btn btn-success" ng-click="showAutofocusShowHide = !showAutofocusShowHide">Toggle Show Statement</button>
-
-            <div class="panel-body" ng-show="showAutofocusShowHide">
-                <button class="btn btn-primary btn-icon" focus-element="autofocus"><span class="ion-images"></span></button>
-                <button class="btn btn-primary btn-icon"><span class="ion-wand"></span></button>
-                <button class="btn btn-primary btn-icon"><span class="ion-contrast"></span></button>
-            </div>
-        </div>
-
-        <div class="well well-sm" focus-group="" focus-group-head="stop" focus-group-tail="loop">
-            <button class="btn btn-success" ng-click="showAutofocusIf = !showAutofocusIf">Toggle If Statement</button>
-
-            <div class="panel-body" ng-if="showAutofocusIf">
-                <button class="btn btn-primary btn-icon" focus-element="autofocus"><span class="ion-beaker"></span></button>
-                <button class="btn btn-primary btn-icon"><span class="ion-planet"></span></button>
-                <button class="btn btn-primary btn-icon"><span class="ion-paper-airplane"></span></button>
-            </div>
-        </div>
-
-    </div>
-</div>
-
 <!-- Stacking focus groups-->
-<div class="panel-ex bs-example-modal">
+<div class="panel-ex bs-example-modal" style="max-width: 980px">
     <div class="panel-ex-head">Using focus stack</div>
 
-    <div class="panel-ex-body">
+    <div class="panel-ex-body" style="height: inherit">
         <p>When working with popups and dialogs, you will most likely want the focus to return to the origin from which
             the popup was initialized. The <span class="label">focus-stack=""</span> directive keeps track of these elements.
             You can stack as many layers deep as you would like. So if you have an application where dialogs open other dialogs,
@@ -299,7 +300,6 @@
             </div><!-- /.modal -->
         </div>
     </div>
-
 </div>
 
 <!-- :: Disabled :: -->
@@ -307,7 +307,7 @@
 <!-- optional highlighter to easily show focus -->
 <div focus-highlight=""></div>
 
-<script src="../bower_components/angular/angular.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.24/angular.min.js"></script>
 <script src="../build/angular-focusmanager.js"></script>
 <script src="js/example.js"></script>
 </body>

@@ -1,5 +1,5 @@
 /*
-* angular-focus-manager 0.2.4
+* angular-focus-manager 0.2.5
 * Obogo (c) 2014
 * https://github.com/webux/angular-focusmanager
 * License: MIT.
@@ -233,7 +233,7 @@
                 function onBindKeys() {
                     if (!bound) {
                         bound = true;
-                        Mousetrap.bind(attrs.focusKeyboard.split(","), function(evt) {
+                        Mousetrap.bind(attrs.focusShortcut.split(","), function(evt) {
                             evt.preventDefault();
                             evt.stopPropagation();
                             focusManager.focus(element[0]);
@@ -247,9 +247,10 @@
                         Mousetrap.unbind(attrs.focusKeyboard.split(","));
                     }
                 }
-                if (attrs.focusKeyboard) {
+                if (attrs.focusShortcut) {
                     scope.$on("bindKeys", onBindKeys);
                     scope.$on("unbindKeys", onUnbindKeys);
+                    scope.$on("$destroy", onUnbindKeys);
                 }
             }
         };

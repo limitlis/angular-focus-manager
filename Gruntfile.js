@@ -37,6 +37,21 @@ module.exports = function (grunt) {
                 }
             }
         },
+        bump: {
+            options: {
+                files: ['package.json'],
+                updateConfigs: [],
+//                commit: false,
+//                commitMessage: 'Release v%VERSION%',
+//                commitFiles: ['package.json'],
+//                createTag: false,
+//                tagName: 'v%VERSION%',
+//                tagMessage: 'Version %VERSION%',
+//                push: false,
+//                pushTo: 'upstream',
+//                gitDescribeOptions: '--tags --always --abbrev=1 --dirty=-d'
+            }
+        },
         ngAnnotate: {
             build: {
                 files: {
@@ -107,7 +122,9 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-wrap');
     grunt.loadNpmTasks('grunt-ng-annotate');
     grunt.loadNpmTasks('grunt-replace');
+    grunt.loadNpmTasks('grunt-bump');
 
     grunt.registerTask('default', tasks);
+    grunt.registerTask('bump', ['bump']);
 
 };
