@@ -133,7 +133,7 @@ module.service('focusQuery', function () {
     }
 
     function isVisible(el) {
-        if (!el) {
+        if (!el || !el.parentNode) {
             return false;
         }
 

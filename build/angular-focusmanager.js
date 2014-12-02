@@ -878,7 +878,7 @@
             return returnVal;
         }
         function isVisible(el) {
-            if (!el) {
+            if (!el || !el.parentNode) {
                 return false;
             }
             if (el.parentNode.nodeType === 9) {
