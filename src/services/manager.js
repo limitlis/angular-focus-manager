@@ -20,11 +20,16 @@ module.service('focusManager', function (focusQuery, focusDispatcher) {
                 'newTarget': el
             };
 
+            //if(scope.activeElement) {
+            //    scope.activeElement.setAttribute('tabindex', '-1');
+            //}
+
             dispatcher.trigger('focusout', eventObj);
 
             scope.activeElement = el;
 
             if (el) {
+                //el.setAttribute('tabindex', '1');
                 el.focus();
             }
 

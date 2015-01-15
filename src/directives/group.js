@@ -149,6 +149,11 @@ module.directive('focusGroup', function (focusManager, focusQuery, focusDispatch
         el.addEventListener('focus', onFocus, true);
         document.addEventListener('blur', onDocumentBlur, true);
 
+        scope.$on('focus::repeat', function (evt) {
+            evt.stopPropagation();
+            compile(groupName, el);
+        });
+
         // using timeout to allow all groups to digest before performing ParentGroup check
         setTimeout(init, delay);
 

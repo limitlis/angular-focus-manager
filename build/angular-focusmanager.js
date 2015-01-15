@@ -167,6 +167,9 @@
             }
             el.addEventListener("focus", onFocus, true);
             document.addEventListener("blur", onDocumentBlur, true);
+            scope.$on("focus::repeat", function() {
+                compile(groupName, el);
+            });
             setTimeout(init, delay);
             focusQuery.setGroupId(el, groupName);
             compile(groupName, el);
@@ -226,6 +229,16 @@
             template: '<div class="focus-highlight"></div>'
         };
     } ]);
+    module.directive("focusRepeat", function() {
+        return {
+            scope: true,
+            link: function(scope) {
+                if (scope.$last) {
+                    scope.$emit("focus::repeat");
+                }
+            }
+        };
+    });
     module.directive("focusShortcut", [ "focusManager", function(focusManager) {
         return {
             link: function(scope, element, attrs) {
@@ -495,13 +508,9 @@
                     oldTarget: scope.activeElement,
                     newTarget: el
                 };
-                if (scope.activeElement) {
-                    scope.activeElement.setAttribute("tabindex", "-1");
-                }
                 dispatcher.trigger("focusout", eventObj);
                 scope.activeElement = el;
                 if (el) {
-                    el.setAttribute("tabindex", "1");
                     el.focus();
                 }
                 dispatcher.trigger("focusin", eventObj);

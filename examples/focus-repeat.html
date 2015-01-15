@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Focus Manager - Simple Example</title>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body main>
+<div class="panel panel-default" focus-group="" focus-group-head="loop" focus-group-tail="loop">
+    <div class="panel-body">
+        <button focus-repeat ng-repeat="i in count" type="button" class="btn btn-primary">Button</button>
+    </div>
+</div>
+<div focus-highlight=""></div>
+
+<script src="../bower_components/angular/angular.js"></script>
+<script src="../build/angular-focusmanager.js"></script>
+<script>
+    var app = angular.module('app', ['fm'])
+    app.directive('main', function () {
+        return {
+            restrict: 'A',
+            link: function (scope, el, attrs) {
+                scope.count = [2, 3, 1];
+            }
+        }
+    })
+</script>
+</body>
+</html>
