@@ -1,5 +1,5 @@
 /*
-* angular-focus-manager 0.2.6
+* angular-focus-manager 0.2.7
 * Obogo (c) 2015
 * https://github.com/webux/angular-focusmanager
 * License: MIT.
@@ -167,7 +167,8 @@
             }
             el.addEventListener("focus", onFocus, true);
             document.addEventListener("blur", onDocumentBlur, true);
-            scope.$on("focus::repeat", function() {
+            scope.$on("focus::repeat", function(evt) {
+                evt.stopPropagation();
                 compile(groupName, el);
             });
             setTimeout(init, delay);
