@@ -8,21 +8,25 @@ module.directive('focusShortcut', function (focusManager) {
             function onBindKeys() {
                 if (!bound) {
                     bound = true;
-                    Mousetrap.bind(attrs.focusShortcut.split(','), function (evt) {
-                        evt.preventDefault();
-                        evt.stopPropagation();
+                    if(attrs.hasOwnProperty('focusShortcut')) {
+                        Mousetrap.bind(attrs.focusShortcut.split(','), function (evt) {
+                            evt.preventDefault();
+                            evt.stopPropagation();
 
-                        focusManager.focus(element[0]);
+                            focusManager.focus(element[0]);
 
-                        return false;
-                    });
+                            return false;
+                        });
+                    }
                 }
             }
 
             function onUnbindKeys() {
                 if (bound) {
                     bound = false;
-                    Mousetrap.unbind(attrs.focusKeyboard.split(','));
+                    if(attrs.hasOwnProperty('focusShortcut')) {
+                        Mousetrap.unbind(attrs.focusShortcut.split(','));
+                    }
                 }
             }
 
