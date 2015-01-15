@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script data-require="angular.js@*" data-semver="1.3.6" src="../bower_components/angular/angular.js"></script>
+    <script src="../build/angular-focusmanager.js"></script>
+</head>
+
+<body ng-app="fmTest">
+<h1>Focus Manager for AngularJS and the Return Key</h1>
+
+<form>
+    <div>
+        <input type="text" placeholder="Field 1">
+    </div>
+    <div>
+        <textarea placeholder="Try hitting return for a linebreak here" rows="6" cols="40"></textarea>
+    </div>
+    <div>
+        <div contentEditable="true">
+            <p>And here's a <code>contentEditable</code> element. <kbd>Enter</kbd> should create a new paragraph.</p>
+            <ul>
+                <li>And now a bullet list</li>
+                <li>Pressing enter should add a new bullet...</li>
+            </ul>
+        </div>
+    </div>
+</form>
+
+<script>
+    //angular.module('fmTest', []); // This version works
+    angular.module('fmTest', ['fm']); // Adding fm breaks return key handling
+</script>
+</body>
+</html>
