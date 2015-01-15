@@ -1,6 +1,6 @@
 /*
-* angular-focus-manager 0.2.5
-* Obogo (c) 2014
+* angular-focus-manager 0.2.6
+* Obogo (c) 2015
 * https://github.com/webux/angular-focusmanager
 * License: MIT.
 */
@@ -233,18 +233,22 @@
                 function onBindKeys() {
                     if (!bound) {
                         bound = true;
-                        Mousetrap.bind(attrs.focusShortcut.split(","), function(evt) {
-                            evt.preventDefault();
-                            evt.stopPropagation();
-                            focusManager.focus(element[0]);
-                            return false;
-                        });
+                        if (attrs.hasOwnProperty("focusShortcut")) {
+                            Mousetrap.bind(attrs.focusShortcut.split(","), function(evt) {
+                                evt.preventDefault();
+                                evt.stopPropagation();
+                                focusManager.focus(element[0]);
+                                return false;
+                            });
+                        }
                     }
                 }
                 function onUnbindKeys() {
                     if (bound) {
                         bound = false;
-                        Mousetrap.unbind(attrs.focusKeyboard.split(","));
+                        if (attrs.hasOwnProperty("focusShortcut")) {
+                            Mousetrap.unbind(attrs.focusShortcut.split(","));
+                        }
                     }
                 }
                 if (attrs.focusShortcut) {
@@ -347,9 +351,12 @@
             }
         }
         function triggerClick(evt) {
+            var activeElement = evt.target;
+            if (activeElement.type === "text" || activeElement.type === "textarea" || activeElement.getAttribute("contentEditable") === "true") {
+                return;
+            }
             evt.preventDefault();
             evt.stopPropagation();
-            var activeElement = evt.target;
             fireEvent(activeElement, "mousedown");
             fireEvent(activeElement, "mouseup");
             fireEvent(activeElement, "click");
@@ -488,9 +495,13 @@
                     oldTarget: scope.activeElement,
                     newTarget: el
                 };
+                if (scope.activeElement) {
+                    scope.activeElement.setAttribute("tabindex", "-1");
+                }
                 dispatcher.trigger("focusout", eventObj);
                 scope.activeElement = el;
                 if (el) {
+                    el.setAttribute("tabindex", "1");
                     el.focus();
                 }
                 dispatcher.trigger("focusin", eventObj);
