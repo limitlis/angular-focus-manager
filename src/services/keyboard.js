@@ -42,10 +42,13 @@ module.service('focusKeyboard', function (focusManager) {
     }
 
     function triggerClick(evt) {
+        var activeElement = evt.target;
+        if(activeElement.type === 'text' || activeElement.type === 'textarea' || activeElement.getAttribute('contentEditable') === 'true') {
+            return; // if a text input of any kind, do nothing
+        }
+
         evt.preventDefault();
         evt.stopPropagation();
-
-        var activeElement = evt.target;
 
         fireEvent(activeElement, "mousedown");
         fireEvent(activeElement, "mouseup");
