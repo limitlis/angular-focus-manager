@@ -9,3 +9,15 @@ module.directive('focusRepeat', function () {
         }
     };
 });
+
+/* global angular, module, moduleName, utils */
+module.directive('ngRepeat', function () {
+    return {
+        scope: true,
+        link: function (scope) {
+            if (scope.$last) {
+                scope.$emit('focus::repeat');
+            }
+        }
+    };
+});

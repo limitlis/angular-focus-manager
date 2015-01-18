@@ -240,6 +240,16 @@
             }
         };
     });
+    module.directive("ngRepeat", function() {
+        return {
+            scope: true,
+            link: function(scope) {
+                if (scope.$last) {
+                    scope.$emit("focus::repeat");
+                }
+            }
+        };
+    });
     module.directive("focusShortcut", [ "focusManager", function(focusManager) {
         return {
             link: function(scope, element, attrs) {
