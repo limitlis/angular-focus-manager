@@ -1,5 +1,5 @@
 /*
-* angular-focus-manager 0.2.7
+* angular-focus-manager 0.2.8
 * Obogo (c) 2015
 * https://github.com/webux/angular-focusmanager
 * License: MIT.
@@ -343,7 +343,7 @@
         return dispatcher;
     });
     module.service("focusKeyboard", [ "focusManager", function(focusManager) {
-        var scope = this, tabKeysEnabled = false, arrowKeysEnabled = false;
+        var scope = this, tabKeysEnabled = false, arrowKeysEnabled = false, arrowKeysTraverseGroupsVertically = false;
         var _groupName;
         function enableTabKeys() {
             if (!tabKeysEnabled) {
@@ -358,6 +358,16 @@
         function enableArrowKeys() {
             if (!arrowKeysEnabled) {
                 arrowKeysEnabled = true;
+            }
+        }
+        function enableVerticalGroupTraverse() {
+            if (!arrowKeysTraverseGroupsVertically) {
+                arrowKeysTraverseGroupsVertically = true;
+            }
+        }
+        function disableVerticalGroupTraverse() {
+            if (arrowKeysTraverseGroupsVertically) {
+                arrowKeysTraverseGroupsVertically = false;
             }
         }
         function disableArrowKeys() {
@@ -397,10 +407,34 @@
             evt.stopPropagation();
             return false;
         }
+        function onFocusNextGroup(evt) {
+            scope.direction = "next";
+            if (focusManager.enabled) {
+                focusManager.nextGroup();
+            }
+            if (!focusManager.enabled) {
+                return;
+            }
+            evt.preventDefault();
+            evt.stopPropagation();
+            return false;
+        }
         function onFocusPrev(evt) {
             scope.direction = "prev";
             if (focusManager.enabled) {
                 focusManager.prev();
+            }
+            if (!focusManager.enabled) {
+                return;
+            }
+            evt.preventDefault();
+            evt.stopPropagation();
+            return false;
+        }
+        function onFocusPrevGroup(evt) {
+            scope.direction = "prev";
+            if (focusManager.enabled) {
+                focusManager.prevGroup();
             }
             if (!focusManager.enabled) {
                 return;
@@ -457,11 +491,19 @@
                     if (evt.keyCode === 37) {
                         onFocusPrev(evt);
                     } else if (evt.keyCode === 38) {
-                        onFocusPrev(evt);
+                        if (arrowKeysTraverseGroupsVertically) {
+                            onFocusPrevGroup(evt);
+                        } else {
+                            onFocusPrev(evt);
+                        }
                     } else if (evt.keyCode === 39) {
                         onFocusNext(evt);
                     } else if (evt.keyCode === 40) {
-                        onFocusNext(evt);
+                        if (arrowKeysTraverseGroupsVertically) {
+                            onFocusNextGroup(evt);
+                        } else {
+                            onFocusNext(evt);
+                        }
                     }
                 }
             }
@@ -473,6 +515,28 @@
         }
         function onNextKeyUp(evt) {
             unwatchNextTabKey();
+            if (arrowKeysEnabled) {
+                if (!focusManager.enabled) {
+                    focusManager.enable();
+                    switch (evt.keyCode) {
+                      case 37:
+                        focusManager.findPrevChildGroup(_groupName);
+                        break;
+
+                      case 38:
+                        focusManager.findPrevChildGroup(_groupName);
+                        break;
+
+                      case 39:
+                        focusManager.findNextElement(_groupName);
+                        break;
+
+                      case 40:
+                        focusManager.findNextElement(_groupName);
+                        break;
+                    }
+                }
+            }
             if (tabKeysEnabled) {
                 if (!focusManager.enabled) {
                     focusManager.enable();
@@ -485,7 +549,7 @@
             }
         }
         function watchNextTabKey(groupName) {
-            if (tabKeysEnabled) {
+            if (arrowKeysEnabled || tabKeysEnabled) {
                 _groupName = groupName;
                 utils.addEvent(document, "keyup", onNextKeyUp);
             }
@@ -500,6 +564,8 @@
         scope.disableTabKeys = disableTabKeys;
         scope.enableArrowKeys = enableArrowKeys;
         scope.disableArrowKeys = disableArrowKeys;
+        scope.enableVerticalGroupTraversal = enableVerticalGroupTraverse;
+        scope.disableVerticalGroupTraversal = disableVerticalGroupTraverse;
         scope.toggleTabArrowKeys = toggleTabArrowKeys;
         scope.triggerClick = triggerClick;
         scope.watchNextTabKey = watchNextTabKey;
@@ -540,6 +606,10 @@
                 findNextElement();
             }
         }
+        function nextGroup() {
+            var parentGroupId, groupId, group;
+            findNextGroup();
+        }
         function prev() {
             var groupId, elementId;
             if (scope.activeElement) {
@@ -549,6 +619,10 @@
             } else {
                 findPrevElement();
             }
+        }
+        function prevGroup() {
+            var parentGroupId, groupId, group;
+            findPrevGroup();
         }
         function getElementIndex(list, item) {
             var i = 0, len = list.length;
@@ -768,6 +842,8 @@
         scope.focus = focus;
         scope.prev = prev;
         scope.next = next;
+        scope.prevGroup = prevGroup;
+        scope.nextGroup = nextGroup;
         scope.on = on;
         scope.off = off;
         scope.findPrevChildGroup = findPrevChildGroup;

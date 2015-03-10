@@ -57,6 +57,24 @@ module.service('focusManager', function (focusQuery, focusDispatcher) {
     }
 
     /**
+     * Public interface for invoking the next focus group
+     */
+    function nextGroup() {
+        var parentGroupId, groupId, group;
+
+        findNextGroup();
+        // if (scope.activeElement) {
+        //     groupId = focusQuery.getParentId(scope.activeElement);
+        //     group = focusQuery.getGroup(groupId);
+        //     parentGroupId = focusQuery.getParentGroupId(group);
+
+        //     findNextGroup(parentGroupId, groupId);
+        // } else {
+        //     findNextGroup();
+        // }
+    }
+
+    /**
      * Public interface for invoking the previous focus element
      */
     function prev() {
@@ -69,6 +87,23 @@ module.service('focusManager', function (focusQuery, focusDispatcher) {
         } else {
             findPrevElement();
         }
+    }
+    /**
+     * Public interface for invoking the previous focus group
+     */
+    function prevGroup() {
+        var parentGroupId, groupId, group;
+
+        findPrevGroup();
+        // if (scope.activeElement) {
+        //     groupId = focusQuery.getParentId(scope.activeElement);
+        //     group = focusQuery.getGroup(groupId);
+        //     parentGroupId = focusQuery.getParentGroupId(group);
+
+        //     findPrevGroup(parentGroupId, groupId);
+        // } else {
+        //     findPrevGroup();
+        // }
     }
 
     /**
@@ -407,6 +442,8 @@ module.service('focusManager', function (focusQuery, focusDispatcher) {
     scope.focus = focus;
     scope.prev = prev;
     scope.next = next;
+    scope.prevGroup = prevGroup;
+    scope.nextGroup = nextGroup;
     scope.on = on;
     scope.off = off;
 

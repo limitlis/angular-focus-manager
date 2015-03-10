@@ -3,7 +3,8 @@ module.service('focusKeyboard', function (focusManager) {
 
     var scope = this,
         tabKeysEnabled = false,
-        arrowKeysEnabled = false;
+        arrowKeysEnabled = false,
+        arrowKeysTraverseGroupsVertically = false;
 
     var _groupName;
 
@@ -22,6 +23,18 @@ module.service('focusKeyboard', function (focusManager) {
     function enableArrowKeys() {
         if (!arrowKeysEnabled) {
             arrowKeysEnabled = true;
+        }
+    }
+
+    function enableVerticalGroupTraverse() {
+        if (!arrowKeysTraverseGroupsVertically) {
+            arrowKeysTraverseGroupsVertically = true;
+        }
+    }
+
+    function disableVerticalGroupTraverse() {
+        if (arrowKeysTraverseGroupsVertically) {
+            arrowKeysTraverseGroupsVertically = false;
         }
     }
 
@@ -72,6 +85,24 @@ module.service('focusKeyboard', function (focusManager) {
 
         return false;
     }
+    function onFocusNextGroup(evt) {
+
+        scope.direction = 'next';
+
+        if (focusManager.enabled) {
+            
+            focusManager.nextGroup();
+        }
+
+        if (!focusManager.enabled) {
+            return;
+        }
+
+        evt.preventDefault();
+        evt.stopPropagation();
+
+        return false;
+    }
 
     function onFocusPrev(evt) {
 
@@ -79,6 +110,24 @@ module.service('focusKeyboard', function (focusManager) {
 
         if (focusManager.enabled) {
             focusManager.prev();
+        }
+
+        if (!focusManager.enabled) {
+            return;
+        }
+
+        evt.preventDefault();
+        evt.stopPropagation();
+
+        return false;
+    }
+
+    function onFocusPrevGroup(evt) {
+
+        scope.direction = 'prev';
+
+        if (focusManager.enabled) {
+            focusManager.prevGroup();
         }
 
         if (!focusManager.enabled) {
@@ -168,11 +217,19 @@ module.service('focusKeyboard', function (focusManager) {
                 if (evt.keyCode === 37) { // left arrow
                     onFocusPrev(evt);
                 } else if (evt.keyCode === 38) { // up arrow
-                    onFocusPrev(evt);
+                    if (arrowKeysTraverseGroupsVertically){
+                        onFocusPrevGroup(evt);
+                    } else {
+                        onFocusPrev(evt);
+                    }
                 } else if (evt.keyCode === 39) { //right arrow
                     onFocusNext(evt);
                 } else if (evt.keyCode === 40) { // down arrow
-                    onFocusNext(evt);
+                    if (arrowKeysTraverseGroupsVertically){
+                        onFocusNextGroup(evt);
+                    } else {
+                        onFocusNext(evt);
+                    }
                 }
             }
         }
@@ -186,6 +243,29 @@ module.service('focusKeyboard', function (focusManager) {
     function onNextKeyUp(evt) {
         unwatchNextTabKey();
 
+
+        if (arrowKeysEnabled) {
+            // if the focus manager has not been enabled (via mouse click)
+            // enable the FM and then check for SHIFT KEY to determine DIRECTION
+            if (!focusManager.enabled) {
+                focusManager.enable();
+
+                switch(evt.keyCode) {
+                    case 37:
+                        focusManager.findPrevChildGroup(_groupName);
+                        break;
+                    case 38:
+                        focusManager.findPrevChildGroup(_groupName);
+                        break;
+                    case 39:
+                        focusManager.findNextElement(_groupName);
+                        break;
+                    case 40:
+                        focusManager.findNextElement(_groupName);
+                        break;
+                }
+            }
+        }
         if (tabKeysEnabled) {
             // if the focus manager has not been enabled (via mouse click)
             // enable the FM and then check for SHIFT KEY to determine DIRECTION
@@ -201,7 +281,8 @@ module.service('focusKeyboard', function (focusManager) {
     }
 
     function watchNextTabKey(groupName) {
-        if(tabKeysEnabled) {
+        
+        if (arrowKeysEnabled || tabKeysEnabled) {
             _groupName = groupName;
             // remove the key event regardless
             utils.addEvent(document, 'keyup', onNextKeyUp);
@@ -219,6 +300,8 @@ module.service('focusKeyboard', function (focusManager) {
     scope.disableTabKeys = disableTabKeys;
     scope.enableArrowKeys = enableArrowKeys;
     scope.disableArrowKeys = disableArrowKeys;
+    scope.enableVerticalGroupTraversal = enableVerticalGroupTraverse;
+    scope.disableVerticalGroupTraversal = disableVerticalGroupTraverse;
     scope.toggleTabArrowKeys = toggleTabArrowKeys;
     scope.triggerClick = triggerClick;
     scope.watchNextTabKey = watchNextTabKey;

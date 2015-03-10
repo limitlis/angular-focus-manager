@@ -147,6 +147,10 @@
 <script src="js/jquery.dom-outline-1.0.js"></script>
 <script>
     angular.module('app', ['fm'])
+    .run(function(focusKeyboard){
+        focusKeyboard.enableArrowKeys();
+        focusKeyboard.enableVerticalGroupTraversal();
+    })
             .controller('AppCtrl', function () {
                 this.showModal = false;
                 this.showView = false;
